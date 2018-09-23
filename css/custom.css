@@ -1,0 +1,99 @@
+html {
+  background: #fff;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  color: #000;
+  font-family: 'Didact Gothic';
+}
+
+.center {
+  text-align: center;
+}
+
+.foot {
+  color: #9ba7b1;
+  height: 50px;
+}
+
+.push {
+  height: 50px;
+}
+
+.container {
+  padding-top: 5rem;
+  margin-bottom: -50px;
+  min-height: 100%;
+}
+
+a, a:hover {
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #eeeeee;
+  background: #9ba7b1;
+  text-decoration: none;
+}
+
+.profile {
+  width: 100px;
+  border: 1px solid #9ba7b1;
+  border-radius: 50%;
+}
+
+.yin, .yang {
+  text-align: center;
+}
+
+@media (min-width: 400px) {
+    .container {
+      padding-top: 10rem;
+    }
+
+    .yang {
+      text-align: left;
+    }
+}
+
+@media (min-width: 550px) {
+    .yang {
+      color: #000;
+    }
+}
+
+@media (min-width: 750px) {
+    .container {
+      padding-top: 15rem;
+    }
+
+    .yin {
+      border: 1px solid #9ba7b1;
+      height: 270px;
+      padding: 1rem;
+    }
+
+    .yang {
+      height: 270px;
+      padding: 1rem;
+      background: #eeeeee;
+      color: #000;
+    }
+}
+
+@media (min-width: 1000px) {
+    .container {
+      padding-top: 20rem;
+      margin-bottom: -50px;
+      min-height: 100%;
+    }
+
+    .yin {
+      padding: 5rem;
+    }
+
+    .yang {
+      padding: 5rem;
+    }
+}
+
