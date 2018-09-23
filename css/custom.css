@@ -9,6 +9,14 @@ body {
   font-family: 'Didact Gothic';
 }
 
+.name {
+  color: #d3554c;
+}
+
+.links {
+  margin-top: 2rem;
+}
+
 .center {
   text-align: center;
 }
