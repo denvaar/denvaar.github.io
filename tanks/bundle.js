@@ -59,7 +59,7 @@ t.exports={Alpha:i(254),Animation:i(255),BlendMode:i(258),ComputedSize:i(535),Cr
  * @copyright    2019 Photon Storm Ltd.
  * @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
  */
-var n=i(22),s=i(4);t.exports=function(t,e,i){var r=s(t,e,null);if(null===r)return i;if(Array.isArray(r))return n.RND.pick(r);if("object"==typeof r){if(r.hasOwnProperty("randInt"))return n.RND.integerInRange(r.randInt[0],r.randInt[1]);if(r.hasOwnProperty("randFloat"))return n.RND.realInRange(r.randFloat[0],r.randFloat[1])}else if("function"==typeof r)return r(e);return r}},function(t,e){t.exports.debug=!1,t.exports.gameWidth=500,t.exports.gameHeight=300,t.exports.clientHost="localhost",t.exports.serverHost="localhost",t.exports.serverPort=4e3},function(t,e){
+var n=i(22),s=i(4);t.exports=function(t,e,i){var r=s(t,e,null);if(null===r)return i;if(Array.isArray(r))return n.RND.pick(r);if("object"==typeof r){if(r.hasOwnProperty("randInt"))return n.RND.integerInRange(r.randInt[0],r.randInt[1]);if(r.hasOwnProperty("randFloat"))return n.RND.realInRange(r.randFloat[0],r.randFloat[1])}else if("function"==typeof r)return r(e);return r}},function(t,e){t.exports.debug=!1,t.exports.gameWidth=500,t.exports.gameHeight=300,t.exports.clientHost="https://denvaar.github.io/tanks",t.exports.serverHost="obscure-tor-90137.herokuapp.com",t.exports.serverPort=4e3},function(t,e){
 /**
  * @author       Richard Davey <rich@photonstorm.com>
  * @copyright    2019 Photon Storm Ltd.
