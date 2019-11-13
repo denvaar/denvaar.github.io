@@ -5,7 +5,7 @@ html {
 body {
   margin: 0;
   height: 100%;
-  font-family: 'Overpass Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 .center {
@@ -69,68 +69,67 @@ a {
 }
 
 @media (min-width: 400px) {
-    .profile-image {
-      background-position-y: -98px;
-      height: 350px;
-    }
+  .profile-image {
+    background-position-y: -98px;
+    height: 350px;
+  }
 }
 
 @media (min-width: 550px) {
-    .profile-image {
-      background-position-y: -108px;
-      height: 400px;
-    }
+  .profile-image {
+    background-position-y: -108px;
+    height: 400px;
+  }
 }
 
 @media (min-width: 600px) {
-    .links a {
-      text-align: left;
-      margin-right: 5px;
-    }
+  .links a {
+    text-align: left;
+    margin-right: 5px;
+  }
 
-    .content {
-      padding: 1rem;
-      text-align: left;
-    }
+  .content {
+    padding: 1rem;
+    text-align: left;
+  }
 
-    .content h2 {
-      text-align: left;
-    }
+  .content h2 {
+    text-align: left;
+  }
 
-    .profile-image {
-      background-position-y: unset;
-      height: 100%;
-    }
+  .profile-image {
+    background-position-y: unset;
+    height: 100%;
+  }
 
-    .left {
-      background-color: #ffffff;
-      color: #000;
-      flex: 1;
-      display: flex;
-    }
+  .left {
+    background-color: #ffffff;
+    color: #000;
+    flex: 1;
+    display: flex;
+  }
 
-    .right {
-      background-color: #efefef;
-      flex: 1;
-    }
+  .right {
+    background-color: #efefef;
+    flex: 1;
+  }
 
-    .container {
-      flex-direction: row;
-    }
+  .container {
+    flex-direction: row;
+  }
 }
 
 @media (min-width: 800px) {
-    .links a {
-      font-size: 14px;
-      margin-right: 10px;
-    }
+  .links a {
+    font-size: 14px;
+    margin-right: 10px;
+  }
 
-    .content {
-      padding: 3rem;
-    }
+  .content {
+    padding: 3rem;
+  }
 
-    .container {
-      margin-bottom: -50px;
-    }
+  .container {
+    margin-bottom: -50px;
+  }
 }
-
