@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Diffie-Hellman Key Exchange</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link type="image/x-icon" rel="icon" href="favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/article.css" />
+    <link rel="stylesheet" href="../css/highlightjs/default.css" />
+  </head>
+  <body>
+    <div class="article">
+      <div class="top-nav">
+        
+        <div>
+          <a alt="On Learning Elixir" href="on_learning_elixir.html"
+            >/previous</a
+          >
+        </div>
+        
+        <div>
+          <a href="../articles/index.html">/programming journal</a>
+        </div>
+        
+        <div>
+          <a alt="More Binary Tree Properties" href="more_binary_tree_properties.html">/next</a>
+        </div>
+        
+      </div>
+      <h1>Diffie-Hellman Key Exchange</h1>
+      <p class="article-summary">An explanation of an important public key cryptography algorithm as well as some of the history behind it.</p>
+      <h4 class="article-date">
+        <img width="12px" src="../css/calendar.svg" alt="Date published" />
+        06.19.2017
+      </h4>
+      <div class="article-body">
+        <p><em>This post is largely based off of an awesome video that I stumbled upon today. <a href="https://www.youtube.com/watch?v=YEBfamv-_do">Check it out</a>.</em></p>
+<h2 id="weneedencryption">We Need Encryption</h2>
+<p>The idea that computers can be used to connect and share information between people across the globe has, of course, made a huge impact on our society.</p>
+<p>After World War II, The United States and Canada launched NORAD: A joint effort to defend the North American continent from potential nuclear attacks. The project included hundreds of long-distance radars across North America, which were connected to computers. These early computers transmitted the data via radio waves and telephone lines to a base in Colorado. This method of processing and transmitting data allowed operators to make split-second decisions on a large scale.</p>
+<p>This idea of sharing data was further developed by researchers at universities who saw how valuable this type of "computer communication" could be. Fast forward to today and it's true that the internet has grown to encompass just about everything we do.</p>
+<p>Just as important as sharing our data with each other is the ability to secure it, and to prevent it from falling into the hands of an unwanted listener.</p>
+<p>That's one of the problems that encryption attempts to solve. However, in order for encryption to be usable, there must first be an exchange of keys between the sender and the receiver -- a way for them to unlock the information. One question that remained unanswered for some time is how to safely share those encryption keys.</p>
+<h2 id="howcantwopeoplewhohavenevermetagreeonasecretsharedkey">How can two people who have never met agree on a secret, shared key?</h2>
+<p>In 1976, Whitfield Diffie and Martin Hellman discovered a clever way to allow different parties to securely exchange encryption keys over a public channel. It works using very large prime numbers, and modular arithmetic. The <a href="https://www.youtube.com/watch?v=YEBfamv-_do">video</a> that I mentioned, provides the following example.</p>
+<ol>
+<li>Two parties, Alice and Bob, agree on a prime modulus and a generator of <code>17</code> and <code>3</code> (<code>3 mod 17</code>).</li>
+<li>Alice then selects a <em>private</em> random number (<code>15</code> for example.)</li>
+<li>Alice calculates <code>3^15 mod 17</code> to get a result of <code>6</code>, which she sends to Bob.</li>
+<li>Bob does the same thing and selects his own <em>private</em> random number (<code>13</code> for example.)</li>
+<li>Bob calculates <code>3^13 mod 17</code> to get a result of <code>12</code>, which he sends to Alice.</li>
+</ol>
+<p><em>At this point, Eve, who is an eavesdropper, knows everything that was sent between Alice and Bob, but does not know their private numbers that they used to perform the calculation</em></p>
+<ol start="6">
+<li>Now Alice uses the <code>12</code> that was received from Bob and calculates <code>12^15 mod 17</code> to get <code>10</code>, the <strong>shared secret</strong>.</li>
+<li>Bob also uses the <code>6</code> that he got from Alice to calculate <code>6^13 mod 17</code> to get <code>10</code>, <strong>the same shared secret that Alice calculated</strong>.</li>
+</ol>
+<p>Eve is unable to obtain the shared secret -- there is no for her to calculate it.</p>
+<blockquote>
+  <p>This works because both Alice and Bob did the same calculations. Alice did <code>12^15 mod 17</code>, which is the equivalent of <code>3^13^15 mod 17</code>. Similarly, Bob did <code>6^13 mod 17</code>, which is the equivalent of <code>3^15^13 mod 17</code>.</p>
+</blockquote>
+<p>The technique relies on the fact that a problem like 12^15 mod 17 is easy to solve in one direction, but given only the solution, it's very difficult to work backwards. Of course it's easy to calculate using small numbers as in this example, but when the numbers become hundreds of digits long, it takes computers thousands of years to figure out.</p>
+<h2 id="secretcolors">Secret colors</h2>
+<p>To help illustrate how this technique works, we can also use colors.</p>
+<p><img src="../assets/colors.png" alt="colors" /></p>
+<p>Pretend that Pablo has a secret color of paint he wants to share with Vincent. Neither of them want Andy to find out about this color. Also, we're going to assume the following:</p>
+<ul>
+<li>The secret color is a combination of three colors.</li>
+<li>It's easy to mix two colors of paint together to make a third color.</li>
+<li>Once a color is mixed, it's practically impossible to figure out the three original colors it's composed of. It's impossible for Andy to take his brush and separate the paint back to their originals.</li>
+</ul>
+<p>Since it's easy to mix paint, but hard to un-mix paint back to its initial colors, this is known as a <a href="https://en.wikipedia.org/wiki/One-way_function">one-way function</a>. This property of paint forms the basis of how Pablo and Vincent can share their secret color.</p>
+<p>So, how can Pablo and Vincent share their secret color of paint without Andy also learning about it? Here's how it goes:</p>
+<ol>
+<li>Vincent and Pablo both agree publicly on the color <strong>green</strong>. Since this agreement happened publicly, Andy now knows that green is part of the mix.</li>
+<li>Next, Vincent and Pablo both <em>privately</em> decide on another color. Vincent picks <strong>red</strong> and Pablo picks <strong>blue</strong>. Since this was not done in public, Andy does not know about these colors. In fact, Vincent doesn't even know about Pablo's color, and vice versa.</li>
+<li>Both Vincent and Pablo mix their privately selected colors with the public <strong>green</strong> color of paint. Next, they send each other their mixtures publicly. Since it's done publicly, Andy is able to obtain the mixtures as well.</li>
+</ol>
+<p>At this point, Here's what it looks like:</p>
+<p>Vincent has:</p>
+<ul>
+<li><span style="line-height:40px;background:green;color:#fff;padding:3px;">public color</span></li>
+<li><span style="line-height:40px;background:red;color:#fff;padding:3px;">private color</span></li>
+<li><span style="line-height:40px;background:#1C548F;color:#fff;padding:3px">mixutre from Pablo (green + blue)</span></li>
+</ul>
+<p>Pablo has:</p>
+<ul>
+<li><span style="line-height:40px;background:green;color:#fff;padding:3px;">public color</span></li>
+<li><span style="line-height:40px;background:blue;color:#fff;padding:3px;">private color</span></li>
+<li><span style="line-height:40px;background:#994C1A;color:#fff;padding:3px">mixutre from Vincent (green + red)</span></li>
+</ul>
+<p>Andy (the spy) has:</p>
+<ul>
+<li><span style="line-height:40px;background:green;color:#fff;padding:3px;">public color</span></li>
+<li><span style="line-height:40px;background:#1C548F;color:#fff;padding:3px">public mixutre (green + blue)</span></li>
+<li><span style="line-height:40px;background:#994C1A;color:#fff;padding:3px">public mixutre (green + red)</span></li>
+</ul>
+<p>Now the essential part of the exchange. Both Pablo and Vincent add their private color into the mixtures that they received from each other. They are both able to create this color: <span style="background:#4C3380;color:#fff;padding:3px">SECRET MIXTURE</span></p>
+<p>Andy does not have a combination of colors that will mix to form the secret color. Though the combination for the secret color of paint is buried within the colors he has, there's no practical way for him to take his brush and unmix the colors to find the secret mixture.</p>
+<ul>
+<li><span style="line-height:40px;background:#6F6600;color:#fff;padding:3px">green + mixture from Pablo</span> -- Doesn't work</li>
+<li><span style="line-height:40px;background:#0E7648;color:#fff;padding:3px">green + mixture from Vincent</span> -- Doesn't work</li>
+<li><span style="line-height:40px;background:#5A5054;color:#fff;padding:3px">mixture from Pablo + mixture from Vincent</span> -- Doesn't work</li>
+</ul>
+<h2 id="realworldapplications">Real world applications</h2>
+<p>This is how the Diffie-Hellman key exchange algorithm works in a nutshell. Of course, in the real world, we are not dealing with colors of paint, but thanks to maths, this same concept can be used to securely and reliably transmit useful information.</p>
+<p>As a practical example, when setting up an Nginx web server to use TLS/SSL, you can specify the <code>ssl_dhparam</code> directive with the path to your Diffie-Hellman parameters. These params can be generated using openssl:</p>
+<pre><code>openssl dhparam -out dhparam4096.pem 4096
+</code></pre>
+      </div>
+    </div>
+    <footer class="foot center">
+      © 2019 Denver Smith
+    </footer>
+    <script src="../js/highlight.pack.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+  </body>
+</html>

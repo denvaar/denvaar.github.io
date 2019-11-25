@@ -61,16 +61,16 @@ a {
 }
 
 .profile-image {
-  background: url(../bw-profile.png) no-repeat center;
+  background: url(../assets/me.jpg) no-repeat center;
   background-size: cover;
-  background-position-y: -68px;
+  background-position-y: -45px;
   height: 300px;
   overflow: hidden;
 }
 
 @media (min-width: 400px) {
   .profile-image {
-    background-position-y: -98px;
+    background-position-y: -35px;
     height: 350px;
   }
 }
@@ -99,6 +99,7 @@ a {
 
   .profile-image {
     background-position-y: unset;
+    background-position-x: -65px;
     height: 100%;
   }
 
@@ -120,6 +121,11 @@ a {
 }
 
 @media (min-width: 800px) {
+  .profile-image {
+    background-position-y: 0;
+    background-position-x: 0;
+  }
+
   .links a {
     font-size: 14px;
     margin-right: 10px;

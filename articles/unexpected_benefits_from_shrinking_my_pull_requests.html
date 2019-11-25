@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Unexpected Benefits From Shrinking My Pull Requests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link type="image/x-icon" rel="icon" href="favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/article.css" />
+    <link rel="stylesheet" href="../css/highlightjs/default.css" />
+  </head>
+  <body>
+    <div class="article">
+      <div class="top-nav">
+        
+        <div>
+          <a alt="Base64 Basics" href="base64_basics.html"
+            >/previous</a
+          >
+        </div>
+        
+        <div>
+          <a href="../articles/index.html">/programming journal</a>
+        </div>
+        
+        <div>
+          <a alt="Planning Helps Me Finish Things" href="planning_helps_me_finish_things.html">/next</a>
+        </div>
+        
+      </div>
+      <h1>Unexpected Benefits From Shrinking My Pull Requests</h1>
+      <p class="article-summary">Small pull requests help improve the code review process, but making it a priority has helped me improve in several other ways.</p>
+      <h4 class="article-date">
+        <img width="12px" src="../css/calendar.svg" alt="Date published" />
+        08.28.2018
+      </h4>
+      <div class="article-body">
+        <p><em>Keep pull requests small</em> -- this is a well known sentiment among programming teams to improve the code review process. We do this to avoid having our new features and fixes sitting around waiting for peer review. Nobody wants to spend hours reviewing thousands of changed lines of code. It's just not effective.</p>
+<p>Even so, I've found myself making exceptions to this best practice. It wasn't until recently, when these kind of issues were becoming more apparent, that I really started to take this attitude of keeping PR's small to heart. I invite anyone looking to improve the quality of their code review process to remember this seemingly simple guideline: Keep pull requests small.</p>
+<p>Those reviewing the changes will likely realize:</p>
+<ul>
+<li>The PR is more appealing to review because it's not as much of a time commitment.</li>
+<li>It's easier to leave meaningful feedback because it's simpler to understand.</li>
+</ul>
+<p>Those submitting the changes will likely realize:</p>
+<ul>
+<li>It'll be approved quicker.</li>
+<li>When there are changes requested, it's easier to go ahead and fix them.</li>
+</ul>
+<h2 id="unexpectedresults">Unexpected Results</h2>
+<p>When I began to personally enforce the goal of creating small PR's in my own programming, I realized some neat and unexpected benefits.</p>
+<h3 id="1organizationandclarity">1. Organization and Clarity</h3>
+<p>It's always a temptation to immediately begin to write code when starting a new task. Sometimes this lack of planning results in wasted time coding and recoding. In some cases we may even feel the need to start over.</p>
+<p>Small PR's help combat this situation because we are forced to break up the task into smaller pieces. To do that, we must try to grasp the task more fully. I feel more organized while writing code because of this.</p>
+<h3 id="2easiertostayontask">2. Easier to stay on task</h3>
+<p>Imagine that you are given a task, and you expect it to take about one week to complete. You decide to do your best to chip away at it until it's all done, and then submit a PR. Consider the many distractions which we encounter while coding (Slack, YouTube, candy in the break room, The Internet in general…)</p>
+<p>In my opinion, it's hard to stay on task in this scenario. That's because there's not really anything dictating your schedule, other than the result of a completed task at the end of the week.</p>
+<p>I consider it much easier to stay on task when I can use small iterations of pull requests as personal breakpoints. It's great to take breaks throughout the day, and I think this gives me a bit more control and stability to appropriately do so.</p>
+<h3 id="3increasedestimationaccuracy">3. Increased estimation accuracy</h3>
+<p>One of the most difficult aspects of programming is letting people know when something will be finished. Our project managers are especially eager to know. When estimating delivery dates, we have the opportunity to build trust. Failing to meet a deadline is a discouraging feeling. Frederick P. Brooks, Jr., author of the influential software engineering book, <em>The Mythical Man Month</em>, writes about why this is so difficult. One of the culprits he discusses is optimism.</p>
+<blockquote>
+  <p>"All programmers are optimists… The first false assumption that underlies the scheduling of systems programming is that <em>all will go well</em>."</p>
+</blockquote>
+<p>So, we are optimistic about our code. We think, <em>I'm pretty much done, I just have to write the tests</em>. We don't expect QA to discover bugs in our code. We count on our giant monster-of-a-pull-request to be swiftly approved by our peers.</p>
+<p>A natural byproduct of small PR's is a more accurate depiction of progress. We still need to write tests, we should still plan on QA finding some kind of bug, and we still need to address concerns that come up during peer review. However, these often overlooked details are easier to deal with in smaller iterations -- we're forced to consider them upfront, which makes estimated delivery dates more accurate.</p>
+<h3 id="4easiercollaborationwithteammates">4. Easier collaboration with teammates</h3>
+<p>Sometimes we are assigned a task that depends on something that our teammate has already been working on. So, it goes without much explanation that if we merge our code in smaller, more frequent iterations, that the pieces others might need will be available sooner.</p>
+<h3 id="5testqualityimproved">5. Test quality improved</h3>
+<p>Testing is an important part of software development, especially in large applications. Tests allow us to refactor with confidence.</p>
+<p>It's easier to write tests when working in small iterations. Writing tests is time consuming and frustrating when they're written at the end of a huge task. When I find myself in this position, I start to question the value of writing tests. However, testing can be fun and rewarding when done upfront. My attitude and ability to write good tests has improved from working in small iterations.</p>
+<h2 id="challenges">Challenges</h2>
+<p>The biggest challenge in my opinion is to figure out the best way to break up the task in order to be done in smaller, more frequent iterations of change. We might see a task as one large indivisible mass. <a href="https://github.com/jnunemaker/flipper">Flipper</a> is a handy tool for feature flipping in Ruby applications. It can be used as a way to turn features on and off for end-users of the application, but it's also valuable as a tool for developers to implement small changes without fully replacing exiting parts of the application.</p>
+<p>Another challenge to beware of is the possibility of creating "dead code." Sometimes I intentionally duplicate existing code while refactoring, knowing that I will need to remember to go back and clean it up when I have finished all of my small PR's. The codebase could possibly become full of old, unused code if I forget to cleanup after myself, so I think it's important to figure out a good strategy with your team to help combat this.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>So, in summary, I have noticed lots of extra benefits as a result of keeping my PR's small. I feel like a more organized programmer. I find it easier to stay on task throughout the day. I believe my ability to estimate when things will be completed has become more accurate. Collaboration with my team is easier, and finally, my willingness to invest time writing good tests has grown stronger.</p>
+<p>The benefits are worth the challenges, and this has helped me improve as a programmer. I'm confident that those who are willing to keep their PR's small will see similar benefits.</p>
+      </div>
+    </div>
+    <footer class="foot center">
+      © 2019 Denver Smith
+    </footer>
+    <script src="../js/highlight.pack.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+  </body>
+</html>

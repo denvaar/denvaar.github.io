@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Template Method Design Pattern</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link type="image/x-icon" rel="icon" href="favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/article.css" />
+    <link rel="stylesheet" href="../css/highlightjs/default.css" />
+  </head>
+  <body>
+    <div class="article">
+      <div class="top-nav">
+        
+        <div>
+          <a alt="Strategy Design Pattern" href="design_patterns_strategy.html"
+            >/previous</a
+          >
+        </div>
+        
+        <div>
+          <a href="../articles/index.html">/programming journal</a>
+        </div>
+        
+        <div>
+          <a alt="Gathering Time Series Data" href="gathering_time_series_data.html">/next</a>
+        </div>
+        
+      </div>
+      <h1>Template Method Design Pattern</h1>
+      <p class="article-summary">Example of the Template Method design pattern with Python.</p>
+      <h4 class="article-date">
+        <img width="12px" src="../css/calendar.svg" alt="Date published" />
+        11.09.2015
+      </h4>
+      <div class="article-body">
+        <h3 id="introduction">Introduction</h3>
+<p>An <em>algorithm</em> is basically a formula, or a set of steps to solve a problem. There are usually several different ways to solve a problem. Take the act of baking a loaf of bread for example. Your grandma bakes bread a little bit differently than my grandma does, but the process that they use is probably very similar:</p>
+<p><strong>Generalized Bread Recipe</strong></p>
+<p><strong>1.</strong> Put some ingredients into a bowl to make the dough.</p>
+<p><strong>2.</strong> Turn and knead the dough on a floured surface.</p>
+<p><strong>3.</strong> Shape and place the dough into baking pans.</p>
+<p><strong>4.</strong> Stick the pans into the oven to bake.</p>
+<p>These are four basic steps that can be followed to bake bread. Following these steps will result in different kinds of bread, depending on how the baker decides to perform each step. Some bakers may even choose to add additional steps to their own recipe, which is totally fine.</p>
+<h3 id="whosdownwithoop">Who's Down With OOP?</h3>
+<p>One awesome result of Object Oriented Programming (OOP) is that it allows developers to more accurately model real-world situations and concepts. In OOP, the types of problems that programs solve can be broken down into steps and carried out differently in a variety of situations. One effective way to accomplish this is via the template method design pattern.</p>
+<h3 id="thetemplatemethod">The Template Method</h3>
+<p>The template method pattern is used encapsulate algorithms. It defines a skeleton of an algorithm, leaving the details of each step to its subclasses while preserving the actual structure of the algorithm. Consider how putting an algorithm inside of a template could be beneficial. I have listed a few potential benefits below:</p>
+<ul>
+<li>Avoid writing the same code in multiple places.</li>
+<li>Isolate the details of an algorithm inside of a single class.</li>
+<li>Encourages a reusable algorithm design.</li>
+<li>Improved readability.</li>
+<li>Improved maintainability.</li>
+</ul>
+<h3 id="design">Design</h3>
+<p><em>What's a design pattern?</em> A design pattern is a reusable solution to a problem in a given context.</p>
+<p>Here is a brief overview of the template method design pattern.</p>
+<ul>
+<li><p>Create an abstract base class, which will represent the skeleton of the algorithm.</p></li>
+<li><p>Within the abstract base class, declare abstract methods to be overridden for each step of the algorithm. These will essentially act as placeholders.</p></li>
+<li><p>Within the abstract base class, create a method to serve as the template for the algorithm. This method should be marked as <code>final</code> so that it cannot be changed by any subclasses. It will simply call each step in the algorithm.</p></li>
+<li><p>Other optional methods may be added to the abstract base class.</p></li>
+<li><p>To implement the abstract base class, simply create a new subclass and provide an implementation of each abstract method. Subclasses of the a skeleton provide a concrete implementation of each step. They represent all the different types of bread-bread baking grandmas -- bless their hearts.</p></li>
+</ul>
+<p>These design steps will begin to make more sense as you examine the code below.</p>
+<h3 id="pythonexamplecode">Python Example Code</h3>
+<p>Note that Python does not have a <code>final</code> keyword like in Java, which is used to mark methods as "un-overridable" by subclasses. After doing some research, I discovered that there are several different ways around this. The simplest way is to just not worry about it and document the usage of your class in the docstring. Due to the nature of the Python programming language, that's perfectly fine, however there is a way to effectively get the same behavior as the <code>final</code> keyword.</p>
+<h3 id="makingthingsfinal">Making Things Final</h3>
+<p><em>If you don't care to learn about this Python-specific detail, just skip right over this part.</em></p>
+<p>To understand how methods can be marked as <code>final</code>, first understand what a meta class is. A meta class is basically the class of a class, and to create a custom meta class, you need to subclass <code>type</code>. That's what's going on below with the "Final" class.</p>
+<p><code>__new__</code> is the first step in instance construction -- even before <code>__init__</code>. There is a <strong>lot</strong> more to <code>__new__</code> in the <a href="https://www.python.org/download/releases/2.2/descrintro/#__new__">documentation</a>, but for this example, just know that it's used to check if a base class contains a certain method. If it does, then it will throw a syntax error. Using this method, we can essentially mark class methods as final by checking if they exist from the bases argument in the <code>__new__</code> method.</p>
+<h3 id="theabstractbaseclass">The Abstract Base Class</h3>
+<p>Here's an example of what an abstract base class (the class that represents the skeleton of the algorithm) might look like:</p>
+<pre><code>class Final(type):
+    def __new__(self, name, bases, d):
+        if bases and "templateMethod" in d:
+            raise SyntaxError, "Overriding 'templateMethod' is not allowed."
+        return type.__new__(self, name, bases, d)
+
+class AbstractClass:
+    __metaclass__ = Final
+
+    def stepOne(self):
+        msg = "Must provide an implementation of 'stepOne' method."
+        raise NotImplementedError(msg)
+
+    def stepTwo(self):
+        msg = "Must provide an implementation of 'stepTwo' method."
+        raise NotImplementedError(msg)
+
+    def stepThree(self):
+        msg = "Must provide an implementation of 'stepThree' method."
+        raise NotImplementedError(msg)
+
+    def stepFour(self):
+        msg = "Must provide an implementation of 'stepFour' method."
+        raise NotImplementedError(msg)
+
+    def stepFourHook(self):
+        # Provides a *hook* so that a subclass
+        # may choose to override this method.
+        return False
+
+    def templateMethod(self):
+        # This method has essentially been marked
+        # as *final* from the class defined up top.
+        # No subclasses can change this.
+        self.stepOne()
+        self.stepTwo()
+        self.stepThree()
+        if self.stepFourHook():
+            self.stepFour()
+</code></pre>
+<p>If this code was for the bread example, this class might be named something along the lines of, "BasicBreadRecipe" Trying to use this class on its own should result in an error. That's because this class is only meant to be inherited from. Let's look at what some subclasses might look like.</p>
+<h3 id="thesubclasses">The Subclasses</h3>
+<p>I've created two separate classes that implement the same algorithm, but have slightly different details for each step. Back to bread…these classes could be likened to, "GrandmaMaeRecipe," and, "GrandmaEllenRecipe." Notice that <code>Solver</code> gracefully adds a fourth step to the process while <code>OtherSolver</code> simply does not do that part. That's known as a <em>hook</em>.</p>
+<p>These two classes can be used to provide different details for the algorithm. At the same time, they are restricted to only stay within the bounds that have been established by their base class. That's the template method design pattern.</p>
+<pre><code>class Solver(AbstractClass):
+
+    def stepOne(self):
+        print("Step 1..."),
+
+    def stepTwo(self):
+        print("Step 2..."),
+
+    def stepThree(self):
+        print("Step 3..."),
+
+    def stepFour(self):
+        print("Step 4 too!")
+
+    def stepFourHook(self):
+        return True
+
+class OtherSolver(AbstractClass):
+
+    def stepOne(self):
+        print("????? 1..."),
+
+    def stepTwo(self):
+        print("????? 2..."),
+
+    def stepThree(self):
+        print("????? 3..."),
+</code></pre>
+<p>If I were to try and modify the <code>templateMethod</code> that we have marked as final, and which represents the core steps of the algorithm, I would be met with an error.</p>
+      </div>
+    </div>
+    <footer class="foot center">
+      © 2019 Denver Smith
+    </footer>
+    <script src="../js/highlight.pack.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+  </body>
+</html>

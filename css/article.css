@@ -1,0 +1,136 @@
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+h1 {
+  font-size: 2rem;
+  color: #d3554c;
+}
+
+pre {
+  padding: 15px;
+  background: #002451;
+  color: #fff;
+  border-radius: 3px;
+  overflow-x: scroll;
+}
+
+blockquote {
+  color: #888;
+  padding-left: 15px;
+  border-left: 1px solid #888;
+}
+
+p img {
+  width: 100%;
+}
+
+table {
+  width: 100%;
+  border-spacing: 0;
+}
+
+thead {
+  background: royalblue;
+  color: #fff;
+}
+
+th {
+  padding: 5px;
+}
+
+td {
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background: aliceblue;
+}
+
+a {
+  background: #d1ffec;
+  color: #3f51b5;
+  text-decoration: none;
+
+  white-space: pre-wrap; /* CSS3 */
+  white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+  white-space: -pre-wrap; /* Opera 4-6 */
+  white-space: -o-pre-wrap; /* Opera 7 */
+  word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+
+.article-summary {
+  color: #aaaaaa;
+  font-style: italic;
+}
+
+.article-date {
+  color: #aaaaaa;
+  font-weight: 400;
+  border-bottom: 1px solid;
+}
+
+.center {
+  text-align: center;
+}
+
+.article {
+  max-width: 750px;
+  min-height: 100%;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  color: #373737;
+  margin-bottom: 2rem;
+}
+
+.foot {
+  color: #000;
+  height: 20px;
+  font-size: 11px;
+  margin-bottom: 2rem;
+}
+
+.top-nav a {
+  text-decoration: none;
+  background: unset;
+  font-size: 0.9rem;
+}
+
+.top-nav {
+  background: #fff;
+  padding: 20px;
+  position: sticky;
+  top: 0;
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: space-between;
+}
+
+@media (min-width: 500px) {
+  h1 {
+    font-size: 3rem;
+  }
+  .top-nav {
+    align-items: center;
+    padding: 10px;
+    flex-direction: row;
+  }
+}
+
+@media (min-width: 720px) {
+  h1 {
+    font-size: 4rem;
+  }
+  .article {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

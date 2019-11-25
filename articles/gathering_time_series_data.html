@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gathering Time Series Data</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link type="image/x-icon" rel="icon" href="favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/article.css" />
+    <link rel="stylesheet" href="../css/highlightjs/default.css" />
+  </head>
+  <body>
+    <div class="article">
+      <div class="top-nav">
+        
+        <div>
+          <a alt="Template Method Design Pattern" href="design_patterns_template_method.html"
+            >/previous</a
+          >
+        </div>
+        
+        <div>
+          <a href="../articles/index.html">/programming journal</a>
+        </div>
+        
+        <div>
+          <a alt="Python Code Optimization Tips" href="python_code_optimization_tips.html">/next</a>
+        </div>
+        
+      </div>
+      <h1>Gathering Time Series Data</h1>
+      <p class="article-summary">A brief description of an efficient solution to gather new time series data.</p>
+      <h4 class="article-date">
+        <img width="12px" src="../css/calendar.svg" alt="Date published" />
+        10.23.2015
+      </h4>
+      <div class="article-body">
+        <h3 id="introduction">Introduction</h3>
+<p>I have been working on an application that gathers time series data from sensors, located at sites throughout the valley. The application is one piece of a larger system of software (<a href="https://github.com/ODM2">ODM2</a>). Since the data is in <em>almost</em> real time, it's valuable for many reasons. For instance, it can be used to create forecasting and flood risk models. The data is also used to determine things like, "The water just increased by a foot -- here comes a flood wave," or, "Looks like we had more rainfall one year ago than we do today."</p>
+<p>Here is the context for this particular situation:</p>
+<ul>
+<li>A text file on a web server is updated periodically with streaming time series data.</li>
+<li>An application periodically connects to the web server to read the file.</li>
+<li>The time series data is mapped to tables in a relational database for storage and future analysis.</li>
+</ul>
+<h3 id="challenges">Challenges</h3>
+<p>The main problem is that the speed of the application is negatively affected as the data file grows larger. It is inefficient to read the entire data file each time, because new data is constantly appended to it. Optimizing the speed of the application is one of the problems to solve.</p>
+<h3 id="solution">Solution</h3>
+<p>One way to dramatically improve the speed of the application is to keep a record of the last known byte that was read from the data file. Each time the application reads the data file, it will first check inside of a configuration file to see what the last byte read was. If the file is opened in binary mode, it's easy to skip, or <code>seek</code> to that byte number and begin reading from there. After a successful file read, the last byte is logged in the configuration file.</p>
+<p>This method works great for local files that exist on the file system. Before this same method will work for remote files, there are a couple extra steps to take. First, check what the path looks like. If the path begins with <code>http://</code> then it is obviously a web address. Next, simply read the entire data file. Python has a great <a href="https://docs.python.org/2/library/urllib2.html">module</a> that makes this an easy two-line process. Store the data in a temporary file on the file system. <a href="https://pymotw.com/2/tempfile/">Tempfile</a> works great for this. Reading/writing the entire data file may seem like a bottleneck, but it ends up not making much of a difference. The temporary file is deleted as soon as the application is done using it.</p>
+<p>With the data on the web now temporarily stored in a local file, the same method mentioned above can now be applied. By reading only the new data in a file, the application's efficiency is now only closely related to how much new data has been uploaded since the last read.</p>
+<h3 id="algorithmandpythonimplementation">Algorithm and Python Implementation</h3>
+<p>Here is a sample Python function that will read a file -- either local, or remote -- and return the newest data.</p>
+<p><em>Note: This function could be refactored and divided into several smaller functions that each perform one specific part of the process.</em></p>
+<pre><code>import pandas as pd
+import logging
+from StringIO import StringIO
+import tempfile
+import os
+import urllib2
+
+def byteReader(filepath, start_byte, datecol, header=0, sep=None, dataBegin=0):
+    try:
+        if filepath.startswith('http://'):
+            response = urllib2.urlopen(filepath)
+            data = response.read()
+            temp = tempfile.NamedTemporaryFile()
+            try:
+                temp.write(data)
+                temp.seek(0)
+            finally:
+                df = byteReader(temp.name, start_byte, datecol, header, sep, dataBegin)
+                temp.close()
+                return df
+    except AttributeError:
+        logger.error("Could not read data file!")
+    df = pd.DataFrame
+    # Check if the data has been modified.
+    if int(os.path.getsize(filepath)) &lt; start_byte:
+        logger.info('Previous data has been modified.')
+        start_byte = 0
+    try:
+        with open(filepath, 'rb') as f:
+            logger.info('Reading from byte %d.' % start_byte)
+            # If we are going to skip to the new location, we need
+            # to make sure and grab the headers for Pandas.
+            if start_byte &gt; 0:
+                header_names = ''
+                for i in range(header):
+                    header_names = f.next()
+                f.seek(int(start_byte))
+                new_data = f.read()
+                finished_data = header_names + new_data
+                if new_data:
+                    logger.info('New Data.')
+                    logger.debug(finished_data)
+                else:
+                    logger.info('No new data.')
+                df = pd.read_csv(StringIO(finished_data),
+                                    sep=str(sep),
+                                    engine='python')
+                df.set_index(datecol, inplace=True)
+            else:
+                # Just begin at the start of the file.
+                f.seek(0)
+                finished_data = f.read()
+                logger.info('New data.')
+                logger.debug(finished_data)
+                df = pd.read_csv(StringIO(finished_data),
+                                    header=(header - 1),
+                                    sep=str(sep),
+                                    engine='python')
+                df = df.ix[(dataBegin - header) - 1:]
+                df.set_index(datecol, inplace=True)
+    except IOError as e:
+        logger.error('Skipping "%s" because of %s' % (filepath, e))
+    except Exception as e2:
+        logger.error('Exception: %s' % e2.message)
+    return df
+</code></pre>
+      </div>
+    </div>
+    <footer class="foot center">
+      © 2019 Denver Smith
+    </footer>
+    <script src="../js/highlight.pack.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+  </body>
+</html>

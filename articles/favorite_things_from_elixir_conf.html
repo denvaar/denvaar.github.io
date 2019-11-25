@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Favorite Things From ElixirConf</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link type="image/x-icon" rel="icon" href="favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/article.css" />
+    <link rel="stylesheet" href="../css/highlightjs/default.css" />
+  </head>
+  <body>
+    <div class="article">
+      <div class="top-nav">
+        
+        <div>
+          <a alt="Planning Helps Me Finish Things" href="planning_helps_me_finish_things.html"
+            >/previous</a
+          >
+        </div>
+        
+        <div>
+          <a href="../articles/index.html">/programming journal</a>
+        </div>
+        
+        <div>
+          <a alt="Exploring Text Compression" href="exploring_text_compression.html">/next</a>
+        </div>
+        
+      </div>
+      <h1>My Favorite Things From ElixirConf</h1>
+      <p class="article-summary">I had the chance to attend LoneStar ElixirConf 2018 - a programming conference in Austin, Texas. I sat in a conference room for two days and listened to people talk. 🎶 These are a few of my favorite things. 🎶</p>
+      <h4 class="article-date">
+        <img width="12px" src="../css/calendar.svg" alt="Date published" />
+        02.24.2018
+      </h4>
+      <div class="article-body">
+        <p>I had the chance to attend <a href="http://lonestarelixir.com/">LoneStar ElixirConf</a> in Austin, Texas this year. The conference was a two day event, full of many great talks. I just wanted to take a moment and highlight a few things that stood out to me.</p>
+<h2 id="brisket">Brisket</h2>
+<p>Brisket is meat that comes from the front of a cow. I usually don't eat stuff like that, but I must say, this was good. I also had two servings of mac 'n cheese.</p>
+<h2 id="questionstoaskyourprogram">Questions to ask your program</h2>
+<p>Dave Thomas shared a simple question we should be asking our programs. The question is, <em>What do you do?</em> If the answer that comes back contains a conjunction of some sort ("or", "but", "and", etc.) then it should probably be refactored. This applies to all levels of an application, from the overall big-picture down to the functions. The idea is <a href="https://en.wikipedia.org/wiki/Single_responsibility_principle">nothing new</a> but I enjoyed how he delivered the message.</p>
+<p>In general, functions are more reusable, understandable, and easier to test when they do just one thing. However, it's also important to not go overboard and break up every single statement in your code into a separate function. Many times the answer to <em>What do you do?</em> will involve a few "and" conjunctions, which is totally fine. Programmers should consider the logical levels of abstraction within their code to help deal with those kinds of situations.</p>
+<h2 id="stickers">Stickers</h2>
+<p>I got three really cool stickers.</p>
+<h2 id="whydoeselixirmatter">Why does Elixir matter?</h2>
+<p>Osa Gaius organizes Elixir meetups in Atlanta. He recounted a time where a programming bootcamp student attended his meetup and wanted to know why he should learn Elixir. We often attempt to answer that question from a technical perspective. But a technical answer about functional programming, fault-tolerance, or concurrency will fall flat to someone whose primary goal is to land their first job, and begin their career as a software developer. Osa argues "that answering this question, as a community, will define the success or failure of the language."</p>
+<p>Osa included a sort of "call to action" along with his talk. We should consider ways to evangelize the language. This can be done though the development of packages and tooling. Languages like Python or Ruby have an amazing ecosystem of community-managed packages for nearly anything. Elixir is young and there is still a lot of work to be done to improve the ecosystem.</p>
+<p>Another thing he mentioned was to "infiltrate" other programming communities. I was at a Ruby conference last year, and I think nearly every speaker ended up at least mentioning Elixir. There's already a lot of love for Elixir in the Ruby community. Those who are passionate about Elixir should also find ways to spread their excitement to other communities as well.</p>
+<h2 id="changingtheworld">Changing the world</h2>
+<p>Tim Mecklem was the final keynote speaker. He shared an inspiring example of how he's using code to improve the lives of people with diabetes - namely, his wife. Tim shared a project he's working on which monitors, tracks, and predicts a person's blood sugar levels (hope I got that right…) The application has significantly improved his wife's quality of life, and he has gained more empathy and understanding of what it's like to try and cope with such a disease.</p>
+<p>I really enjoyed his presentation because he pointed out the opportunity we have as software developers to make an impact on people. Discovering and solving meaningful problems gives us a heightened ability to to empathize with those around us, and an ability to change the world (or at least one person's world.)</p>
+<h2 id="clothes">Clothes</h2>
+<p>The main reason I went to this conference was for the T-shirt. ✅</p>
+<h2 id="managingapplicationstate">Managing application state</h2>
+<p>One thing I like about <a href="http://phoenixframework.org/">Phoenix</a> is that it seems like a web framework that is well prepared for the future. There are web applications that no longer fit the mold of the traditional HTTP request, response flow of data. Phoenix is exciting to learn and to program with because it comes with realtime capabilities right out of the box. Chris McCord opened up the conference by talking about some of the things they are working on and considering when it comes to managing state for different types of applications.</p>
+<p>For example, a Tic-Tac-Toe application needs to manage state differently than a traditional CMS would. Chris shared different options that they have explored for managing ephemeral (short lived) versus persistent state. I feel like Chris, and others who are working on Phoenix, are doing a great job about considering and designing the framework in a way that encourages good development practices. <a href="http://phoenixframework.org/blog/phoenix-1-3-0-released">Context</a> was recently added to version 1.3, and now it sounds like there are even more great things in store for the next release which will help us write all kinds of cool web applications.</p>
+<h2 id="jokes">Jokes</h2>
+<p>All of <a href="https://twitter.com/tenderlove">Aaron Patterson</a>'s jokes. He also implemented <code>true</code> and <code>false</code> using only functions. I am still trying to wrap my head around that one.</p>
+<hr/>
+<p>Thanks ElixirConf!</p>
+      </div>
+    </div>
+    <footer class="foot center">
+      © 2019 Denver Smith
+    </footer>
+    <script src="../js/highlight.pack.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+  </body>
+</html>

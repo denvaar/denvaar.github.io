@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>More Binary Tree Properties</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link type="image/x-icon" rel="icon" href="favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/article.css" />
+    <link rel="stylesheet" href="../css/highlightjs/default.css" />
+  </head>
+  <body>
+    <div class="article">
+      <div class="top-nav">
+        
+        <div>
+          <a alt="Diffie-Hellman Key Exchange" href="diffie_hellman_key_exchange.html"
+            >/previous</a
+          >
+        </div>
+        
+        <div>
+          <a href="../articles/index.html">/programming journal</a>
+        </div>
+        
+        <div>
+          <a alt="Binary Search Tree" href="data_structures_binary_search_tree.html">/next</a>
+        </div>
+        
+      </div>
+      <h1>More Binary Tree Properties</h1>
+      <p class="article-summary">Height and depth of a tree and determining if it's balanced.</p>
+      <h4 class="article-date">
+        <img width="12px" src="../css/calendar.svg" alt="Date published" />
+        02.16.2017
+      </h4>
+      <div class="article-body">
+        <p>I have been reviewing and brushing up on some basic data structures in Computer Science. To go along with these <a href="http://denverpsmith.com/posts/binary-tree-traversal">other</a> <a href="http://denverpsmith.com/posts/data-structures-binary-search-tree">posts</a>, I am now writing about some more properties of binary trees: Height, depth, and balancing.</p>
+<h2 id="nodeheight">Node Height</h2>
+<p><strong>Height</strong> of a tree is the number of edges in the longest path from the root node to a leaf node. A tree with no children would have a height of 0. A tree with one child, or a tree with just one left and one right child node would have height 1 at the root. A tree with no nodes (<code>NULL</code>) will have a height defined as -1.</p>
+<pre><code class="c language-c">                    F           &lt;---- height 2 (F)
+                  /  \
+                 D    H         &lt;---- height 1 (D, H)
+               /  \  / \
+              B   E G   J       &lt;---- height 0 (B, E, G J)
+</code></pre>
+<p>Finding the height of a tree involves visiting every node and recursively adding 1 to the maximum value in the left and right subtrees. Here is a Python example:</p>
+<pre><code class="python language-python">def max_height(node):
+    """recursively find the max height of a binary tree"""
+    if not node:
+        return -1  # height of a NULL node is -1
+    return max(max_height(node.left),
+               max_height(node.right)) + 1
+</code></pre>
+<h2 id="nodedepth">Node Depth</h2>
+<p>So, that's height of a tree. <strong>Depth</strong> of a tree is the number of edges from the root node to another node. I think of it sort of as the opposite of height. Where height is from the perspective of the top down, depth is the same, but from the bottom up.</p>
+<pre><code class="c language-c">                F           &lt;---- depth of F: 0
+              /  \
+             D    H         &lt;---- depth of D, H: 1
+           /  \  / \
+          B   E G   J       &lt;---- depth of B, E, G J: 2
+</code></pre>
+<h2 id="treebalancedproperty">Tree Balanced Property</h2>
+<p>For a tree to be <strong>balanced</strong>, the left and right subtrees should never differ in height by more than one. A balanced tree will yield optimal performance, but a tree that is not balanced won't be much better than a linked-list data structure, so that's why it's an important property. A tree can be checked to see if it's balanced or not with the help of the <code>max_height</code> function implemented above. Here's a Python example:</p>
+<pre><code class="python language-python">import math
+
+def is_balanced(node):
+    """determine if tree rooted at `node` is balanced or not"""
+    if not node:
+        return True
+    left_height = max_height(node.left)
+    right_height = max_height(node.right)
+    return (math.abs(left_height - right_height) &lt;= 1 and
+        is_balanced(node.left) and is_balanced(node.right))
+</code></pre>
+<p>This works to determine if the tree is balanced, but has a time complexity of <code>O(n^2)</code>, which is not very efficient. Nodes of the subtrees are visited multiple times. The algorithm can be optimized to run more efficiently by cutting out some of the calls to <code>max_height</code>. To fix it, I am going to make a new helper function to get the height, called <code>get_height</code>.</p>
+<pre><code class="python language-python">import math
+
+def get_height(node):
+    """get height of given `node` in tree, duck out early if non-balanced"""
+    if not node:
+        return -1  # height of NULL node is -1
+    left_height = get_height(node.left)
+    if left_height == -2:
+        return -2
+    right_height = get_height(node.right)
+    if right_height == -1:
+        return -2
+    if math.abs(left_height - right_height) &lt;= 1:
+        return max(left_height, right_height) + 1
+    return -2  # -2 is used to indicate that it's not balanced anymore
+
+def is_balanced(node):
+    """check if tree rooted at `node` is balanced"""
+    return get_height(node) != -2
+</code></pre>
+<p>This algorithm runs in <code>O(n)</code> time because the height and balance condition are being checked at essentially the same time. <code>get_height</code> is now more of a helper function to <code>is_balanced</code>. It returns -2 to indicate that the balance condition is no longer satisfied for a given subtree, and returns early without computing every value.</p>
+      </div>
+    </div>
+    <footer class="foot center">
+      © 2019 Denver Smith
+    </footer>
+    <script src="../js/highlight.pack.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+  </body>
+</html>

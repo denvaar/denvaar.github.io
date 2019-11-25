@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>On Learning Elixir</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link type="image/x-icon" rel="icon" href="favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/article.css" />
+    <link rel="stylesheet" href="../css/highlightjs/default.css" />
+  </head>
+  <body>
+    <div class="article">
+      <div class="top-nav">
+        
+        <div>
+          <a alt="Makeshift Security Camera" href="makeshift_security_camera.html"
+            >/previous</a
+          >
+        </div>
+        
+        <div>
+          <a href="../articles/index.html">/programming journal</a>
+        </div>
+        
+        <div>
+          <a alt="Diffie-Hellman Key Exchange" href="diffie_hellman_key_exchange.html">/next</a>
+        </div>
+        
+      </div>
+      <h1>On Learning Elixir</h1>
+      <p class="article-summary">Exploring a different way of approaching and solving problems with the cool functional language of Elixir.</p>
+      <h4 class="article-date">
+        <img width="12px" src="../css/calendar.svg" alt="Date published" />
+        06.25.2017
+      </h4>
+      <div class="article-body">
+        <h2 id="functionalprogramming">Functional Programming</h2>
+<p>In contradiction to <a href="https://www.youtube.com/watch?v=iLNiYpKeP-o">this potty mouthed guy</a>'s beliefs, I've recently taken an interest in a relatively new programming language, <a href="https://elixir-lang.org/">Elixir</a>. It's popularity seems to be growing pretty quickly. I attended a Ruby conference a couple of months back, and it seems like most of the talks were actually about Elixir, or at the very least, the person presenting gave mention to some cool feature of Elixir.</p>
+<p><img src="../assets/elixir-trend.png" alt="Elixir on Stack Overflow" /></p>
+<p>Going off of this graph from <a href="https://insights.stackoverflow.com/trends?utm_source=so-owned&utm_medium=blog&utm_campaign=trends&utm_content=blog-link&tags=elixir">Stack Overflow Trends</a>, it looks like developers began talking about Elixir between 2013 and 2014. In between 2015 and 2016 there was a pretty drastic jump as well.</p>
+<p>So, the past month or so I've been spending some time learning about Elixir, as well as some functional programming concepts in general. Functional programming is not new, so it's interesting to me that functional languages have been getting new attention recently.</p>
+<p>I hope what I say does not come across as "Functional programming is the future!" or "Functional programming is better than object-oriented programming!" or anything like that. I cannot definitively say that one thing is better than another. There are always benefits and disadvantages to be had when thinking about problems and solving them. I believe that when we consider all options, we put ourselves in a better position to understand the things we're working on. That's my intent with this article, as well as the mindset I had as I began exploring Elixir.</p>
+<p>In Dave Thomas' book, <em>Programming Elixir 1.3</em>, he maintains that programming should be about transforming data, and argues that an object-oriented paradigm doesn't always cut it:</p>
+<blockquote>
+  <p>If you come from an object-oriented world, then you are used to thinking in terms of classes and their instances. A class defines behavior, and objects hold state. Developers spend time coming up with intricate hierarchies of classes that try to model their problem…</p>
+  <p>Much of our time is spent calling methods in objects and passing them other objects. Based on these calls, objects update their own state, and possibly the state of other objects. In this world, the class is king -- it defines what each instance can do, and it implicitly controls the state of the data its instances hold. Our goal is data-hiding.</p>
+  <p>But that's not the real world. In the real world, we don't want to model abstract hierarchies (because in reality there aren't that many true hierarchies.) We want to get things done, not maintain state.</p>
+</blockquote>
+<p>I think many developers who strive to write maintainable software can at least understand the point Dave Thomas makes. I know there's been times when I have felt frustrated with a code base while trying to understand or think about how to organize a new feature.</p>
+<p>Yes, I know the confusion and frustration can be attributed to my own lack of understanding, or the fact that nobody can write code perfectly. However, I feel that at least sometimes there are legitimate bottlenecks caused by trying to fit everything into an inheritance or relationship hierarchy.</p>
+<p>In a bold video that I recently saw, the self-proclaimed "Programmer of stuff" and "YouTuber of educational videos," Brian Will, argues that <a href="https://www.youtube.com/watch?v=QM1iUe6IofM">object-oriented programming is bad</a>. He states that if he were to look at your object-oriented code, he's likely to find one of two situations:</p>
+<ol>
+<li>An over-engineered, giant tower of abstractions.</li>
+<li>An inconsistently architected pile of objects that are tangled together like Christmas lights.</li>
+</ol>
+<p>I don't know if I totally agree with all of the points he makes, however, it is an interesting video that does highlight some downfalls of object-oriented software design.</p>
+<p>I guess what I'm trying to say is that I'm excited about Elixir because it lets me think about programming in a different way. José Valim, the creator of Elixir, has said the following about functional programming, which is also inherently true for the Elixir programming language:</p>
+<blockquote>
+  <p>[Elixir] lets us think in terms of functions that transform data. This transformation never mutates data. Instead, each application of a function potentially creates a new, fresh version of the data. This greatly reduces the need for data-synchronization mechanisms.</p>
+</blockquote>
+<p>To quote from Dave Thomas' book one last time,</p>
+<blockquote>
+  <p>…mostly, I want you to have fun.</p>
+</blockquote>
+<p>I can definitely say I've been having fun.</p>
+<h2 id="learningtheropes">Learning the Ropes</h2>
+<p>I want to illustrate a couple ways that Elixir offers a different way of approaching problems.</p>
+<p><a href="https://projecteuler.net/">Project Euler</a> is a fun way to learn about programming and problem solving. When learning a new language, I've found that working on a specific problem helps me understand the documentation quickly. I think it's because it allows me to read with more purpose and context. I was looking at problem number two the other day, which states:</p>
+<blockquote>
+  <p>Each new term in the Fibonacci sequence is generated by adding the previous two terms.</p>
+  <p>Find the sum of the even-valued terms that are less than or equal to 4,000,000.</p>
+</blockquote>
+<p>This is a simple problem, but it turned out to be pretty interesting as I worked my way through an Elixir solution.</p>
+<p>Using Python, or a similar language, an obvious approach would be to use a loop. One possible solution: Check if the current value is even as we loop. Add the previous two terms from the sequence until we reach 4,000,000, then sum the values at the end.</p>
+<pre><code class="python language-python"># Find the sum of the even-valued terms 4,000,000 or less.
+
+def even_fibonacci(n):
+    a = 1
+    b = 2
+    while b &lt; n:
+        if b % 2 == 0: yield b
+        a, b = b, a + b
+
+print(sum(even_fibonacci(4000000)))
+</code></pre>
+<p>Another approach would be to just add the even values as we go:</p>
+<pre><code class="python language-python">def even_fibonacci(n):
+    a = 1
+    b = 2
+    result = 0
+    while b &lt; n:
+        if b % 2 == 0: result = result + b
+        a, b = b, a + b
+    return result
+
+print(even_fibonacci(4000000))
+</code></pre>
+<p>With Elixir, I was forced to think a little bit differently than my Python and Ruby solutions. First of all, Elixir does not have loops as you would find in Python or any other imperative languages. That's because in an imperative loop, mutations happen. As <a href="https://elixir-lang.org/getting-started/recursion.html">the guide</a> says, mutating is not possible in Elixir.</p>
+<p>Another difference that I had to consider with Elixir was that <code>=</code> is not quite the same as in other languages. Though typically it's used for assignment, in Elixir it's called the match operator, and it's used more like an assertion.</p>
+<p>The code I first came up with looked like this:</p>
+<pre><code class="elixir language-elixir">defmodule Problem2 do
+
+  def solve do
+    Stream.unfold({1, 2}, &amp;fib(&amp;1))
+    |&gt; Enum.reduce_while(0, &amp;sum_even_numbers(&amp;1,&amp;2))
+  end
+
+  defp fib({a, b}) do
+    {a, {b, a + b}}
+  end
+
+  defp sum_even_numbers(i, acc) do
+    if i &lt; 4_000_000 do
+      if rem(i, 2) == 0, do: {:cont, acc + i},
+      else: {:cont, acc}
+    else
+      {:halt, acc}
+    end
+  end
+end
+</code></pre>
+<p>Notice there are no loops and no assignments happening. The <code>solve</code> function begins with a call to <code>Stream.unfold</code>, which is basically a way of lazily emitting a stream of values using a function (in this case it's <code>fib</code>) to calculate the next value. The values are stored in <code>unfold</code>'s first parameter, which is an accumulator. <code>|&gt;</code> is then used to pipe the results from one function to the next, much like the unix pipe operator <code>|</code>. In this case, I discovered the <a href="https://hexdocs.pm/elixir/Enum.html#reduce_while/3"><code>reduce_while</code></a> function to figure out which values to use to figure out the Fibonacci problem.</p>
+<p>Overall, I was pretty happy with the code, but I knew there were a few code smells going on. Mainly, the <code>sum_even_numbers</code> function seemed a bit complex. I received some great feedback on the Elixir Slack channel about some ways to improve the code.</p>
+<h2 id="firstrevision">First Revision</h2>
+<p>Here's the same solution, but with the logic from <code>sum_even_numbers</code> broken out into individual functions. It's much more readable in my opinion, and uses a couple of Elixir's great features:</p>
+<pre><code class="elixir language-elixir">defmodule RevisedProblem2 do
+
+  def solve do
+    Stream.unfold({1, 2}, &amp;fib(&amp;1))
+    |&gt; Enum.reduce_while(0, &amp;sum_even_numbers(&amp;1, &amp;2))
+  end
+
+  defp fib({a, b}) do
+    {a, {b, a + b}}
+  end
+
+  defp sum_even_numbers(i, acc) when i &gt;= 4_000_000 do
+    {:halt, acc}
+  end
+  defp sum_even_numbers(i, acc) when rem(i, 2) == 0 do
+    {:cont, acc + i}
+  end
+  defp sum_even_numbers(_, acc) do
+    {:cont, acc}
+  end
+end
+</code></pre>
+<p>You'll notice that there's three separate definitions of <code>sum_even_numbers</code>. Behind the scenes, it's actually three clauses of the same function. Elixir works through the code from the top down, trying to match the given arguments with the right parameter list. This is an example of <a href="https://elixir-lang.org/getting-started/pattern-matching.html">pattern matching</a>.</p>
+<p>Additionally, much of the logic can be moved out of the body of the function and into what are called <a href="https://hexdocs.pm/elixir/master/guards.html#expressions-in-guard-clauses">guard clauses</a>. This is a bit more readable and straightforward to read in my opinion.</p>
+<h2 id="finalrevision">Final Revision</h2>
+<p>Thanks to some more community feedback, the solution was revised again into this short and concise module:</p>
+<pre><code class="elixir language-elixir">defmodule RevisedAgainProblem2 do
+  def solve do
+    Stream.unfold({1, 2}, &amp;fib(&amp;1))
+    |&gt; Stream.reject(fn i -&gt; rem(i, 2) != 0 end)
+    |&gt; Stream.take_while(fn i -&gt; i &lt; 4_000_000 end)
+    |&gt; Enum.reduce(fn i, acc -&gt; i + acc end)
+  end
+
+  defp fib({a, b}) do
+    {a, {b, a + b}}
+  end
+end
+</code></pre>
+<p>This is really beautiful to me. I'm not going to go into depth, but in short, I like it because…</p>
+<ul>
+<li>There's no looping through data to mutate a variable.</li>
+<li>Once you begin to understand the syntax, it is very clear what's going on. You are able to focus more on <em>what</em> the code should do, and not <em>how</em> it should do it (it's <a href="https://medium.freecodecamp.com/imperative-vs-declarative-programming-283e96bf8aea">declarative</a>.)</li>
+<li>Each function is intended to perform one (and only one) job very well, then passes the result to the next function.</li>
+</ul>
+<p><img src="../assets/doge-elixir.jpg" style="width:300px" /></p>
+<p>I also like the Python version that I came up with. For an example problem this simple, there's probably not a lot of differences to justify saying one way is better than the other.</p>
+<p>Again, like I mentioned at the beginning of this post, it's rewarding (and fun) to explore the different available options at hand when programming. Learning Elixir gives me a new way to think about and solve problems. It also helps me be more mindful of the code I write in general. I've enjoyed the little bit of programming I've done with it so far, and I plan to keep on learning. It's got a great community and the documentation is well-written and easy to understand.</p>
+<p>Thanks for reading, <a href="https://www.youtube.com/watch?v=Exe0IEB3hKs">here's a prize</a>.</p>
+      </div>
+    </div>
+    <footer class="foot center">
+      © 2019 Denver Smith
+    </footer>
+    <script src="../js/highlight.pack.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+  </body>
+</html>
