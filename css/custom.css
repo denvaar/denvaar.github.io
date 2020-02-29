@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Inter';
-  src: url('./css/fonts/inter.var.woff2') format('woff2');
+  src: url('./fonts/inter.var.woff2') format('woff2');
 }
 
 html {
@@ -10,7 +10,7 @@ html {
 body {
   margin: 0;
   height: 100%;
-  font-family: 'Inter';
+  font-family: 'Inter', sans-serif;
   font-size: 1.1em;
 }
 
