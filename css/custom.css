@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/inter.var.woff2') format('woff2');
+}
+
 html {
   height: 100%;
 }
@@ -5,7 +10,8 @@ html {
 body {
   margin: 0;
   height: 100%;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1em;
 }
 
 .center {
@@ -25,7 +31,6 @@ a {
 }
 
 .links a {
-  font-size: 10px;
   margin-right: 5px;
 }
 
@@ -35,8 +40,6 @@ a {
   flex-direction: column;
 
   padding: 2rem;
-  text-align: justify;
-  font-size: 0.9rem;
 }
 
 .content h2 {
@@ -127,7 +130,6 @@ a {
   }
 
   .links a {
-    font-size: 14px;
     margin-right: 10px;
   }
 

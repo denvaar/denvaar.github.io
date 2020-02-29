@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/inter.var.woff2') format('woff2');
+}
+
 html {
   height: 100%;
 }
@@ -5,12 +10,12 @@ html {
 body {
   margin: 0;
   height: 100%;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1em;
 }
 
 h1 {
   font-size: 2rem;
-  color: #5c977e;
 }
 
 pre {
@@ -63,14 +68,9 @@ p > code {
   background: #f0f0f0;
 }
 
-a,
-p > a > code {
-  background: #d1ffec;
+a {
   color: #3f51b5;
   text-decoration: none;
-
-  padding-left: 5px;
-  padding-right: 5px;
 
   white-space: pre-wrap; /* CSS3 */
   white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
@@ -79,8 +79,13 @@ p > a > code {
   word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
 
+p > a > code {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 .article-summary {
-  color: #ca65a2;
+  color: #8e69a3;
   font-style: italic;
 }
 
@@ -103,11 +108,15 @@ p > a > code {
   margin-bottom: 2rem;
 }
 
+.article h2 {
+  scroll-margin-top: 75px;
+}
+
 .article h1,
 .article h2,
 .article h3,
 .article h4 {
-  color: #5c977e;
+  color: #35ab85;
 }
 
 .foot {
@@ -120,7 +129,6 @@ p > a > code {
 .top-nav a {
   text-decoration: none;
   background: unset;
-  font-size: 0.9rem;
 }
 
 .top-nav {
