@@ -36,11 +36,10 @@
         🗓 09.23.2015
       </h4>
       <div class="article-body">
-        <h2 id="introduction">Introduction</h2>
-<p>The other day I came across <a href="https://wiki.python.org/moin/PythonSpeed/PerformanceTips">an interesting article</a>, written by the creator of Python, Guido van Rossum. A friend had asked him what would be the best way to convert a list of integers (representing ASCII characters) into a string. In the article, Rossum analysed several different ways to tackle this simple problem. I learned several general tips to keep in mind for when speed and performance is important. This entry demonstrates what I learned from the article, and illustrates some test results as well.</p>
-<h4 id="onefocusonbottlenecks">One: Focus on bottlenecks.</h4>
+        <p>The other day I came across <a href="https://wiki.python.org/moin/PythonSpeed/PerformanceTips">an interesting article</a>, written by the creator of Python, Guido van Rossum. A friend had asked him what would be the best way to convert a list of integers (representing ASCII characters) into a string. In the article, Rossum analysed several different ways to tackle this simple problem. I learned several general tips to keep in mind for when speed and performance is important. This entry demonstrates what I learned from the article, and illustrates some test results as well.</p>
+<h2 id="onefocusonbottlenecks">One: Focus on bottlenecks.</h2>
 <p>Code optimization is fun and interesting. It can be tempting to nitpick every line of code in an effort to gain performance increases. It is important, however, to keep in mind that <em>real</em> performance improvement is found only at the bottlenecks. This is obviously not Python-specific. In real-world situations, your efficiency as a developer is often just as valuable as the efficient code that you produce. Only optimize code where a proven speed bottleneck exists. Doing so will save a lot of work and leave you free to tackle more problems. That being said, this tip is not an excuse to be lazy or to write poor code.</p>
-<h4 id="twolocalvariablesarefasterthanglobals">Two: Local variables are faster than globals.</h4>
+<h2 id="twolocalvariablesarefasterthanglobals">Two: Local variables are faster than globals.</h2>
 <p>In Python, function names are considered global constants. That means if you are going to use a built-in function inside a loop, for example, it's possible to save some overhead by assigning it to a local variable before the loop. Rossum points out that local variables are faster than global variables. Here's an example to demonstrate:</p>
 <pre><code class="python language-python">def option1(l):
     string = ""
@@ -59,7 +58,7 @@ def option2(l):
 <p><code>Option 1: 11.59 seconds</code>
 <code>Option 2: 12.74 seconds</code></p>
 <p>These results may not seem like much, but applied to some situations, the use of this simple optimization could help drastically improve performance.</p>
-<h4 id="threeusefunctionsimplementedincwhenpossible">Three: Use functions implemented in C when possible.</h4>
+<h2 id="threeusefunctionsimplementedincwhenpossible">Three: Use functions implemented in C when possible.</h2>
 <p>Rossum points out that you can't really get any faster than C. Choose functions that are implemented in C whenever possible for massive speed-up's. This means that it's well worth your time to check the Python documentation for a built-in function that does what you want. Rossum demonstrated the use of a string concatenation function from the string module, which is written in C. I have written the example below to show just how much faster using C code can be.</p>
 <pre><code>import string
 

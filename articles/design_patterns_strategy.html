@@ -36,13 +36,12 @@
         🗓 11.10.2015
       </h4>
       <div class="article-body">
-        <h3 id="overview">Overview</h3>
-<p>This design pattern is called Strategy Pattern.
+        <p>This design pattern is called Strategy Pattern.
 It is used to define a family of algorithms, encapsulates each
 one, and make them interchangeable. Strategy
 design pattern lets an algorithm vary independently
 from clients that use it.</p>
-<h3 id="codeexample">Code Example</h3>
+<h2 id="codeexample">Code Example</h2>
 <p>For example, animals can "walk" in many different ways. Walking could be considered a strategy that is implemented by different types of animals:</p>
 <pre><code class="python language-python">from types import MethodType
 
@@ -103,7 +102,7 @@ generic_animal.walk()
 #     raise NotImplementedError(message)
 # NotImplementedError: Animal should implement a walk method
 </code></pre>
-<h3 id="pythonspecificdetails">Python-specific Details</h3>
+<h2 id="pythonspecificdetails">Python-specific Details</h2>
 <p>Note that in languages like C++ or Java, this pattern is implemented using an abstract class or an interface to define a a strategy. In Python it makes more sense to just define some functions externally that can be added dynamically to a class using <code>types.MethodType</code>.</p>
       </div>
     </div>
