@@ -16,6 +16,12 @@
       <div class="top-nav">
         
         <div>
+          <a alt="Problem Solving" href="problem_solving_example.html"
+            >Previous</a
+          >
+        </div>
+        
+        <div>
           <a href="../articles/index.html">Programming Journal</a>
         </div>
         
@@ -116,24 +122,24 @@ end
 <h2 id="whymaskthetoken">Why mask the token?</h2>
 <p>Let's see if there's any evidence about why this function exists, so We'll open up a git blame view on GitHub.</p>
 <p><img src="../assets/mask_blame.png" alt="" /></p>
-<p>Ah-ha! "Mask CSRF tokens to avoid breach attacks" - this is a useful commit message! With <a href="https://www.acunetix.com/blog/articles/breach-attack/">a bit of research</a> about what a breach attack is, we can learn that it's basically when an attacker is able to send a bunch of requests, and incrementally figure out parts of the response body, even when the responses are encrpyted.</p>
+<p>Ah-ha! "Mask CSRF tokens to avoid breach attacks" - this is a useful commit message! With <a href="https://www.acunetix.com/blog/articles/breach-attack/">a bit of research</a> about what a breach attack is, we can learn that it's basically when an attacker is able to send a bunch of requests, and incrementally figure out parts of the response body, even when the responses are encrypted.</p>
 <p>The attacker takes advantage of the fact that the responses use compression, and that the size of the compressed responses either grows or shrinks, depending on if one small guess of a character is correct or incorrect. In <a href="https://www.youtube.com/watch?v=CoNKarq1IYA">"SSL, gone in 30 seconds"</a>, the security researchers who discovered this vulnerability explain and demonstrate this attack in great detail.</p>
 <p>They have also released <a href="http://breachattack.com/resources/BREACH%20-%20SSL,%20gone%20in%2030%20seconds.pdf">a paper</a> which suggests attack mitigation options. This excerpt explains <code>Plug.CSRFProtection.mask/1</code>'s algorithm.</p>
 <blockquote>
-  <p>The attack relies on the fact that the targeted secret remains the same between requests. While it is usually impractical to rotate secretson each request, there is a method due to Tom Berson which can synthesize thiseffect. Instead of embedding a secret S in a page, on each request, generate a new onetime pad P, and embed <code>P || (P ⊕ S)</code> in the page. Here, we use <code>||</code> to denote concatenation, and <code>⊕</code> to denote XOR.</p>
+  <p>The attack relies on the fact that the targeted secret remains the same between requests. While it is usually impractical to rotate secrets on each request, there is a method due to Tom Berson which can synthesize this effect. Instead of embedding a secret S in a page, on each request, generate a new onetime pad P, and embed <code>P || (P ⊕ S)</code> in the page. Here, we use <code>||</code> to denote concatenation, and <code>⊕</code> to denote XOR.</p>
 </blockquote>
 <p>Masking the token helps prevent an attacker from incrementally guessing characters of a response body. That's because even though the token may not change between requests, the mask will. Therefore, the token is represented differently every time in the response body. When we start looking at token validation, we will see that the XOR mask can be reversed to reveal the original token.</p>
 <p>We now know why the token is masked, as well as what it means to mask it. We also know how an unmasked token is created. However, it's not enough to just insert a token into the HTML document. The same token is also placed in the user's browser cookies.</p>
 <h2 id="sessioncookies">Session cookies</h2>
 <p>If we have a look at the cookies in our browser, we'll see <em>something</em>, but it obviously doesn't match the token we looked at from the HTML form. That's because Phoenix <a href="https://www.phoenixframework.org/blog/sessions">cryptographically signs cookies</a> so that they cannot be tampered with.</p>
-<p>Every Phoenix app has a <code>secret_key_base</code> value defined in <code>config/config.ex</code>, and this is what Phoenix uses as a signature. However, <code>secret_key_base</code> is supposed to be a secret value that nobody knows, so it's not an option to use <code>secret_key_base</code> directly. Instead, Phoneix relies on the <code>Plug.Crypto.KeyGenerator</code> module. Here is an excerpt from the docs that summarizes the purpose of the <code>Plug.Crypto.KeyGenerator</code> module:</p>
+<p>Every Phoenix app has a <code>secret_key_base</code> value defined in <code>config/config.ex</code>, and this is what Phoenix uses as a signature. However, <code>secret_key_base</code> is supposed to be a secret value that nobody knows, so it's not an option to use <code>secret_key_base</code> directly. Instead, Phoenix relies on the <code>Plug.Crypto.KeyGenerator</code> module. Here is an excerpt from the docs that summarizes the purpose of the <code>Plug.Crypto.KeyGenerator</code> module:</p>
 <blockquote>
   <p>…This lets applications have a single secure secret, but avoid reusing that key in multiple incompatible contexts.</p>
 </blockquote>
 <p>We will now take a look at how the application is able to protect the integrity and authenticity of the session cookie data, which includes the CSRF token.</p>
 <h2 id="generatingasessionsigningkey">Generating a session signing key</h2>
 <p><em>How would it be possible to use the application's secret key in potentially insecure places?</em> <a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto/key_generator.ex"><code>Plug.Crypto.KeyGenerator</code></a> accomplishes this by implementing an algorithm called Password-Based Key Derivation Function 2, or <a href="https://tools.ietf.org/html/rfc2898#section-5.2">PBKDF2</a>.</p>
-<p>It takes a salt and a secret as its inputs. Then it repeatedly applies a pseudorandom function (PRF) to create a derived key. An important detail of PBKDF2 is that it allows the program to specify how many times the PRF will be applied. In other words, it allows the program to decide how long the algorithm should take. This helps make brute force attacks less feasible. <a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto/key_generator.ex#L34">The iteration count defaults to 1,000</a> - the recommended minimum.</p>
+<p>It takes a salt and a secret as its inputs. Then it repeatedly applies a pseudo random function (PRF) to create a derived key. An important detail of PBKDF2 is that it allows the program to specify how many times the PRF will be applied. In other words, it allows the program to decide how long the algorithm should take. This helps make brute force attacks less feasible. <a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto/key_generator.ex#L34">The iteration count defaults to 1,000</a> - the recommended minimum.</p>
 <p>The PRF used here is HMAC-sha256. Coincidentally, HMAC is also used to sign and verify the session data as a whole, which we will go over in the next section.</p>
 <p>By logging the result of <a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto/key_generator.ex#L51-L53"><code>Plug.Crypto.KeyGenerator.generate/6</code></a> we can see that it a session signing key is only generated once. All subsequent requests use a cached value, which is stored in ETS. Here's an example of what it looks like (the bitstring is the result, A.K.A. the derived session signing key):</p>
 <pre><code class="elixir language-elixir">iex(2)&gt; :ets.lookup(Plug.Keys, {"2/JWt8kJK5ybWYFPqXGDZj0o3LuKerv1CnG/F8LVbLi71hZTYllzKxP9HMpT+y0m", "8yQvCfAG",
@@ -222,7 +228,7 @@ end
 <p><img src="../assets/csrf_error_message.png" alt="" /></p>
 <h2 id="summary">Summary</h2>
 <p>To wrap things up let's do a quick recap of the whole process of when a user visits a page that has a form with HTTP method "POST". The order of events isn't meant to be completely accurate - my goal here is to paint a generalized picture of what happens overall.</p>
-<p>Phoneix seems to use the <a href="https://en.wikipedia.org/wiki/Cross-site_request_forgery#Double_Submit_Cookie">"Double Submit Cookie"</a> approach when it comes to protecting from CSRF.</p>
+<p>Phoenix seems to use the <a href="https://en.wikipedia.org/wiki/Cross-site_request_forgery#Double_Submit_Cookie">"Double Submit Cookie"</a> approach when it comes to protecting from CSRF.</p>
 <ol>
 <li>A <code>GET</code> request issued to "/login" route.</li>
 <li>HTML markup for the page is generated. <a href="https://github.com/phoenixframework/phoenix_html/blob/d41e2f530560af0dbbbc0a2997cbc43b17e7d0c9/lib/phoenix_html/tag.ex#L197"><code>Phoenix.HTML.form_tag</code></a> detects that the login form should include a CSRF token, since the form method is <code>POST</code>.</li>
@@ -237,11 +243,11 @@ end
 <p>At this point the user can fill out the form and submit. This will trigger an HTTP POST request, and the tokens will be verified.</p>
 <ol>
 <li>The session data <a href="https://github.com/elixir-plug/plug/blob/master/lib/plug/session/cookie.ex#L96">is verified</a> to ensure it has not been modified. If successful, the unmasked CSRF token <a href="https://github.com/elixir-plug/plug/blob/master/lib/plug/session/cookie.ex#L141">is revealed/returned</a>.</li>
-<li>The masked token from the HTML body, along with the unmasked token from the session <a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto.ex#L113-L128">are compared</a>. The correct <a href="https://github.com/elixir-plug/plug/blob/master/lib/plug/csrf_protection.ex#L330">mask is retreivable</a> from the token in the HTML body. The comparison happens in a way that prevents timing attacks.</li>
+<li>The masked token from the HTML body, along with the unmasked token from the session <a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto.ex#L113-L128">are compared</a>. The correct <a href="https://github.com/elixir-plug/plug/blob/master/lib/plug/csrf_protection.ex#L330">mask is retrievable</a> from the token in the HTML body. The comparison happens in a way that prevents timing attacks.</li>
 <li>If the tokens match, then there's not a problem. An error occurs if the tokens do not match.</li>
 </ol>
 <h2 id="finalthoughts">Final thoughts</h2>
-<p>That's about it! As we have seen, there's a lot of fancy stuff going on as part of this process, and its pretty amazinig to try and understand how it all fits together.</p>
+<p>That's about it! As we have seen, there's a lot of fancy stuff going on as part of this process, and its pretty amazing to try and understand how it all fits together.</p>
 <p>It's this kind of stuff that makes me really appreciate all of the work that people are doing to both make and break software. I think it's a good practice to take a close look at the technologies, libraries, and frameworks that we use once in a while. It's a blessing that we don't have to totally understand all the details in order to create and be productive, but there is definitely value in doing so from time to time.</p>
       </div>
     </div>

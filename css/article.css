@@ -1,165 +1,165 @@
 @font-face {
-  font-family: 'Inter';
-  src: url('./fonts/inter.var.woff2') format('woff2');
+    font-family: "Inter";
+    src: url("./fonts/inter.var.woff2") format("woff2");
 }
 
 html {
-  height: 100%;
+    height: 100%;
 }
 
 body {
-  margin: 0;
-  height: 100%;
-  font-family: 'Inter', sans-serif;
-  font-size: 1.1em;
+    margin: 0;
+    height: 100%;
+    font-family: "Inter", sans-serif;
+    font-size: 1.1em;
 }
 
 h1 {
-  font-size: 2rem;
+    font-size: 2rem;
 }
 
 pre {
-  padding: 15px;
-  background: #002451;
-  color: #fff;
-  border-radius: 3px;
-  overflow-x: scroll;
+    padding: 15px;
+    background: #002451;
+    color: #fff;
+    border-radius: 3px;
+    overflow-x: scroll;
 }
 
 blockquote {
-  color: #888;
-  padding-left: 15px;
-  border-left: 1px solid #888;
+    color: #888;
+    padding-left: 15px;
+    border-left: 1px solid #888;
 }
 
 p img {
-  width: 100%;
+    width: 100%;
 }
 
 table {
-  width: 100%;
-  border-spacing: 0;
+    width: 100%;
+    border-spacing: 0;
 }
 
 thead {
-  background: royalblue;
-  color: #fff;
+    background: royalblue;
+    color: #fff;
 }
 
 th {
-  padding: 5px;
+    padding: 5px;
 }
 
 td {
-  padding: 5px;
+    padding: 5px;
 }
 
 tr:nth-child(even) {
-  background: aliceblue;
+    background: aliceblue;
 }
 
 code {
-  font-family: 'IBM Plex Mono', monospace;
+    font-family: "IBM Plex Mono", monospace;
 }
 
 p > code {
-  padding-left: 5px;
-  padding-right: 5px;
-  background: #f0f0f0;
+    padding-left: 5px;
+    padding-right: 5px;
+    background: #f0f0f0;
 }
 
 a {
-  color: #3f51b5;
-  text-decoration: none;
+    color: blue;
+    text-decoration: none;
 
-  white-space: pre-wrap; /* CSS3 */
-  white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
-  white-space: -pre-wrap; /* Opera 4-6 */
-  white-space: -o-pre-wrap; /* Opera 7 */
-  word-wrap: break-word; /* Internet Explorer 5.5+ */
+    white-space: pre-wrap; /* CSS3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
 
 p > a > code {
-  padding-left: 5px;
-  padding-right: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .article-summary {
-  color: #8e69a3;
-  font-style: italic;
+    color: #6b7282;
+    font-style: italic;
 }
 
 .article-date {
-  color: #ca65a2;
-  font-weight: 400;
-  border-bottom: 1px solid;
+    color: #ca65a2;
+    font-weight: 400;
+    border-bottom: 1px solid;
 }
 
 .center {
-  text-align: center;
+    text-align: center;
 }
 
 .article {
-  max-width: 700px;
-  min-height: 100%;
-  margin-left: 1rem;
-  margin-right: 1rem;
-  color: #373737;
-  margin-bottom: 2rem;
+    max-width: 700px;
+    min-height: 100%;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    color: #373737;
+    margin-bottom: 2rem;
 }
 
 .article h2 {
-  scroll-margin-top: 75px;
+    scroll-margin-top: 75px;
 }
 
 .article h1,
 .article h2,
 .article h3,
 .article h4 {
-  color: #35ab85;
+    color: #393838;
 }
 
 .foot {
-  color: #000;
-  height: 20px;
-  font-size: 11px;
-  margin-bottom: 2rem;
+    color: #000;
+    height: 20px;
+    font-size: 11px;
+    margin-bottom: 2rem;
 }
 
 .top-nav a {
-  text-decoration: none;
-  background: unset;
+    text-decoration: none;
+    background: unset;
 }
 
 .top-nav {
-  background: #fff;
-  padding: 20px;
-  position: sticky;
-  top: 0;
-  height: 50px;
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  justify-content: space-between;
+    background: #fff;
+    padding: 20px;
+    position: sticky;
+    top: 0;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: space-between;
 }
 
 @media (min-width: 500px) {
-  h1 {
-    font-size: 3rem;
-  }
-  .top-nav {
-    align-items: center;
-    padding: 10px;
-    flex-direction: row;
-  }
+    h1 {
+        font-size: 3rem;
+    }
+    .top-nav {
+        align-items: center;
+        padding: 10px;
+        flex-direction: row;
+    }
 }
 
 @media (min-width: 720px) {
-  h1 {
-    font-size: 4rem;
-  }
-  .article {
-    margin-left: auto;
-    margin-right: auto;
-  }
+    h1 {
+        font-size: 4rem;
+    }
+    .article {
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
