@@ -141,6 +141,7 @@ p > a > code {
     flex-direction: column;
     align-items: left;
     justify-content: space-between;
+    border-bottom: 1px solid #ff69fd;
 }
 
 @media (min-width: 500px) {

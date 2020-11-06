@@ -16,7 +16,7 @@
       <div class="top-nav">
         
         <div>
-          <a href="../articles/index.html">Programming Journal</a>
+          <a href="../articles/index.html">All Entries</a>
         </div>
         
         <div>
@@ -25,19 +25,21 @@
         
       </div>
       <h1>Problem Solving</h1>
-      <p class="article-summary">Going meta - Working through a programming problem to understand problem solving techniques.</p>
+      <p class="article-summary">✏️ Going meta - Working through a programming problem to understand problem solving techniques.</p>
       <h4 class="article-date">
         🗓 10.28.2020
       </h4>
       <div class="article-body">
         <p>The technical skills of computer programming fall under two broad categories, in my opinion.</p>
-<p>Things like learning language syntax, constructs, and patterns fall into one category. I would summarize it as the ability to connect and utilize the myriad, "tools of the trade" -- languages, frameworks, APIs, libraries -- to create software. There's usually tutorials for these things.</p>
+<p>The first category includes things like learning language syntax, constructs, and patterns. I would summarize it as the ability to connect and utilize the myriad, "tools of the trade" -- languages, frameworks, APIs, libraries -- to create software. There's usually tutorials for these things.</p>
 <p>The second category includes things that are a little bit harder to put your finger on, but can probably be best described as problem solving. It's the ability to analyze, troubleshoot, debug, or solve a problem. It's the ability to reason with abstract ideas and turn them into code.</p>
-<p>There is for sure some overlap between these two categories, but this is how I like to categorize them.</p>
-<p>I think problems like the one I am about to share are great tools for learning about problem solving. This one's from Project Euler. My intention is not to spoil the answer. I want to share my process of figuring it out, with the hope of being able to pinpoint some specific strategies that can be used to solve all kinds of problems.</p>
+<p>There is for sure some overlap between these two categories, but this is how I like to think about it.</p>
+<p>It's hard to be specific about what it takes to be good at problem solving. I believe that's because we all have a slightly different perception of the world around us. Everyone learns differently. There must, however, be at least some techniques that I might learn from you, and vice versa.</p>
+<p>Problems like the one I am about to share can be great tools for learning about problem solving. This one's from Project Euler. My intention is not to simply spoil the answer. I want to share my process of figuring it out, with the hope of being able to pinpoint some specific strategies that can be used to solve all kinds of problems.</p>
 <h2 id="thechallenge">The challenge</h2>
-<p>You can find the original problem statement <a href="https://projecteuler.net/problem=79">here</a>. The goal is to figure out what the secret number is. You are given a list of numbers as clues. Think of the list of numbers like the output of a keylogger as a user types their passcode.</p>
-<p>Another clue is that the user is prompted to enter three of the digits from their passcode each time they log in, and that these digits are asked for in order. So, you don't know exactly which digits they asked for, but you can be sure that the first digit would appear before the second, and the second before the third.</p>
+<p>You can find the original problem statement <a href="https://projecteuler.net/problem=79">here</a>. It's short, so take a moment to read through.</p>
+<p><img src="../assets/secret_number_0.png" alt="" /></p>
+<p>The challenge is to determine what the shortest possible secret number is. Here's an excerpt from the keylogger file.</p>
 <pre><code>...
 160
 689
@@ -46,20 +48,20 @@
 736
 ...
 </code></pre>
-<p>So, the challenge is to determine what the shortest possible secret number is.</p>
 <h2 id="firststeps">First steps</h2>
-<p>I started out by simply writing down some numbers with pencil and paper. Writing things down helps me begin to think about the problem.</p>
-<p>One of the first thoughts that I had was that maybe the length of the secret number was directly related to the length of the list of numbers. For example, if I was given four three-digit numbers, does that mean that the length of the secret number is four?</p>
-<p>I realized pretty quickly that the answer is no, but this question helped me to try and simplify the problem. <em>You've got to start somewhere…</em></p>
-<p>What if you were given a list of two-digit numbers, or even a list of just one-digit numbers? What could that tell you about the length of the secret number? Is there something special about three-digit numbers in particular?</p>
+<p>I began by sitting down with pencil and paper to write some numbers from the list. Writing helps me begin to think about the problem.</p>
+<p>I thought about what these numbers in the list could tell me about the secret number. Maybe I could find a way to at least figure our its length. There are about fifty numbers in the list, so maybe that number is somehow correlated to the secret number.</p>
+<p>These were a few of the questions going through my head. If the answers seem super obvious to you, then congratulations, you might be smarter than me. What's most important during the first steps is that you ask questions.</p>
+<p>I realized pretty quickly that no, the length of the list I was given didn't tell me much, but you've got to start somewhere. Next, my thoughts turned to the fact that each number was three digits long.</p>
+<p><em>What if I was given a list of two-digit numbers, or even a list of just one-digit numbers? What could that tell me about the length of the secret number? Is there something special about three-digit numbers in particular?</em> These were valuable questions to ask, because it helped me to simplify the problem.</p>
 <p>I made a list of one-digit numbers and tried to think about how I might be able to solve the same problem with that instead.</p>
 <pre><code>6
 2
 1
 0
 </code></pre>
-<p>Given a list like this as clues, I could say for certain that the secret number has at least a 6,2,1, and 0, but I also loose essential information about the problem: The order that the numbers appear in. A one-digit list is too ambiguous. The secret number could be <code>6210</code>, <code>2601</code>, or any other combination, and I would have no way of knowing which one is correct.</p>
-<p>If I made a list of two-digit numbers instead, that may be simpler to work with, yet still able to convey the information needed. From this point forward, I decided to think about the list as two-digit numbers, rather than three-digit numbers.</p>
+<p>Given a list like this as clues, I could say for certain that the secret number has at least a 6,2,1, and 0, but I also loose essential information about the problem: The order that the numbers appear in. A list of one-digit numbers is too ambiguous. The secret number could be <code>6210</code>, <code>2601</code>, or any other combination, and I would have no way of knowing which one is correct.</p>
+<p>A list of two-digit numbers might be nice. It's less to think about, yet is still able to convey the needed information. From this point forward, I decided to think about the list as two-digit numbers, rather than three-digit numbers.</p>
 <h2 id="possibleoptionmaintainasortedarray">Possible option: Maintain a sorted array</h2>
 <p>At this point, I still wasn't sure how to solve the problem on paper, so I decided to try and work backwards. I wrote down a random number and then picked a few pairs of digits from it to try and reconstruct my own version of the problem. I decided to go through each number in the list and write down the digits as if they were being inserted into some kind of array.</p>
 <p><img src="../assets/secret_number_1.png" alt="" /></p>
@@ -67,12 +69,13 @@
 <p>In the example above, its clear that 5 is before 2, but if I continue to add the digits from the next number, I can't tell if the 1 should come before or after the 5. It's the same problem for the 8: I know it should come before the 2, but the data says nothing about if it should be before or after the 1, or the 5.</p>
 <p>Even if I had another data point to disambiguate the clues -- <code>51</code>, for example -- sure, it would tell me that the 1 is in the correct spot between 5 and 2, but I already get the feeling that trying to write code to account for switching numbers around in an array is not going to be practical, and that there is probably an easier way.</p>
 <p>Writing it out this way helped me realize that the help of some sort of data structure would be useful for solving this problem.</p>
-<p>So now the question is, <em>what kind of data structure could help model this problem?</em>. To help with this decision, I thought about what data is actually provided in the problem. I am given the numbers, of course, and I'm also given a list of rules about how the digits should fit together. Using the example above, the list of numbers reads as:</p>
+<p>So now the question is, <em>what kind of data structure could help model this problem?</em> To help with this decision, I thought about what data is actually provided in the problem. Using the example above, the list of numbers reads as:</p>
 <ul>
 <li>5 "comes before" 2</li>
-<li>1 "comes before" 1</li>
+<li>1 "comes before" 2</li>
 <li>8 "comes before" 2</li>
 </ul>
+<p>Each number in the list provides helpful clues, but the problem is that it's difficult to keep track of how each clue ultimately fits together. I tried to think of some kind of data structure that would be able to represent each clue individually, but also as a whole.</p>
 <p>A directed graph seems to be a pretty natural fit to represent this information. Each node could be a digit, and the edges between nodes could represent the relationship between them.</p>
 <p><img src="../assets/secret_number_2.png" alt="" /></p>
 <p>I felt good about using a graph to solve the problem, but there were still some questions that I had to figure out.</p>
@@ -171,7 +174,8 @@ print(front_digits)
 <p>And so the secret number is <code>73162890</code>. Luckily I did not have to worry about duplicate digits to solve this particular problem, so I am glad that I didn't end up spending time on that for nothing.</p>
 <p>I'm going to stop here, but the next step would be to look for ways to improve my answer. Now that I have a baseline, I can improve all sorts of things about the program such as its runtime, memory usage, the readability of the code, or work on refactoring to handle special cases (like duplicate digits.)</p>
 <h2 id="howtosolveaprogrammingproblem">How to solve a programming problem</h2>
-<p>There's obviously not only one way to solve this, or any problem in general. I hope that this example has demonstrated at least a few of the techniques that I find useful.</p>
+<p>I think that problem solving is quite personal. There's never going to be a laundry list of steps for everyone to follow. Our minds are unique, as is the way that we see and solve problems, and that's awesome!</p>
+<p>There's obviously not just one way to solve the example here, but I hope that I have demonstrated at least a few of the techniques that I find useful.</p>
 <ul>
 <li>Start by asking questions and making observations about the problem. Sometimes this step feels like I'm just spinning my wheels, or stating the obvious, but I find that it gives my mind the traction needed to get started.</li>
 <li>Try to make the problem smaller, and solve those ones instead. Look for ways to simplify the information given. This helps me reason about the problem easier, and it can reveal different aspects that I may not have considered otherwise.</li>
@@ -183,7 +187,7 @@ print(front_digits)
 <li>Think about edge cases, but don't try to tackle everything at once. It helps to just make a note, and then revisit if necessary.</li>
 <li>It almost goes without saying, but practice/experience makes a big difference. For example, if I had never even heard of a graph data structure, I would not have thought to apply it to this problem. So, make practice and learning part of your daily workflow as much as possible.</li>
 </ul>
-<p>I think that problem solving is quite personal. There's never going to be a definitive list for everyone to follow. Our minds are unique, as is the way that we see and solve problems, and that's awesome. While we can definately learn from each other, we should try to come up with our own techniques to reason about the problems that we're given. This was a fun exercise for me -- to solve a problem, but also to analyze what my own version of problem solving invovles.</p>
+<p>While we can definitely learn from each other, we should also formulate our own techniques to reason about the problems that we're given. This was a fun exercise for me -- to solve a problem, but also to analyze what my own version of problem solving involves. Try it out for yourself and see what you can learn.</p>
       </div>
     </div>
     <footer class="foot center">

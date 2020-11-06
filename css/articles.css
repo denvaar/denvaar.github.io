@@ -44,7 +44,7 @@ a {
 
 .list-item {
     padding: 5px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ff69fd;
 }
 
 .top-nav a {
@@ -64,6 +64,10 @@ a {
     color: #000;
     height: 20px;
     font-size: 11px;
+}
+
+.article-title a {
+    white-space: pre-line;
 }
 
 .article-list {
