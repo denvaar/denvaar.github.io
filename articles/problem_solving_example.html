@@ -50,7 +50,7 @@
 </code></pre>
 <h2 id="firststeps">First steps</h2>
 <p>I began by sitting down with pencil and paper to write some numbers from the list. Writing helps me begin to think about the problem.</p>
-<p>I thought about what these numbers in the list could tell me about the secret number. Maybe I could find a way to at least figure our its length. There are about fifty numbers in the list, so maybe that number is somehow correlated to the secret number.</p>
+<p>I thought about what these numbers in the list could tell me about the secret number. Maybe I could find a way to at least figure out its length. There are about fifty numbers in the list, so maybe that number is somehow correlated to the secret number.</p>
 <p>These were a few of the questions going through my head. If the answers seem super obvious to you, then congratulations, you might be smarter than me. What's most important during the first steps is that you ask questions.</p>
 <p>I realized pretty quickly that no, the length of the list I was given didn't tell me much, but you've got to start somewhere. Next, my thoughts turned to the fact that each number was three digits long.</p>
 <p><em>What if I was given a list of two-digit numbers, or even a list of just one-digit numbers? What could that tell me about the length of the secret number? Is there something special about three-digit numbers in particular?</em> These were valuable questions to ask, because it helped me to simplify the problem.</p>
@@ -103,7 +103,7 @@
 <p>A secret number with more than one of the same digit could cause problems with my approach. This was something that worried me as I was working, because it was not clear how to know which two nodes to put the edge between. For example, take a look at 1030 as the secret number, and imagine the digits given in the following order:</p>
 <p><img src="../assets/secret_number_7.png" alt="" /></p>
 <p>There are multiple ways to draw the graph because there are two 0's. There should still be only one "correct" way. Creating a correct graph might depend on the order in which the digits are given. I might need to think of some way to backtrack and re-connect nodes in order to end up with the correct graph.</p>
-<p>The correct and incorrect graphs can be compared to understand how exactly they differ. The incorrect graph has a circular dependency: 3 comes before both the orange and blue 0's, but then the blue zero comes before 3, which is contradictory.</p>
+<p>The correct and incorrect graphs can be compared to understand how exactly they differ. The incorrect graph has a circular dependency: 3 comes before both the orange and blue 0's, but then the blue 0 comes before 3, which is contradictory.</p>
 <p>Another difference is that the correct version is the only one that satisfies the property mentioned above, where the number of each node's edges differ by exactly one. This property should always be true for any secret number modeled with the graph.</p>
 <p><img src="../assets/secret_number_8.png" alt="" /></p>
 <p>At this point, I decided to put the question of duplicate digits on hold. It looked like this would break the approach that I had planned to use. I think its possible to figure out, but it was unclear if this use case needed to be supported at all.</p>
@@ -180,6 +180,7 @@ print(front_digits)
 <li>Start by asking questions and making observations about the problem. Sometimes this step feels like I'm just spinning my wheels, or stating the obvious, but I find that it gives my mind the traction needed to get started.</li>
 <li>Try to make the problem smaller, and solve those ones instead. Look for ways to simplify the information given. This helps me reason about the problem easier, and it can reveal different aspects that I may not have considered otherwise.</li>
 <li>Create lots of examples to experiment with.</li>
+<li>Realize that your ideas will probably be wrong more often than they are right. Don't get discouraged about it. Failed attempts can provide a lot of valuable insight to the problem.</li>
 <li>Work backwards if possible. This can provide another angle on the problem.</li>
 <li>Look for patterns and think about how they could be utilized.</li>
 <li>Visualize ideas by writing them down. Pencil and paper is a medium that helps me think clearly.</li>
