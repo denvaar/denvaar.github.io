@@ -46,11 +46,8 @@
       </div>
       <h1>Close Look at CSRF Tokens</h1>
       <p class="article-summary">✏️ Cross-site request foregery is one of many techniques an attacker might use to pwn a web application. In this article we take a close look at how exactly CSRF tokens work from the context of the Phoenix Web Framework.</p>
-      <h4 class="article-date">
-        🗓 02.19.2020
-      </h4>
-      <div class="article-body">
-        <p>I set out to understand how CSRF tokens are generated and validated. I did it by tracing the flow of function calls through a Phoenix web applciation. It was a process that led me down some deep rabbit holes, but ultimately was a rewarding experience. Readers who are less interested in the nitty gritty details of this article can skip to the <a href="#summary">summary section</a> toward the bottom for a TL;DR.</p>
+      <h4 class="article-date">🗓 02.19.2020</h4>
+      <div class="article-body"><p>I set out to understand how CSRF tokens are generated and validated. I did it by tracing the flow of function calls through a Phoenix web applciation. It was a process that led me down some deep rabbit holes, but ultimately was a rewarding experience. Readers who are less interested in the nitty gritty details of this article can skip to the <a href="#summary">summary section</a> toward the bottom for a TL;DR.</p>
 <p>This article details the life of a CSRF token. To begin the journey we will navigate to a page with an HTML form in the body - "/login", for example. We'll inspect the fields within the form to see that there's a hidden <code>_csrf_token</code> field. It was put in the form automatically.</p>
 <p><img src="../assets/csrf_form_example.png" alt="" /></p>
 <p>We can take a look at the source code for <a href="https://github.com/phoenixframework/phoenix_html/blob/d41e2f530560af0dbbbc0a2997cbc43b17e7d0c9/lib/phoenix_html/tag.ex#L197"><code>Phoenix.HTML.form_tag/3</code></a> to see where the magic happens. This is the part of the code that adds a hidden input field to store the token. It is added to the form when the method is "POST".</p>
@@ -262,12 +259,9 @@ end
 </ol>
 <h2 id="finalthoughts">Final thoughts</h2>
 <p>That's about it! As we have seen, there's a lot of fancy stuff going on as part of this process, and its pretty amazing to try and understand how it all fits together.</p>
-<p>It's this kind of stuff that makes me really appreciate all of the work that people are doing to both make and break software. I think it's a good practice to take a close look at the technologies, libraries, and frameworks that we use once in a while. It's a blessing that we don't have to totally understand all the details in order to create and be productive, but there is definitely value in doing so from time to time.</p>
-      </div>
+<p>It's this kind of stuff that makes me really appreciate all of the work that people are doing to both make and break software. I think it's a good practice to take a close look at the technologies, libraries, and frameworks that we use once in a while. It's a blessing that we don't have to totally understand all the details in order to create and be productive, but there is definitely value in doing so from time to time.</p></div>
     </div>
-    <footer class="foot center">
-      © 2020 Denver Smith
-    </footer>
+    <footer class="foot center">© 2021 Denver Smith</footer>
     <script src="../js/highlight.pack.js"></script>
     <script>
       hljs.initHighlightingOnLoad();

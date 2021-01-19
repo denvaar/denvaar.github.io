@@ -46,11 +46,8 @@
       </div>
       <h1>More Binary Tree Properties</h1>
       <p class="article-summary">✏️ Height and depth of a tree and determining if it's balanced.</p>
-      <h4 class="article-date">
-        🗓 02.16.2017
-      </h4>
-      <div class="article-body">
-        <p>I have been reviewing and brushing up on some basic data structures in Computer Science. To go along with these <a href="http://denverpsmith.com/posts/binary-tree-traversal">other</a> <a href="http://denverpsmith.com/posts/data-structures-binary-search-tree">posts</a>, I am now writing about some more properties of binary trees: Height, depth, and balancing.</p>
+      <h4 class="article-date">🗓 02.16.2017</h4>
+      <div class="article-body"><p>I have been reviewing and brushing up on some basic data structures in Computer Science. To go along with these <a href="http://denverpsmith.com/posts/binary-tree-traversal">other</a> <a href="http://denverpsmith.com/posts/data-structures-binary-search-tree">posts</a>, I am now writing about some more properties of binary trees: Height, depth, and balancing.</p>
 <h2 id="nodeheight">Node Height</h2>
 <p><strong>Height</strong> of a tree is the number of edges in the longest path from the root node to a leaf node. A tree with no children would have a height of 0. A tree with one child, or a tree with just one left and one right child node would have height 1 at the root. A tree with no nodes (<code>NULL</code>) will have a height defined as -1.</p>
 <pre><code class="c language-c">                    F           &lt;---- height 2 (F)
@@ -109,12 +106,9 @@ def is_balanced(node):
     """check if tree rooted at `node` is balanced"""
     return get_height(node) != -2
 </code></pre>
-<p>This algorithm runs in <code>O(n)</code> time because the height and balance condition are being checked at essentially the same time. <code>get_height</code> is now more of a helper function to <code>is_balanced</code>. It returns -2 to indicate that the balance condition is no longer satisfied for a given subtree, and returns early without computing every value.</p>
-      </div>
+<p>This algorithm runs in <code>O(n)</code> time because the height and balance condition are being checked at essentially the same time. <code>get_height</code> is now more of a helper function to <code>is_balanced</code>. It returns -2 to indicate that the balance condition is no longer satisfied for a given subtree, and returns early without computing every value.</p></div>
     </div>
-    <footer class="foot center">
-      © 2020 Denver Smith
-    </footer>
+    <footer class="foot center">© 2021 Denver Smith</footer>
     <script src="../js/highlight.pack.js"></script>
     <script>
       hljs.initHighlightingOnLoad();

@@ -46,11 +46,8 @@
       </div>
       <h1>Diffie-Hellman Key Exchange</h1>
       <p class="article-summary">✏️ An explanation of an important public key cryptography algorithm as well as some of the history behind it.</p>
-      <h4 class="article-date">
-        🗓 06.19.2017
-      </h4>
-      <div class="article-body">
-        <p><em>This post is largely based off of an awesome video that I stumbled upon today. <a href="https://www.youtube.com/watch?v=YEBfamv-_do">Check it out</a>.</em></p>
+      <h4 class="article-date">🗓 06.19.2017</h4>
+      <div class="article-body"><p><em>This post is largely based off of an awesome video that I stumbled upon today. <a href="https://www.youtube.com/watch?v=YEBfamv-_do">Check it out</a>.</em></p>
 <h2 id="weneedencryption">We Need Encryption</h2>
 <p>The idea that computers can be used to connect and share information between people across the globe has, of course, made a huge impact on our society.</p>
 <p>After World War II, The United States and Canada launched NORAD: A joint effort to defend the North American continent from potential nuclear attacks. The project included hundreds of long-distance radars across North America, which were connected to computers. These early computers transmitted the data via radio waves and telephone lines to a base in Colorado. This method of processing and transmitting data allowed operators to make split-second decisions on a large scale.</p>
@@ -122,12 +119,9 @@
 <p>This is how the Diffie-Hellman key exchange algorithm works in a nutshell. Of course, in the real world, we are not dealing with colors of paint, but thanks to maths, this same concept can be used to securely and reliably transmit useful information.</p>
 <p>As a practical example, when setting up an Nginx web server to use TLS/SSL, you can specify the <code>ssl_dhparam</code> directive with the path to your Diffie-Hellman parameters. These params can be generated using openssl:</p>
 <pre><code>openssl dhparam -out dhparam4096.pem 4096
-</code></pre>
-      </div>
+</code></pre></div>
     </div>
-    <footer class="foot center">
-      © 2020 Denver Smith
-    </footer>
+    <footer class="foot center">© 2021 Denver Smith</footer>
     <script src="../js/highlight.pack.js"></script>
     <script>
       hljs.initHighlightingOnLoad();
