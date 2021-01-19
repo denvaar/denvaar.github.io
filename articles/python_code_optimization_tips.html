@@ -46,11 +46,8 @@
       </div>
       <h1>Python Code Optimization Tips</h1>
       <p class="article-summary">✏️ Tips from Guido Van Rossum about code optimization.</p>
-      <h4 class="article-date">
-        🗓 09.23.2015
-      </h4>
-      <div class="article-body">
-        <p>The other day I came across <a href="https://wiki.python.org/moin/PythonSpeed/PerformanceTips">an interesting article</a>, written by the creator of Python, Guido van Rossum. A friend had asked him what would be the best way to convert a list of integers (representing ASCII characters) into a string. In the article, Rossum analysed several different ways to tackle this simple problem. I learned several general tips to keep in mind for when speed and performance is important. This entry demonstrates what I learned from the article, and illustrates some test results as well.</p>
+      <h4 class="article-date">🗓 09.23.2015</h4>
+      <div class="article-body"><p>The other day I came across <a href="https://wiki.python.org/moin/PythonSpeed/PerformanceTips">an interesting article</a>, written by the creator of Python, Guido van Rossum. A friend had asked him what would be the best way to convert a list of integers (representing ASCII characters) into a string. In the article, Rossum analysed several different ways to tackle this simple problem. I learned several general tips to keep in mind for when speed and performance is important. This entry demonstrates what I learned from the article, and illustrates some test results as well.</p>
 <h2 id="onefocusonbottlenecks">One: Focus on bottlenecks.</h2>
 <p>Code optimization is fun and interesting. It can be tempting to nitpick every line of code in an effort to gain performance increases. It is important, however, to keep in mind that <em>real</em> performance improvement is found only at the bottlenecks. This is obviously not Python-specific. In real-world situations, your efficiency as a developer is often just as valuable as the efficient code that you produce. Only optimize code where a proven speed bottleneck exists. Doing so will save a lot of work and leave you free to tackle more problems. That being said, this tip is not an excuse to be lazy or to write poor code.</p>
 <h2 id="twolocalvariablesarefasterthanglobals">Two: Local variables are faster than globals.</h2>
@@ -96,12 +93,9 @@ def option5(l):
 <code>Option 2: 12.65 seconds</code></p>
 <p><code>Option 4: 7.79 seconds</code>
 <code>Option 5: 3.76 seconds</code></p>
-<p>Check out the article that I have been referencing for more tips and performance results. You can find a link in the introduction, or the URL in the references section below.</p>
-      </div>
+<p>Check out the article that I have been referencing for more tips and performance results. You can find a link in the introduction, or the URL in the references section below.</p></div>
     </div>
-    <footer class="foot center">
-      © 2020 Denver Smith
-    </footer>
+    <footer class="foot center">© 2021 Denver Smith</footer>
     <script src="../js/highlight.pack.js"></script>
     <script>
       hljs.initHighlightingOnLoad();

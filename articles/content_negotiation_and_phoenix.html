@@ -46,11 +46,8 @@
       </div>
       <h1>Content Negotiation &amp; Phoenix</h1>
       <p class="article-summary">✏️ A quick demo exploring how HTTP content negotiation works with Phoenix.</p>
-      <h4 class="article-date">
-        🗓 12.06.2018
-      </h4>
-      <div class="article-body">
-        <p>I usually try not to post about things that are specific to libraries and frameworks, but I thought this was an interesting look into how one important part of HTTP works.</p>
+      <h4 class="article-date">🗓 12.06.2018</h4>
+      <div class="article-body"><p>I usually try not to post about things that are specific to libraries and frameworks, but I thought this was an interesting look into how one important part of HTTP works.</p>
 <p>Web servers mostly deal with HTML documents, but it's also possible for a server to have multiple content types available for the same resource or page. Web servers perform a process called Content Negotiation, part of HTTP, to determine what content type to give to the client (PDF, CSV, HTML, etc.)</p>
 <p>I set up demo application to explore how I might serve several different content types for the same resource using Phoenix. It's worth mentioning that if your web application includes an API (JSON, for example,) you might not want to use the same url for the API and web. Every use case is different, but for an API, I would recommend keeping it separate with its own unique urls and controllers.</p>
 <h2 id="usecase">Use Case</h2>
@@ -127,12 +124,9 @@ end
 &lt;% end %&gt;
 </code></pre>
 <p>That's pretty much it, here's an example of what the text format looks like in my console. Hitting <code>http://localhost:4000/bikes</code> from the browser returns a normal HTML list version as you would expect (I'm not going to post a screen shot of that one.)</p>
-<p><img src="../assets/content-type-example.png" alt="" /></p>
-      </div>
+<p><img src="../assets/content-type-example.png" alt="" /></p></div>
     </div>
-    <footer class="foot center">
-      © 2020 Denver Smith
-    </footer>
+    <footer class="foot center">© 2021 Denver Smith</footer>
     <script src="../js/highlight.pack.js"></script>
     <script>
       hljs.initHighlightingOnLoad();

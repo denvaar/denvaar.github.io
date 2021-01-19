@@ -46,11 +46,8 @@
       </div>
       <h1>Exploring Text Compression</h1>
       <p class="article-summary">✏️ Challenges, takeaways, and findings of coding up a famous text compression algorithm.</p>
-      <h4 class="article-date">
-        🗓 01.15.2018
-      </h4>
-      <div class="article-body">
-        <p>I hadn't put much thought into how text compression works , until I watched Tom Scott's <a href="https://www.youtube.com/watch?v=JsTptu56GM8">video on YouTube</a>. He always does a great job explaining all sorts of computer-related topics.</p>
+      <h4 class="article-date">🗓 01.15.2018</h4>
+      <div class="article-body"><p>I hadn't put much thought into how text compression works , until I watched Tom Scott's <a href="https://www.youtube.com/watch?v=JsTptu56GM8">video on YouTube</a>. He always does a great job explaining all sorts of computer-related topics.</p>
 <p>Being inspired by the video, I made <a href="https://github.com/denvaar/huffman-text-compression/">my own working version</a> of a program that does text compression, using an approach called <em>Huffman Coding</em>.</p>
 <p>This algorithm has its roots all the way back to 1951, which is pretty amazing. David A. Huffman was a graduate student at MIT. One of Huffman's professors allowed his students to choose between solving a difficult problem and taking the final exam. Huffman opted to solve the difficult problem, which was to find the most efficient way to represent pieces of data. He was able to come up with a solution that proved to be more optimal than anyone else had found at the time<a href="https://www.huffmancoding.com/my-uncle">¹</a>. He later published <a href="http://www.cse.iitd.ernet.in/~pkalra/col783/huffman_1952.pdf">a paper</a>, and Huffman Coding was born.</p>
 <p>To help illustrate the value of Huffman Coding, take <a href="https://stackoverflow.com/questions/2199383/what-are-the-real-world-applications-of-huffman-coding">this question</a> I ran across on Stack Overflow the other day. Someone asked what the real-world applications of Huffman Coding were. They were under the impression that there were more modern ways of doing lossless text compression. Someone replied that their question was like asking, "Give me an example of a car made out of steel."</p>
@@ -150,12 +147,9 @@ iex(2)&gt; :erlang.binary_to_term(&lt;&lt;131, 107, 0, 3, 1, 2, 3&gt;&gt;)
 <p>My program is certainly not as good at compressing text as the popular tools out there, but I'm fine with that because they use additional techniques to make the compression even more efficient. My intent was to learn the basics. Perhaps I can continue to revisit my program and make improvements as I continue to learn.</p>
 <p>I enjoyed working on something that forced me to "get low", as Lil Jon would say. The algorithm operates on bits and bytes, which is definitely not what I am used to working with. I had to understand the basics of how text encoding standards, like <a href="https://unicode.org/">Unicode</a> work.</p>
 <p>Writing the code for this algorithm was a fun challenge. I hadn't written too much Elixir code going into this project, so I feel like I have come a long way in my understanding of that. <a href="https://github.com/denvaar/huffman-text-compression">The code for this program can be found on GitHub</a>. It is open source and others are welcome to help improve it.</p>
-<p>Finally, this project has helped me to appreciate the amazing research that people like David Huffman have done. I'm still amazed that this idea came about in the 50's. This was a fun introduction to understanding a fundamental text compression algorithm.</p>
-      </div>
+<p>Finally, this project has helped me to appreciate the amazing research that people like David Huffman have done. I'm still amazed that this idea came about in the 50's. This was a fun introduction to understanding a fundamental text compression algorithm.</p></div>
     </div>
-    <footer class="foot center">
-      © 2020 Denver Smith
-    </footer>
+    <footer class="foot center">© 2021 Denver Smith</footer>
     <script src="../js/highlight.pack.js"></script>
     <script>
       hljs.initHighlightingOnLoad();

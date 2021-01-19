@@ -46,11 +46,8 @@
       </div>
       <h1>Gathering Time Series Data</h1>
       <p class="article-summary">✏️ A brief description of an efficient solution to gather new time series data.</p>
-      <h4 class="article-date">
-        🗓 10.23.2015
-      </h4>
-      <div class="article-body">
-        <h2 id="introduction">Introduction</h2>
+      <h4 class="article-date">🗓 10.23.2015</h4>
+      <div class="article-body"><h2 id="introduction">Introduction</h2>
 <p>I have been working on an application that gathers time series data from sensors, located at sites throughout the valley. The application is one piece of a larger system of software (<a href="https://github.com/ODM2">ODM2</a>). Since the data is in <em>almost</em> real time, it's valuable for many reasons. For instance, it can be used to create forecasting and flood risk models. The data is also used to determine things like, "The water just increased by a foot -- here comes a flood wave," or, "Looks like we had more rainfall one year ago than we do today."</p>
 <p>Here is the context for this particular situation:</p>
 <ul>
@@ -132,12 +129,9 @@ def byteReader(filepath, start_byte, datecol, header=0, sep=None, dataBegin=0):
     except Exception as e2:
         logger.error('Exception: %s' % e2.message)
     return df
-</code></pre>
-      </div>
+</code></pre></div>
     </div>
-    <footer class="foot center">
-      © 2020 Denver Smith
-    </footer>
+    <footer class="foot center">© 2021 Denver Smith</footer>
     <script src="../js/highlight.pack.js"></script>
     <script>
       hljs.initHighlightingOnLoad();
