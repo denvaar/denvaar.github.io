@@ -55,7 +55,7 @@
 <li>Move to an empty, distant spot on the board by jumping one or more marbles. Changing directions while jumping another marble is not possible, however, once an empty cell is reached, the direction can change. Here's some pictures of valid and invalid jumps to help illustrate.</li>
 </ol>
 <div style="text-align:center">
-<img src="../assets/jump_move_rules.png" style="width:450px" />
+<img src="../assets/jump_move_rules.png" style="width:100%;max-width:450px" />
 </div>
 <h2 id="projectdesignoverview">Project Design Overview</h2>
 <p>I picked the <a href="https://elixir-lang.org/">Elixir</a> programming language for this project. It's a lot of fun to work with. I'll try to demonstrate some of the cool features it has as I get into the code.</p>
@@ -187,7 +187,7 @@ end
 <li>Find the "jumpable" neighbors. These are empty spots on the board that are exactly one occupied spot away from the current position. For example, <code>B</code>, <code>C</code>, and <code>D</code> are <code>A</code>'s only jumpable neighbors.</li>
 </ul>
 <div style="text-align:center">
-<img src="../assets/jumpable_neighbors.png" style="width:250px" />
+<img src="../assets/jumpable_neighbors.png" style="width:100%;max-width:250px" />
 </div>
 <ul>
 <li>Filter out any of the neighbors that have already been visited.</li>
@@ -344,7 +344,7 @@ defp text_color(&lt;&lt;"#", hex_color::binary&gt;&gt;) do
 end
 </code></pre>
 <div style="text-align:center">
-<img src="../assets/sternhalma_color_path.png" style="width:400px" />
+<img src="../assets/sternhalma_color_path.png" style="width:100%;max-width:400px" />
 </div>
 <p>The most important animation that I wanted to include was the marble jumping across the board. I fear that I may have bent the rules of LiveView a little bit in order to make this feature possible. Each time a player selects a move, I store a list of each position from the start to the end.</p>
 <p>As soon as a valid move is chosen, the GameServer <a href="https://github.com/denvaar/board_games/blob/d9874f46bd93ee54a72f6945f26eb92ddc0c7a29/lib/board_games/event_handlers/move_marble.ex#L29">sends a message to itself</a> which recursively handles each position along the path, <a href="https://github.com/denvaar/board_games/blob/d9874f46bd93ee54a72f6945f26eb92ddc0c7a29/lib/board_games/event_handlers/advance_marble.ex#L68">broadcasting state changes</a> as it goes.</p>
@@ -374,8 +374,9 @@ defdelegate to_pixel(position), to: Hex
 </code></pre>
 <p>Running the suite is quick and easy, and the ExUnit testing library is included by default in Elixir projects.</p>
 <div style="text-align:center">
-<img src="../assets/sternhalma_exunit.png" style="width:400px" />
+<img src="../assets/sternhalma_exunit.png" style="width:100%;max-width:400px" />
 </div>
+<p>I did fail to write any tests for the web app ☹️.</p>
 <h2 id="howdiditturnout">How Did it Turn Out?</h2>
 <p>Personally, I'm happy with how the project has turned out -- both from a code perspective, as well as the game itself.</p>
 <p>I worked on a similar project a few months back, which <strong>almost</strong> worked, but was buggy and a little disappointing in the end. I like to think that I learned from those mistakes here. I haven't discovered any serious bugs yet (knock on wood…)</p>
