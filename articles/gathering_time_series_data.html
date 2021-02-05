@@ -23,7 +23,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../css/article.css" />
-    <link rel="stylesheet" href="../css/highlightjs/default.css" />
+    <link rel="stylesheet" href="../css/highlightjs/atom-one-dark.css" />
   </head>
   <body>
     <div class="article">
@@ -45,8 +45,12 @@
         
       </div>
       <h1>Gathering Time Series Data</h1>
-      <p class="article-summary">✏️ A brief description of an efficient solution to gather new time series data.</p>
-      <h4 class="article-date">🗓 10.23.2015</h4>
+      <div class="article-summary-wrapper">
+        <h3 class="article-summary">A brief description of an efficient solution to gather new time series data.</h3>
+      </div>
+      <div class="article-date-wrapper">
+        <h3 class="article-date">Published 10.23.2015</h3>
+      </div>
       <div class="article-body"><h2 id="introduction">Introduction</h2>
 <p>I have been working on an application that gathers time series data from sensors, located at sites throughout the valley. The application is one piece of a larger system of software (<a href="https://github.com/ODM2">ODM2</a>). Since the data is in <em>almost</em> real time, it's valuable for many reasons. For instance, it can be used to create forecasting and flood risk models. The data is also used to determine things like, "The water just increased by a foot -- here comes a flood wave," or, "Looks like we had more rainfall one year ago than we do today."</p>
 <p>Here is the context for this particular situation:</p>

@@ -23,7 +23,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../css/article.css" />
-    <link rel="stylesheet" href="../css/highlightjs/default.css" />
+    <link rel="stylesheet" href="../css/highlightjs/atom-one-dark.css" />
   </head>
   <body>
     <div class="article">
@@ -45,8 +45,12 @@
         
       </div>
       <h1>Python Code Optimization Tips</h1>
-      <p class="article-summary">✏️ Tips from Guido Van Rossum about code optimization.</p>
-      <h4 class="article-date">🗓 09.23.2015</h4>
+      <div class="article-summary-wrapper">
+        <h3 class="article-summary">Tips from Guido Van Rossum about code optimization.</h3>
+      </div>
+      <div class="article-date-wrapper">
+        <h3 class="article-date">Published 09.23.2015</h3>
+      </div>
       <div class="article-body"><p>The other day I came across <a href="https://wiki.python.org/moin/PythonSpeed/PerformanceTips">an interesting article</a>, written by the creator of Python, Guido van Rossum. A friend had asked him what would be the best way to convert a list of integers (representing ASCII characters) into a string. In the article, Rossum analysed several different ways to tackle this simple problem. I learned several general tips to keep in mind for when speed and performance is important. This entry demonstrates what I learned from the article, and illustrates some test results as well.</p>
 <h2 id="onefocusonbottlenecks">One: Focus on bottlenecks.</h2>
 <p>Code optimization is fun and interesting. It can be tempting to nitpick every line of code in an effort to gain performance increases. It is important, however, to keep in mind that <em>real</em> performance improvement is found only at the bottlenecks. This is obviously not Python-specific. In real-world situations, your efficiency as a developer is often just as valuable as the efficient code that you produce. Only optimize code where a proven speed bottleneck exists. Doing so will save a lot of work and leave you free to tackle more problems. That being said, this tip is not an excuse to be lazy or to write poor code.</p>

@@ -23,7 +23,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../css/article.css" />
-    <link rel="stylesheet" href="../css/highlightjs/default.css" />
+    <link rel="stylesheet" href="../css/highlightjs/atom-one-dark.css" />
   </head>
   <body>
     <div class="article">
@@ -41,8 +41,12 @@
         
       </div>
       <h1>Optimization with Timeit</h1>
-      <p class="article-summary">✏️ Code optimization analysis using Python's timeit module.</p>
-      <h4 class="article-date">🗓 06.19.2015</h4>
+      <div class="article-summary-wrapper">
+        <h3 class="article-summary">Code optimization analysis using Python's timeit module.</h3>
+      </div>
+      <div class="article-date-wrapper">
+        <h3 class="article-date">Published 06.19.2015</h3>
+      </div>
       <div class="article-body"><p>I needed to compare which way was the fastest for skipping to a certain point in a large CSV file. Python has an awesome module that makes it really easy. It's called timeit.</p>
 <p>I've demonstrated one simple way of using timeit to compare three different functions below.</p>
 <pre><code>import timeit

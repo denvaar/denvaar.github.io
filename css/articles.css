@@ -9,7 +9,7 @@ html {
 
 body {
     margin: 0;
-    font-family: "Inter", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
     font-size: 1.1em;
     min-height: 100%;
 }
@@ -32,8 +32,9 @@ li {
 }
 
 a {
-    color: blue;
-    text-decoration: none;
+    color: #393838;
+    text-decoration: underline 2px blue;
+    text-decoration-skip-ink: none;
     white-space: nowrap;
     display: block;
 }
@@ -44,11 +45,12 @@ a {
 
 .list-item {
     padding: 5px;
-    border-bottom: 1px solid #ff69fd;
+    border-bottom: 1px solid #c8c8c8;
 }
 
 .top-nav a {
-    text-decoration: none;
+    text-decoration: underline 2px blue;
+    text-decoration-skip-ink: none;
     background: unset;
 }
 
@@ -86,6 +88,18 @@ a {
 @media (min-width: 720px) {
     a {
         display: unset;
+    }
+
+    .list-item {
+        display: flex;
+    }
+
+    .article-date {
+        flex: 1;
+    }
+
+    .article-title {
+        flex: 2;
     }
 
     .top-nav {

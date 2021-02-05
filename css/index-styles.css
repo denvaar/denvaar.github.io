@@ -4,14 +4,15 @@
 }
 
 body {
-    font-family: "Inter", "Helvetica Neue", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
     margin: 0;
     color: #323d48;
 }
 
 a {
-    text-decoration: none;
-    color: blue;
+    color: #323d48;
+    text-decoration: underline 2px blue;
+    text-decoration-skip-ink: none;
 }
 
 h1 {

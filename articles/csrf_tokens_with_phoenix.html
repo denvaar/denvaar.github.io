@@ -23,7 +23,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../css/article.css" />
-    <link rel="stylesheet" href="../css/highlightjs/default.css" />
+    <link rel="stylesheet" href="../css/highlightjs/atom-one-dark.css" />
   </head>
   <body>
     <div class="article">
@@ -45,8 +45,12 @@
         
       </div>
       <h1>Close Look at CSRF Tokens</h1>
-      <p class="article-summary">✏️ Cross-site request foregery is one of many techniques an attacker might use to pwn a web application. In this article we take a close look at how exactly CSRF tokens work from the context of the Phoenix Web Framework.</p>
-      <h4 class="article-date">🗓 02.19.2020</h4>
+      <div class="article-summary-wrapper">
+        <h3 class="article-summary">Cross-site request foregery is one of many techniques an attacker might use to pwn a web application. In this article we take a close look at how exactly CSRF tokens work from the context of the Phoenix Web Framework.</h3>
+      </div>
+      <div class="article-date-wrapper">
+        <h3 class="article-date">Published 02.19.2020</h3>
+      </div>
       <div class="article-body"><p>I set out to understand how CSRF tokens are generated and validated. I did it by tracing the flow of function calls through a Phoenix web applciation. It was a process that led me down some deep rabbit holes, but ultimately was a rewarding experience. Readers who are less interested in the nitty gritty details of this article can skip to the <a href="#summary">summary section</a> toward the bottom for a TL;DR.</p>
 <p>This article details the life of a CSRF token. To begin the journey we will navigate to a page with an HTML form in the body - "/login", for example. We'll inspect the fields within the form to see that there's a hidden <code>_csrf_token</code> field. It was put in the form automatically.</p>
 <p><img src="../assets/csrf_form_example.png" alt="" /></p>

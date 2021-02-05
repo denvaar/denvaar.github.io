@@ -23,7 +23,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../css/article.css" />
-    <link rel="stylesheet" href="../css/highlightjs/default.css" />
+    <link rel="stylesheet" href="../css/highlightjs/atom-one-dark.css" />
   </head>
   <body>
     <div class="article">
@@ -45,8 +45,12 @@
         
       </div>
       <h1>Exploring Text Compression</h1>
-      <p class="article-summary">✏️ Challenges, takeaways, and findings of coding up a famous text compression algorithm.</p>
-      <h4 class="article-date">🗓 01.15.2018</h4>
+      <div class="article-summary-wrapper">
+        <h3 class="article-summary">Challenges, takeaways, and findings of coding up a famous text compression algorithm.</h3>
+      </div>
+      <div class="article-date-wrapper">
+        <h3 class="article-date">Published 01.15.2018</h3>
+      </div>
       <div class="article-body"><p>I hadn't put much thought into how text compression works , until I watched Tom Scott's <a href="https://www.youtube.com/watch?v=JsTptu56GM8">video on YouTube</a>. He always does a great job explaining all sorts of computer-related topics.</p>
 <p>Being inspired by the video, I made <a href="https://github.com/denvaar/huffman-text-compression/">my own working version</a> of a program that does text compression, using an approach called <em>Huffman Coding</em>.</p>
 <p>This algorithm has its roots all the way back to 1951, which is pretty amazing. David A. Huffman was a graduate student at MIT. One of Huffman's professors allowed his students to choose between solving a difficult problem and taking the final exam. Huffman opted to solve the difficult problem, which was to find the most efficient way to represent pieces of data. He was able to come up with a solution that proved to be more optimal than anyone else had found at the time<a href="https://www.huffmancoding.com/my-uncle">¹</a>. He later published <a href="http://www.cse.iitd.ernet.in/~pkalra/col783/huffman_1952.pdf">a paper</a>, and Huffman Coding was born.</p>

@@ -10,7 +10,7 @@ html {
 body {
     margin: 0;
     height: 100%;
-    font-family: "Inter", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
     font-size: 1.1em;
 }
 
@@ -20,7 +20,7 @@ h1 {
 
 pre {
     padding: 15px;
-    background: #002451;
+    background: #282d33;
     color: #fff;
     border-radius: 3px;
     overflow-x: scroll;
@@ -60,6 +60,7 @@ tr:nth-child(even) {
 
 code {
     font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
 }
 
 p > code {
@@ -69,8 +70,9 @@ p > code {
 }
 
 a {
-    color: blue;
-    text-decoration: none;
+    color: #393838;
+    text-decoration: underline 2px blue;
+    text-decoration-skip-ink: none;
 
     white-space: pre-wrap; /* CSS3 */
     white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
@@ -85,14 +87,17 @@ p > a > code {
 }
 
 .article-summary {
-    color: #6b7282;
-    font-style: italic;
+    font-weight: 400;
+}
+
+.article-date-wrapper {
+    border-bottom: 4px solid #393838;
+    margin-bottom: 50px;
 }
 
 .article-date {
     color: #ca65a2;
     font-weight: 400;
-    border-bottom: 1px solid;
 }
 
 .center {
@@ -127,7 +132,8 @@ p > a > code {
 }
 
 .top-nav a {
-    text-decoration: none;
+    text-decoration: underline 2px blue;
+    text-decoration-skip-ink: none;
     background: unset;
 }
 
@@ -141,7 +147,7 @@ p > a > code {
     flex-direction: column;
     align-items: left;
     justify-content: space-between;
-    border-bottom: 1px solid #ff69fd;
+    border-bottom: 4px solid #393838;
 }
 
 @media (min-width: 500px) {
