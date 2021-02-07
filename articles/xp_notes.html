@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-P0BCBS2V0C"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-P0BCBS2V0C");
+    </script>
+    <title>Notes from &quot;Extreme Programming Explained&quot;</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link type="image/x-icon" rel="icon" href="favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,600,400i&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/article.css" />
+    <link rel="stylesheet" href="../css/highlightjs/atom-one-dark.css" />
+  </head>
+  <body>
+    <div class="article">
+      <div class="top-nav">
+        
+        <div>
+          <a href="../articles/index.html">All Entries</a>
+        </div>
+        
+        <div>
+          <a alt="My Journey Building a Multiplayer Board Game" href="board_game.html">Next</a>
+        </div>
+        
+      </div>
+      <h1>Notes from &quot;Extreme Programming Explained&quot;</h1>
+      <div class="article-summary-wrapper">
+        <h3 class="article-summary">Summarized chapters and sections from my reading of Kent Beck's &quot;Extreme Programming Explained&quot;. Sentiments from one and two-star Amazon reviews of the book. Some of my thoughts about XP as well.</h3>
+      </div>
+      <div class="article-date-wrapper">
+        <h3 class="article-date">Published 02.02.2021</h3>
+      </div>
+      <div class="article-body"><h2 id="contents">Contents</h2>
+<ul>
+<li>Notes from the book<ul>
+<li><a href="#ch1">What is XP?</a></li>
+<li><a href="#ch2">Learning to Drive</a></li>
+<li><a href="#ch3">Values, Principles, and Practices</a></li>
+<li><a href="#ch4">Values</a></li>
+<li><a href="#ch5">Principles</a></li>
+<li><a href="#ch6">Practices</a></li>
+<li><a href="#ch8">Getting Started</a></li>
+<li><a href="#ch9">Corollary Practices</a></li>
+<li><a href="#ch10">The Whole XP Team</a></li>
+<li><a href="#ch11">The Theory of Constraints</a></li>
+<li><a href="#ch12">Planning: Managing Scope</a></li>
+<li><a href="#ch13">Testing: Early, Often, and Automated</a></li>
+<li><a href="#ch14">Designing: The Value of Time</a></li>
+<li><a href="#ch15">Scaling XP</a></li>
+<li><a href="#ch18">Taylorism and Software</a></li>
+<li><a href="#ch20">Applying XP</a></li>
+<li><a href="#ch21">Purity</a></li>
+<li><a href="#ch25">Conclusion</a></li></ul></li>
+<li><a href="#criticism">Criticism from Readers</a></li>
+<li><a href="#mythoughts">My thoughts (as a "Joe-Schmoe")</a></li>
+</ul>
+<p><br/>
+<br/>
+<br/></p>
+<p><span id="ch1"></span></p>
+<h2 id="chapter1whatisxp">Chapter 1 - What is XP?</h2>
+<p>Distinguishing features:</p>
+<ul>
+<li>Short development cycles, early feedback</li>
+<li>Overall plan expected to evolve over the life of the project</li>
+<li>Reliance on automated tests, oral communication, and source code to communicate system details</li>
+<li>Close collaboration of team members</li>
+<li>Only do the minimum required thing to deliver value</li>
+<li>Understand and accept that people are imperfect</li>
+<li>A high level of technique is required to build trust</li>
+<li>Always keep the system in a deployable state</li>
+</ul>
+<p>Beck says that success comes out of both good relationships as well as technique.</p>
+<p><span id="ch2"></span></p>
+<h2 id="chapter2learningtodrive">Chapter 2 - Learning to Drive</h2>
+<p>Everything involved in software development is constantly changing. Change is not the problem, the real problem is the inability to cope with all of the different things that will change.</p>
+<p>Stay aware of the ever-changing project requirements and be able to adapt your work to meet the needs.</p>
+<p>Customers don't usually have a clear idea of what the software should do.</p>
+<p><span id="ch3"></span></p>
+<h2 id="chapter3valuesprinciplesandpractices">Chapter 3 - Values, Principles, and Practices</h2>
+<p><em>Practices</em> are the things that programmers do daily (<em>eg. pair programming</em>).</p>
+<p><em>Values</em> are defined as "the roots of the things we like and don't like in a situation."</p>
+<p><em>Values</em> give purpose to the practices (<em>eg. well-being, work-life balance, communication</em>).</p>
+<p><em>Principles</em> are the guidelines that connect practices with values (<em>eg. quality work, rapid feedback</em>).</p>
+<p><span id="ch4"></span></p>
+<h2 id="chapter4values">Chapter 4 - Values</h2>
+<p>People have different ideas and views about what things are important when it comes to building software. What matters most is that the people involved come to an agreement about what things to follow. So, it's not any one person's individual ideas and views that are important, but that everyone is focused on the same values.</p>
+<p>XP suggests at least five values that teams can focus on. Each team or organization may have a few more.</p>
+<h3 id="communication">Communication</h3>
+<p><em>Communication is kind of self-explanatory to me.</em></p>
+<h3 id="simplicity">Simplicity</h3>
+<p>It is difficult to find simple solutions to problems. Bias your thinking toward eliminating wasted complexity. Less communication is needed when simple solutions are preferred.</p>
+<h3 id="feedback">Feedback</h3>
+<p>The goal should be more about steady improvement than instant perfection. The perfect solution is almost always an unachievable goal.</p>
+<p>Strive to generate feedback early and often. Feedback comes from peers, customers, and project stakeholders.</p>
+<h3 id="respect">Respect</h3>
+<p>All of the previously mentioned values point to respect and care for each other and for the success of the project.</p>
+<h3 id="courage">Courage</h3>
+<p><em>I don't really understand what this one means.</em></p>
+<p><span id="ch5"></span></p>
+<h2 id="chapter5principles">Chapter 5 - Principles</h2>
+<p>Software development practices should be guided by underlying principles. Principles clarify what practices are intended to accomplish.</p>
+<p>The following principles are likely to be applicable to all software development projects.</p>
+<h3 id="humanity">Humanity</h3>
+<p>Good developers need these basic things in the work environment:</p>
+<ul>
+<li>Sense of basic safety</li>
+<li>Sense of accomplishment</li>
+<li>Sense of belonging</li>
+<li>Ability to grow</li>
+<li>Ability to be understood by peers and vice versa</li>
+</ul>
+<h3 id="economics">Economics</h3>
+<p>Prioritize solving the highest priority business needs first. Doing so will avoid achieving just a mere "technical success" at the end of a project.</p>
+<p>Software that can be easily reused carries more economic value than software that can only be used for the original purpose.</p>
+<h3 id="mutualbenefit">Mutual Benefit</h3>
+<p>Beware of solutions and practices that are only beneficial at the cost of others. Strive for practices that benefit all three groups:</p>
+<ul>
+<li>Yourself</li>
+<li>The team</li>
+<li>The customer</li>
+</ul>
+<p>Beck provides an example of a not-so-good practice, which is writing extensive internal documentation:</p>
+<blockquote>
+  <p>"I am supposed to slow down my development considerably so some unknown person in a potential future will have an easier time maintaining this code. I can see a possible benefit to the future person should the documentation still happen to be valid, but no benefit now."</p>
+</blockquote>
+<p>Beck suggests a better solution, which is to write an automated test instead. The author of the test benefits from the practice, as does the team, both at the present time, as well as in the future. The test also serves as reliable documentation.</p>
+<h3 id="improvement">Improvement</h3>
+<p>Do the best work that you can do right now, and then gradually improve upon it as time goes on.</p>
+<h3 id="diversity">Diversity</h3>
+<p>Diversity fosters healthy conflict within teams. It surfaces more options to consider when problem solving.</p>
+<p>Team members must know how to handle conflict productively, and how to treat each other with respect.</p>
+<h3 id="reflection">Reflection</h3>
+<p>Take time to ask <em>how</em> and <em>why</em> things are (or are not) going well.</p>
+<p>Analytical data can help with reflection, but senses and emotions are also valid things to consider.</p>
+<p>Good teams are open to sharing their mistakes so that they can learn from them.</p>
+<h3 id="flowbabysteps">Flow / Baby Steps</h3>
+<p>Try to deliver features frequently, and at a steady interval.</p>
+<p>Too much change taken at once is dangerous for the project. Team members should instead work in baby steps. There is overhead to working in baby steps, but it's worth it.</p>
+<h3 id="opportunityfailure">Opportunity / Failure</h3>
+<p>Failure is not wasted so long as it results in knowledge. Try to fail fast when possible.</p>
+<p>Approach problems or struggles as learning opportunities.</p>
+<h3 id="redundancy">Redundancy</h3>
+<p>It's not wise to try to solve certain problems in software development with one solution alone. For certain problems, it's better to have multiple practices in place.</p>
+<h3 id="quality">Quality</h3>
+<p>Individuals need to do work that they can be proud of.</p>
+<p>It's wrong to think that a project will move faster if the quality is decreased. Project scope, not quality, should be leveraged as a control variable.</p>
+<h3 id="acceptedresponsibility">Accepted Responsibility</h3>
+<p>Responsibility cannot realistically be given out -- it's only accepted or not accepted.</p>
+<p>The practices one follows tends to indicate which responsibilities they have accepted.</p>
+<p><span id="ch6"></span></p>
+<h2 id="chapters67practices">Chapters 6 &amp; 7 - Practices</h2>
+<p>Practices are the things programmers likely do every day.</p>
+<p>They don't amount to anything without being tied to values and principles.</p>
+<h3 id="sittogether">Sit Together</h3>
+<p>Sitting together has potential to enhance communication.</p>
+<h3 id="wholeteam">Whole Team</h3>
+<p>This practice can also be considered cross-functional teams. People should be grouped into teams based on the skills needed for a project to succeed.</p>
+<h3 id="energizedwork">Energized Work</h3>
+<p>Working more hours does not usually result in more value added to a project. Choose to work more efficiently, and with more focus, rather than working more hours.</p>
+<p>A rested and relaxed mind will produce software that is more valuable.</p>
+<h3 id="pairprogramming">Pair Programming</h3>
+<p>Write code in pairs to see benefits such as:</p>
+<ul>
+<li>Staying on task easier</li>
+<li>Quick brainstorming and idea clarification</li>
+<li>Less frustration from getting stuck on a problem</li>
+<li>Encouragement to follow the team's practices</li>
+</ul>
+<h3 id="stories">Stories</h3>
+<p>Plan work that relates directly to customer-visible functionality.</p>
+<h3 id="weeklycycle">Weekly Cycle</h3>
+<p>Main goals of sprint planning meeting includes:</p>
+<ul>
+<li>Review the previous week's progress</li>
+<li>Pick stories to implement</li>
+<li>Break stories into tasks, and let team members sign up for them and estimate them.</li>
+</ul>
+<p>Try to reduce the amount of time spent planning as the project progresses.</p>
+<h3 id="quarterlycycle">Quarterly Cycle</h3>
+<p>Spend time reflecting as a team. Find and discuss any bottlenecks. Pick some goals to focus on during the quarter.</p>
+<h3 id="slack">Slack</h3>
+<p><em>Not Slack the app 🙃.</em></p>
+<p>Don't commit to unrealistic goals.</p>
+<h3 id="tenminutebuild">Ten-Minute Build</h3>
+<p>The ideal goal is to have:</p>
+<ol>
+<li>Automatic builds…</li>
+<li>which cover the whole system…</li>
+<li>and take no more than 10 minutes to run.</li>
+</ol>
+<h3 id="continuousintegration">Continuous Integration</h3>
+<p>Writing software as a team isn't strictly a "divide and conquer" problem. It is more like "divide, conquer, and integrate".</p>
+<p>Integration can often be unpredictable and take longer than expected.</p>
+<h3 id="testfirstprogramming">Test-First Programming</h3>
+<p>Write a failing test before changing or adding code. It will help solve problems such as:</p>
+<ul>
+<li>Scope creep, because the test passing is your primary indicator to help you know when you are finished.</li>
+<li>Code coupling / cohesion, because a test that is a pain to write may be a sign that the code is too coupled or not cohesive enough.</li>
+<li>Trust, because it becomes clear to see that the code indeed works.</li>
+<li>Rhythm, because the pattern of, "Write a test, make it pass", makes programming more of a step-by-step process.</li>
+</ul>
+<h3 id="incrementaldesign">Incremental Design</h3>
+<p>Refactor and design the system system on a daily basis to avoid creating something that is devastatingly difficult to change.</p>
+<p><span id="ch8"></span></p>
+<h2 id="chapter8gettingstarted">Chapter 8 - Getting Started</h2>
+<p>Begin XP by being aware of the need for change. Awareness comes via feelings, and metrics (trends in data).</p>
+<p>The best way to start doing XP is one practice at a time. Choose practices based on which values and goals you want to realize.</p>
+<p>Team leaders should not dictate XP practices. XP won't be effective unless team members choose to be "on board".</p>
+<h3 id="mappingthepractices">Mapping the Practices</h3>
+<p>An exercise for discovering what various practices mean to the team is to:</p>
+<ul>
+<li>Write down the practice.</li>
+<li>List the purpose of following the practice.</li>
+<li>List the factors that go into the practice.</li>
+<li>List "waste" or negative things that will be expelled by following the practice.</li>
+</ul>
+<p>Example:</p>
+<p><img src="../assets/xp_mapping_exercise.jpg" alt="" /></p>
+<p><span id="ch9"></span></p>
+<h2 id="chapter9corollarypractices">Chapter 9 - Corollary Practices</h2>
+<p>These are secondary practices to follow, once the primary ones are implemented.</p>
+<h3 id="realcustomerinvolvement">Real Customer Involvement</h3>
+<p>Involve end-users in the design and development of the system you're working on.</p>
+<h3 id="incrementaldeployment">Incremental Deployment</h3>
+<p>Whenever possible, find a way to deploy functionality incrementally rather than all at once.</p>
+<h3 id="rootcauseanalysis">Root-Cause Analysis</h3>
+<p>Respond to defects by putting tests in place such that it's not likely to happen again. Once resolved, try to figure out the root cause.</p>
+<p>A proposed method for doing so is to first ask <em>why</em> a defect occurred. Then ask <em>why</em> again based on the response. Do this five-levels deep to discover the root-level cause.</p>
+<h3 id="sharedcode">Shared Code</h3>
+<p>Avoid having people that only work on certain parts of the system. Each programmer on the team should be comfortable enough to improve any part of the system.</p>
+<h3 id="singlecodebase">Single Code Base</h3>
+<p>It's better to have just one main branch. Feature branches, where programmers introduce change, should be very short-lived.</p>
+<p>If there's an underlying design problem that is causing you to have multiple code bases, fix that issue instead.</p>
+<p><span id="ch10"></span></p>
+<h2 id="chapter10thewholexpteam">Chapter 10 - The Whole XP Team</h2>
+<p>Prioritize stories based on business value, and not for technical reasons.</p>
+<p><span id="ch11"></span></p>
+<h2 id="chapter11thetheoryofconstraints">Chapter 11 - The Theory of Constraints</h2>
+<p>See the <a href="https://en.wikipedia.org/wiki/Theory_of_constraints">Wikipedia entry</a>.</p>
+<p><span id="ch12"></span></p>
+<h2 id="chapter12planningmanagingscope">Chapter 12 - Planning: Managing Scope</h2>
+<p>Planning is like buying groceries.</p>
+<ul>
+<li>Items are stories</li>
+<li>Prices are estimates</li>
+<li>Your budget is the amount of time you have available</li>
+</ul>
+<p><span id="ch13"></span></p>
+<h2 id="chapter13testingearlyoftenandautomated">Chapter 13 - Testing: Early, Often, and Automated</h2>
+<p>Software defects destroy trust. Testing software is an investment into healthy teamwork. Testing is as important as programming.</p>
+<p>Both defects as well as time spent planning can be considered a cost. There are two principles in XP that can help increase the effectiveness of removing defects.</p>
+<ol>
+<li>Double-checking</li>
+<li>Defect Cost Increase</li>
+</ol>
+<p>Double-checking refers to the idea that if you approach a problem from two different ways, reaching the same result for both cases, then it's all the more likely that the solution is correct.</p>
+<p>This idea can be applied to software by writing tests, which is a lot different than writing the code. Writing tests and writing code are two distinct ways to <em>double-check</em> that the code is doing what you expect it to do.</p>
+<p>Defect Cost Increase says that it's much easier to fix defects sooner than later. That's because it's difficult to dig up the history and context of the code in question when defects are discovered later on.</p>
+<p><span id="ch14"></span></p>
+<h2 id="chapter14designingthevalueoftime">Chapter 14 - Designing: The Value of Time</h2>
+<p>"Design always", is the XP motto.</p>
+<p>Designing is intended to be a daily practice in XP.</p>
+<p>Designing software is often compared to constructing buildings - but that's not a very good comparison. Software needs to continue running as usual while it's continuously being modified and updated.</p>
+<p>Designing is a continuous feedback cycle. Design in small iterations so that feedback can be collected and utilized to continue designing further.</p>
+<p>Good software designers must balance several different factors to determine <strong>when</strong> to design:</p>
+<ul>
+<li>It may be better to design upfront (sooner) when "pure thought creates most of the value without feedback".</li>
+<li>It may be better to design "just enough" when it's experience and feedback that creates most of the value.</li>
+</ul>
+<p>Design ties into trust. Weekly delivery of requested functionality is almost always the most important priority to the customer. So, remember that "the perfect design" is lower on the priority list than maintaining trust and good relationships within the team.</p>
+<p><span id="ch15"></span></p>
+<h2 id="chapter15scalingxp">Chapter 15 - Scaling XP</h2>
+<p><em>Scaling</em> doesn't always have to refer to the amount of people. Other ways projects can scale include:</p>
+<ul>
+<li>Time</li>
+<li>Investment</li>
+<li>Complexity</li>
+</ul>
+<p>Steps suggested to approach a big problem:</p>
+<ol>
+<li>Break into smaller problems.</li>
+<li>Implement simple solutions.</li>
+<li>Implement complex solutions if there are remaining problems to solve.</li>
+</ol>
+<p>Integrate the solutions to the smaller problems often to reduce the risks of two solutions not working well together.</p>
+<p><span id="ch18"></span></p>
+<h2 id="chapter18taylorismandsoftware">Chapter 18 - Taylorism and Software</h2>
+<p>Separation of QA and development sends the message that developers cannot be trusted to uphold the quality of their own work, or that it's not the job of the developers to do quality work.</p>
+<p><span id="ch20"></span></p>
+<h2 id="chapter20applyingxp">Chapter 20 - Applying XP</h2>
+<p>Seeing results from applying XP can take a long time.</p>
+<p>Adopting XP as a style of software development will not automatically eliminate your problems. It will, however, provide a new way to go about solving them.</p>
+<p>Leading by example is a powerful way to start applying XP.</p>
+<p>Quick adoption of XP is more likely to happen if the team members are all willing to accept the changes.</p>
+<p><span id="ch21"></span></p>
+<h2 id="chapter21purity">Chapter 21 - Purity</h2>
+<p>It's wrong to consider a team or organization is doing enough to truly be considered as "Extreme", as if it's some kind of club membership that you need a high enough score to get into.</p>
+<p>The question or goal should be more along the lines of, <em>Are our relationships and projects satisfying and successful?</em></p>
+<p><span id="ch25"></span></p>
+<h2 id="chapter25conclusion">Chapter 25 - Conclusion</h2>
+<p>Integrity is key to XP. Figure out what your values are, and act in harmony with them.</p>
+<p><span id="criticism"></span></p>
+<h2 id="criticismfromreaders">Criticism from Readers</h2>
+<p>These are some criticisms, taken from one and two-star reviews of the book.</p>
+<ul>
+<li>The book is based on opinions and theories and lacks research.</li>
+<li>The book reads like a gossip magazine fad diet plan.</li>
+<li>The book presents a lot of ideas, but lacks clear explanation of how to implement them.</li>
+<li>Many readers claim that there are better books out there which present some of the same ideas ("The Pragmatic Programmer", "Rapid Development", "Code Complete", "After the Gold Rush").</li>
+</ul>
+<p><span id="mythoughts"></span></p>
+<h2 id="mythoughtsaboutxpasajoeschmoe">My Thoughts About XP (as a "Joe-Schmoe")</h2>
+<p>I agree with most of the values, principles, and practices defined by the XP methodology, but with a grain of salt.</p>
+<p>I love the idea of having clearly defined values, principles, and practices in place. Simply having those kind of things, whether defined by XP or not, is important for software development teams and organizations.</p>
+<p>I think the extent to which XP should be applied is highly situational. As Kent Beck states in the book, adapting XP should be something that the team actually believes in and wants to do in order to be successful. Also, I think that the type of product that the team is working on can make a difference in how effective XP is.</p>
+<p>At the time of writing this, I am doing <em>some</em> of the practices which are outlined in the book, but not always to the full extent.</p>
+<p>I definitely identify as an introvert, yet I enjoy pair programming. I pair with each member of my team for at least two hours each week. This totals up to about eight hours of pair programming for me. I wouldn't mind doing it more often.</p>
+<p>I like to learn from other people's approach to solving problems. My team members benefit from talking through ideas and figuring out solutions together. I find that it's easier to stay on task.</p>
+<p>I agree that tests are just as important as production code, however I've yet to live up to the standard that a test should be written first if I'm being completely honest. There are times when I can effectively do it, but it's not often.</p>
+<p>I find that simply having a test (the right kind of test) is more important than focusing on how it is written. I can appreciate tests for three main reasons:</p>
+<ol>
+<li>Gives me confidence to refactor.</li>
+<li>Provides a little more documentation about the intent of the code.</li>
+<li>Demonstrates that the application does the thing that it was intended to do.</li>
+</ol>
+<p>One thing I strongly agree with hits on a few different principles mentioned in the book: Flow, Baby Steps, and Improvement. I see these principles manifest in things like:</p>
+<ul>
+<li>Small pull requests that change or add one thing.</li>
+<li>Clearly defined tasks that describe one thing.</li>
+<li>Simple code that does that does the bare minimum to satisfy requirements.</li>
+</ul>
+<p>The reason I agree with these principles is because it makes teamwork easier and provides opportunity for feedback more regularly. It's easier to review small changes to the code. Small, well-defined tasks are easier to complete.</p>
+<p>To wrap my thoughts up, I generally think XP has a lot of valuable advice to consider. It's important to figure out what values and principles matter the most to you and your team. I will be applying more of the principles into my life to form some stronger opinions.</p></div>
+    </div>
+    <footer class="foot center">© 2021 Denver Smith</footer>
+    <script src="../js/highlight.pack.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+  </body>
+</html>
