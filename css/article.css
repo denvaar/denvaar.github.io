@@ -1,6 +1,25 @@
 @font-face {
-    font-family: "Inter";
-    src: url("./fonts/inter.var.woff2") format("woff2");
+    font-family: "Atkinson Hyperlegible";
+    src: url("./fonts/Atkinson-Hyperlegible-Regular-102a.woff2") format("woff2"),
+        url("./fonts/Atkinson-Hyperlegible-Regular-102.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Atkinson Hyperlegible";
+    src: url("./fonts/Atkinson-Hyperlegible-Bold-102a.woff2") format("woff2"),
+        url("./fonts/Atkinson-Hyperlegible-Bold-102.woff") format("woff");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Atkinson Hyperlegible";
+    src: url("./fonts/Atkinson-Hyperlegible-Italic-102a.woff2") format("woff2"),
+        url("./fonts/Atkinson-Hyperlegible-Italic-102.woff") format("woff");
+    font-weight: normal;
+    font-style: italic;
 }
 
 html {
@@ -10,7 +29,8 @@ html {
 body {
     margin: 0;
     height: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+    font-family: "Atkinson Hyperlegible", -apple-system, BlinkMacSystemFont,
+        sans-serif;
     font-size: 1.1em;
 }
 
@@ -70,15 +90,19 @@ p > code {
 }
 
 a {
-    color: #393838;
-    text-decoration: underline 2px blue;
-    text-decoration-skip-ink: none;
-
+    color: blue;
+    text-decoration: none;
     white-space: pre-wrap; /* CSS3 */
     white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
     white-space: -pre-wrap; /* Opera 4-6 */
     white-space: -o-pre-wrap; /* Opera 7 */
     word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+
+a:hover {
+    color: #9466cc;
+    text-decoration: underline 1px blue;
+    text-decoration-skip-ink: none;
 }
 
 p > a > code {
@@ -132,7 +156,8 @@ p > a > code {
 }
 
 .top-nav a {
-    text-decoration: underline 2px blue;
+    color: blue;
+    text-decoration: none;
     text-decoration-skip-ink: none;
     background: unset;
 }

@@ -1,17 +1,42 @@
 @font-face {
-    font-family: "Inter";
-    src: url("./fonts/inter.var.woff2") format("woff2");
+    font-family: "Atkinson Hyperlegible";
+    src: url("./fonts/Atkinson-Hyperlegible-Regular-102a.woff2") format("woff2"),
+        url("./fonts/Atkinson-Hyperlegible-Regular-102.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Atkinson Hyperlegible";
+    src: url("./fonts/Atkinson-Hyperlegible-Bold-102a.woff2") format("woff2"),
+        url("./fonts/Atkinson-Hyperlegible-Bold-102.woff") format("woff");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Atkinson Hyperlegible";
+    src: url("./fonts/Atkinson-Hyperlegible-Italic-102a.woff2") format("woff2"),
+        url("./fonts/Atkinson-Hyperlegible-Italic-102.woff") format("woff");
+    font-weight: normal;
+    font-style: italic;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+    font-family: "Atkinson Hyperlegible", -apple-system, BlinkMacSystemFont,
+        sans-serif;
     margin: 0;
     color: #323d48;
 }
 
 a {
-    color: #323d48;
-    text-decoration: underline 2px blue;
+    color: blue;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #9466cc;
+    text-decoration: underline 1px blue;
     text-decoration-skip-ink: none;
 }
 
