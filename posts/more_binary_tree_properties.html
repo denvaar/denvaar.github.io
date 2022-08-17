@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>More Binary Tree Properties | Denver's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 pv2 md:pv3 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <img src="/Users/denvaar/Desktop/me.png" class="banner-img"/>
+          <p class="mv0 bold heading-size-sm md:heading-size-md md:ml1 align-self-end">
+          <a href="../index.html" class="phantom-a">Denver Smith</a>
+          </p>
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">More Binary Tree Properties</h1>
+        <p class="heading-size-xsm">Height and depth of a tree and determining if it's balanced.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag blue-tag"># programming</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2017-02-16</p>
+        <hr class="divider" />
+      </section>
+      <p>
+I have been reviewing and brushing up on some basic data structures in Computer Science. To go along with these <a href="http://denverpsmith.com/posts/binary-tree-traversal">other</a> <a href="http://denverpsmith.com/posts/data-structures-binary-search-tree">posts</a>, I am now writing about some more properties of binary trees: Height, depth, and balancing.</p>
+<h2>
+Node Height</h2>
+<p>
+<strong>Height</strong> of a tree is the number of edges in the longest path from the root node to a leaf node. A tree with no children would have a height of 0. A tree with one child, or a tree with just one left and one right child node would have height 1 at the root. A tree with no nodes (<code class="inline">NULL</code>) will have a height defined as -1.</p>
+<pre><code class="c">                    F           &lt;---- height 2 (F)
+                  /  \
+                 D    H         &lt;---- height 1 (D, H)
+               /  \  / \
+              B   E G   J       &lt;---- height 0 (B, E, G J)</code></pre>
+<p>
+Finding the height of a tree involves visiting every node and recursively adding 1 to the maximum value in the left and right subtrees. Here is a Python example:</p>
+<pre><code class="python">def max_height(node):
+    &quot;&quot;&quot;recursively find the max height of a binary tree&quot;&quot;&quot;
+    if not node:
+        return -1  # height of a NULL node is -1
+    return max(max_height(node.left),
+               max_height(node.right)) + 1</code></pre>
+<h2>
+Node Depth</h2>
+<p>
+So, that’s height of a tree. <strong>Depth</strong> of a tree is the number of edges from the root node to another node. I think of it sort of as the opposite of height. Where height is from the perspective of the top down, depth is the same, but from the bottom up.</p>
+<pre><code class="c">                F           &lt;---- depth of F: 0
+              /  \
+             D    H         &lt;---- depth of D, H: 1
+           /  \  / \
+          B   E G   J       &lt;---- depth of B, E, G J: 2</code></pre>
+<h2>
+Tree Balanced Property</h2>
+<p>
+For a tree to be <strong>balanced</strong>, the left and right subtrees should never differ in height by more than one. A balanced tree will yield optimal performance, but a tree that is not balanced won’t be much better than a linked-list data structure, so that’s why it’s an important property. A tree can be checked to see if it’s balanced or not with the help of the <code class="inline">max_height</code> function implemented above. Here’s a Python example:</p>
+<pre><code class="python">import math
+
+def is_balanced(node):
+    &quot;&quot;&quot;determine if tree rooted at `node` is balanced or not&quot;&quot;&quot;
+    if not node:
+        return True
+    left_height = max_height(node.left)
+    right_height = max_height(node.right)
+    return (math.abs(left_height - right_height) &lt;= 1 and
+        is_balanced(node.left) and is_balanced(node.right))</code></pre>
+<p>
+This works to determine if the tree is balanced, but has a time complexity of <code class="inline">O(n^2)</code>, which is not very efficient. Nodes of the subtrees are visited multiple times. The algorithm can be optimized to run more efficiently by cutting out some of the calls to <code class="inline">max_height</code>. To fix it, I am going to make a new helper function to get the height, called <code class="inline">get_height</code>.</p>
+<pre><code class="python">import math
+
+def get_height(node):
+    &quot;&quot;&quot;get height of given `node` in tree, duck out early if non-balanced&quot;&quot;&quot;
+    if not node:
+        return -1  # height of NULL node is -1
+    left_height = get_height(node.left)
+    if left_height == -2:
+        return -2
+    right_height = get_height(node.right)
+    if right_height == -1:
+        return -2
+    if math.abs(left_height - right_height) &lt;= 1:
+        return max(left_height, right_height) + 1
+    return -2  # -2 is used to indicate that it&#39;s not balanced anymore
+
+def is_balanced(node):
+    &quot;&quot;&quot;check if tree rooted at `node` is balanced&quot;&quot;&quot;
+    return get_height(node) != -2</code></pre>
+<p>
+This algorithm runs in <code class="inline">O(n)</code> time because the height and balance condition are being checked at essentially the same time. <code class="inline">get_height</code> is now more of a helper function to <code class="inline">is_balanced</code>. It returns -2 to indicate that the balance condition is no longer satisfied for a given subtree, and returns early without computing every value.</p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+          <p class="text-size-body">❤️&nbsp;Thanks for reading! Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">subscribing</a> to be notified when I publish more content.</p>
+          <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://twitter.com/denvaaar">Twitter</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a></p>
+          <p class="">© 2015 - 2022 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

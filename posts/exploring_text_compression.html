@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Exploring Text Compression | Denver's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 pv2 md:pv3 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <img src="/Users/denvaar/Desktop/me.png" class="banner-img"/>
+          <p class="mv0 bold heading-size-sm md:heading-size-md md:ml1 align-self-end">
+          <a href="../index.html" class="phantom-a">Denver Smith</a>
+          </p>
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Exploring Text Compression</h1>
+        <p class="heading-size-xsm">Challenges, takeaways, and findings of coding up a famous text compression algorithm.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag blue-tag"># programming</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2018-01-15</p>
+        <hr class="divider" />
+      </section>
+      <p>
+I hadn’t put much thought into how text compression works , until I watched Tom Scott’s <a href="https://www.youtube.com/watch?v=JsTptu56GM8">video on YouTube</a>. He always does a great job explaining all sorts of computer-related topics.</p>
+<p>
+Being inspired by the video, I made <a href="https://github.com/denvaar/huffman-text-compression/">my own working version</a> of a program that does text compression, using an approach called <em>Huffman Coding</em>.</p>
+<p>
+This algorithm has its roots all the way back to 1951, which is pretty amazing. David A. Huffman was a graduate student at MIT. One of Huffman’s professors allowed his students to choose between solving a difficult problem and taking the final exam. Huffman opted to solve the difficult problem, which was to find the most efficient way to represent pieces of data. He was able to come up with a solution that proved to be more optimal than anyone else had found at the time<a href="https://www.huffmancoding.com/my-uncle">¹</a>. He later published <a href="http://www.cse.iitd.ernet.in/~pkalra/col783/huffman_1952.pdf">a paper</a>, and Huffman Coding was born.</p>
+<p>
+To help illustrate the value of Huffman Coding, take <a href="https://stackoverflow.com/questions/2199383/what-are-the-real-world-applications-of-huffman-coding">this question</a> I ran across on Stack Overflow the other day. Someone asked what the real-world applications of Huffman Coding were. They were under the impression that there were more modern ways of doing lossless text compression. Someone replied that their question was like asking, “Give me an example of a car made out of steel.”</p>
+<p>
+From what I understand, Huffman Coding is still widely used in text compression. It’s used in conjunction with other techniques to be even more efficient, but still stands as a valuable algorithm.</p>
+<p>
+Fair warning: My implementation, described below, is very basic compared to popular text compression tools.</p>
+<p>
+I will describe how the algorithm works from a high-level perspective, and also share a few things I learned while building my program. My code will be in <a href="https://elixir-lang.org/">Elixir</a>, but the concepts can be applied to any programming language.</p>
+<h2>
+How digital text is represented</h2>
+<p>
+An important “gotcha” is to remember that a computer cannot actually store letters, numbers, pictures, nor anything else. Computers store only bits. We think of bits as “0” and “1”, but a bit is actually just some electricity that is either on or off. Some sort of context needs to exist in order to make any sense of the bits. <a href="http://www.asciitable.com/">ASCII</a> is an agreed upon standard for representing text electronically.</p>
+<p>
+When dealing with ASCII, a single character always takes up one byte, or eight bits, on a computer. Creating a plain text file, with just one character of content, would result in the file being one byte in size.</p>
+<p>
+Characters like ∞¶•ªº¡™ make things a tad more complicated, but for this article I will assume each character has a one byte encoding.</p>
+<p>
+Using eight bits (one byte) solves a lot of problems and has certain advantages, some of which are mentioned in Tom Scott’s video. However, it would be great if there was a way to represent each character in a more compact and efficient manner. This is, in fact, possible using Huffman Coding.</p>
+<h2>
+How Huffman Coding works</h2>
+<p>
+The algorithm takes advantage of the idea that characters, which are used more frequently, can be represented using a shorter binary encoding. Each character is analyzed and arranged in a way such that they are assigned a new binary encoding, based off of how frequently it appears in the text. As an example, consider the short text below:</p>
+<pre><code class="bash">  corn dogs taste good</code></pre>
+<p>
+First, count up how many times each character appears and sort them by frequency.</p>
+<pre><code class="bash"> character | frequency
+ ---------------------
+    &quot;o&quot;    |    4
+    &quot; &quot;    |    3
+    &quot;d&quot;    |    2
+    &quot;g&quot;    |    2
+    &quot;t&quot;    |    2
+    &quot;s&quot;    |    2
+    &quot;n&quot;    |    1
+    &quot;c&quot;    |    1
+    &quot;r&quot;    |    1
+    &quot;e&quot;    |    1
+    &quot;a&quot;    |    1</code></pre>
+<p>
+From this information, it is possible to construct something known as a <em>Huffman Tree</em>. It is a binary tree which is used to generate new binary encodings for the characters.</p>
+<p>
+The Huffman Tree is created by repeatedly taking next two characters with the lowest frequencies and creating a sub tree. The parent node becomes the sum of the two frequencies, and the leaf nodes are the characters themselves. This is done over and over again until no more characters remain. The root of the tree ends up being a the sum of each frequency.</p>
+<p>
+There are a <a href="https://www.youtube.com/watch?v=iiGZ947Tcck">bunch of</a> great <a href="https://www.youtube.com/watch?v=dM6us854Jk0">videos</a> that walk through the process of how to build a Huffman Tree that I would recommend watching.</p>
+<p>
+The end result is a tree where each leaf is a character. Since “o” had the highest frequency, it appears closer to the top.</p>
+<p>
+The way that new binary encodings are generated is very clever. Begin at the root of the tree. Every time you go left, it’s a “0”, and every time you go right, it’s a “1”.</p>
+<p>
+Going through for each character creates a new encoding for each letter. An example result of the corn dog text above could look like this:</p>
+<pre><code class="elixir">%{2 =&gt; %{&lt;&lt;0::size(2)&gt;&gt; =&gt; &quot;o&quot;},
+  3 =&gt; %{&lt;&lt;2::size(3)&gt;&gt; =&gt; &quot; &quot;, &lt;&lt;3::size(3)&gt;&gt; =&gt; &quot;d&quot;,
+         &lt;&lt;4::size(3)&gt;&gt; =&gt; &quot;t&quot;},
+  4 =&gt; %{&lt;&lt;10::size(4)&gt;&gt; =&gt; &quot;a&quot;, &lt;&lt;11::size(4)&gt;&gt; =&gt; &quot;c&quot;,
+         &lt;&lt;12::size(4)&gt;&gt; =&gt; &quot;g&quot;, &lt;&lt;13::size(4)&gt;&gt; =&gt; &quot;r&quot;,
+         &lt;&lt;14::size(4)&gt;&gt; =&gt; &quot;s&quot;},
+  5 =&gt; %{&lt;&lt;30::size(5)&gt;&gt; =&gt; &quot;e&quot;, &lt;&lt;31::size(5)&gt;&gt; =&gt; &quot;n&quot;}}</code></pre>
+<p>
+Characters with higher frequencies end up with less bits than others. This obviously saves space. The cool part is that by using the new encoding along with the Huffman Tree, it’s always possible to decode (or decompress) the text back to the original 8-bit encoding.</p>
+<h2>
+Compression</h2>
+<p>
+Once the Huffman Tree is created, it is possible to compress the data. It’s a straightforward process. Simply read each character in the dataset, and then write the new binary encoding. I used a <a href="https://hexdocs.pm/elixir/Map.html">Map</a> to store the relation between compressed bits and the characters that they map to.</p>
+<p>
+I mentioned before that the Huffman Tree is needed to compress/decompress, but that’s actually not entirely true. While working on this project I had envisioned the Huffman Tree as the thing that I could always rely on to encode and decode the data. I thought it was necessary for both steps, because a character’s encoding could be found by following the bits down the tree until a leaf is reached, revealing the decoded character.</p>
+<p>
+Actually, the most important thing the Huffman Tree provides is not the encoding itself, but rather the <strong>length (in bits) of each encoded character</strong>. It turns out that it’s possible to generate unique binary encodings by only knowing how many bits long it should be.</p>
+<p>
+The Huffman Tree is a valuable step in the process of compression, but once it has been used to figure out how long the new encodings should be, it can be thrown out. This idea is known as <em><a href="https://en.wikipedia.org/wiki/Canonical_Huffman_code">Canonical Huffman Coding</a></em>.</p>
+<p>
+The first step in making the mapping canonical is to zero-out all of the binary encodings. Next, the encodings are grouped by their bit lengths. Then within each group that has the same bit length, they are sorted alphabetically. Now the data is grouped by bit length and in alphabetical order.</p>
+<p>
+The data is now ready to be assigned a new canonical Huffman code. It’s done by repeatedly adding and shifting bits, while going through the encodings of the groups. Every encoding in the group is one more than the last. A left bit shift happens when a transition between groups occurs.</p>
+<p>
+If I were to transition between a group with encodings that were 2 bits long to a group with 4 bits long, it would result in a left shift of 2 bits (4 - 2) in addition to the +1 that normally happens.</p>
+<p>
+Another look at the canonical mapping generated from “corn dogs taste good” reveals this pattern.</p>
+<pre><code class="elixir">%{2 =&gt; %{&lt;&lt;0::size(2)&gt;&gt; =&gt; &quot;o&quot;},
+  3 =&gt; %{&lt;&lt;2::size(3)&gt;&gt; =&gt; &quot; &quot;, &lt;&lt;3::size(3)&gt;&gt; =&gt; &quot;d&quot;,
+         &lt;&lt;4::size(3)&gt;&gt; =&gt; &quot;t&quot;},
+  4 =&gt; %{&lt;&lt;10::size(4)&gt;&gt; =&gt; &quot;a&quot;, &lt;&lt;11::size(4)&gt;&gt; =&gt; &quot;c&quot;,
+         &lt;&lt;12::size(4)&gt;&gt; =&gt; &quot;g&quot;, &lt;&lt;13::size(4)&gt;&gt; =&gt; &quot;r&quot;,
+         &lt;&lt;14::size(4)&gt;&gt; =&gt; &quot;s&quot;},
+  5 =&gt; %{&lt;&lt;30::size(5)&gt;&gt; =&gt; &quot;e&quot;, &lt;&lt;31::size(5)&gt;&gt; =&gt; &quot;n&quot;}}</code></pre>
+<p>
+Notice how the bits for “o” start at 0. There are no more characters that received an encoding with a bit length of 2, so the next binary value is for “ “, which is in the next group. The binary value is <code class="inline">&lt;&lt;2::3&gt;&gt;</code>, which is <code class="inline">(0 + 1) &lt;&lt;&lt; 1</code>. Within 3’s group, each binary value increases by 1 bit. The first binary value in 4’s group is created by <code class="inline">(4 + 1) &lt;&lt;&lt; 1</code>, which is 10.</p>
+<h2>
+Decompression</h2>
+<p>
+In order to get our data back, we have to store the mapping along with the compressed data. For this reason, there is some overhead to this compression technique. It is not fit for small pieces of text.</p>
+<p>
+I found that serializing the mapping along with the compressed data was one of the most challenging parts of this project.
+In exploring different options I found that some ways resulted in an unacceptable size, while others were difficult for me to implement. For example, Erlang has a super handy pair of functions called <code class="inline">term_to_binary</code>, and <code class="inline">binary_to_term</code>. They work like this:</p>
+<pre><code class="elixir">iex(1)&gt; :erlang.term_to_binary([1,2,3])
+&lt;&lt;131, 107, 0, 3, 1, 2, 3&gt;&gt;
+
+iex(2)&gt; :erlang.binary_to_term(&lt;&lt;131, 107, 0, 3, 1, 2, 3&gt;&gt;)
+[1, 2, 3]</code></pre>
+<p>
+It would have been easy to be able to encode the mapping using these functions, but the binary size is just too big to be practical.</p>
+<p>
+I found that the canonical Huffman code approach, as I have described above, has the added benefit of allowing for easy and efficient serialization of the mapping.</p>
+<p>
+I was shocked to learn that the minimum required data needed to be able to get the original text back was just the length (in bits) of each character’s compressed value. Arranging the characters according to their bit length, as well as in alphabetical order allows this to be possible. Once I understood this idea, I was able to store the mapping along with the compressed data in an efficient way.</p>
+<p>
+For example, the header, that would be saved immediately before the encoded bits, would look roughly like this example below. I’ve added some extra symbols to help visually explain each part. The numbers above the carats tell the program how many bytes to read next. The numbers above the stars are the size (in bits) of the encoded characters in the group. The first character in the string (b) is a way I chose to tell my program how many digits it should expect for the numbers above the carats. The next character (a) has the same purpose, but for the numbers above the stars. “a” maps to 1 digit long, “b” maps to 2 digits long, and so forth. The remaining letters in the string are, of course, the characters that have been encoded/compressed.</p>
+<pre><code class="bash">
+ba033 ,a024eo105CRSchinrst126BDHMdgklmpuv0
+   ^*    ^*  ^ *          ^ *            ^</code></pre>
+<p>
+I’m sure there are even more efficient ways of storing the mapping, but I found this to be good enough for my purposes. It’s a significant improvement over the other options that I had explored.</p>
+<p>
+With the header at the beginning of the file, followed by the compressed data, the file is ready to be decompressed. The serialized mapping, described above, is parsed into the canonical mapping, and then used to translate the compressed bits back to their original arrangement.</p>
+<h2>
+Final Results &amp; Takeaways</h2>
+<p>
+I used my program to compress some sample text files. All things considered, I like the results. The best example resulted in a 68% decrease in file size, and the worst case was an increase of 36%. That’s expected because of the overhead to serialize and store the mapping along with the compressed data.</p>
+<pre><code class="bash">| Text File         | Original Size | Compressed Size   | % Smaller    |
+| ----------------- | ------------- | ----------------- | ------------ |
+| big.txt           | 6.2M          | 3.5M              | 44%          |
+| beowulf.txt       | 294K          | 163K              | 45%          |
+| wai-pageauth.txt  | 82K           | 47K               | 43%          |
+| amendments.txt    | 44K           | 25K               | 43%          |
+| utf8-demo.txt     | 14K           | 8.5K              | 39%          |
+| russian-lorem.txt | 4.5K          | 1.4K              | 68%          |
+| english-lorem.txt | 1.2K          | 738B              | 39%          |
+| small.txt         | 28B           | 38B               | 36% increase |</code></pre>
+<p>
+In general, the algorithm works best on large datasets with lots of repetition.</p>
+<p>
+My program is certainly not as good at compressing text as the popular tools out there, but I’m fine with that because they use additional techniques to make the compression even more efficient. My intent was to learn the basics. Perhaps I can continue to revisit my program and make improvements as I continue to learn.</p>
+<p>
+I enjoyed working on something that forced me to “get low”, as Lil Jon would say. The algorithm operates on bits and bytes, which is definitely not what I am used to working with. I had to understand the basics of how text encoding standards, like <a href="https://unicode.org/">Unicode</a> work.</p>
+<p>
+Writing the code for this algorithm was a fun challenge. I hadn’t written too much Elixir code going into this project, so I feel like I have come a long way in my understanding of that. <a href="https://github.com/denvaar/huffman-text-compression">The code for this program can be found on GitHub</a>. It is open source and others are welcome to help improve it.</p>
+<p>
+Finally, this project has helped me to appreciate the amazing research that people like David Huffman have done. I’m still amazed that this idea came about in the 50’s. This was a fun introduction to understanding a fundamental text compression algorithm.</p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+          <p class="text-size-body">❤️&nbsp;Thanks for reading! Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">subscribing</a> to be notified when I publish more content.</p>
+          <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://twitter.com/denvaaar">Twitter</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a></p>
+          <p class="">© 2015 - 2022 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

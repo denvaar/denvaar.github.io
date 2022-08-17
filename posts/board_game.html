@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Building a Multiplayer Board Game | Denver's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 pv2 md:pv3 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <img src="/Users/denvaar/Desktop/me.png" class="banner-img"/>
+          <p class="mv0 bold heading-size-sm md:heading-size-md md:ml1 align-self-end">
+          <a href="../index.html" class="phantom-a">Denver Smith</a>
+          </p>
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Building a Multiplayer Board Game</h1>
+        <p class="heading-size-xsm">I programmed a web application rendition of a board game called Sternhalma.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag blue-tag"># programming</span>
+          
+            <span class="tag orange-tag"># projects</span>
+          
+            <span class="tag purple-tag"># elixir</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2021-01-17</p>
+        <hr class="divider" />
+      </section>
+      <p>
+I programmed a classic board game from my childhood that my grandma taught me how to play. It’s called Sternhalma, or better known as Chinese Checkers. With the game actually being invented in America, neither names make sense…</p>
+<p>
+Now that this side project is coming to an end, I want to highlight some of the parts that I found interesting, and try to explain my approach to building this game.</p>
+<p>
+You can find the code on GitHub <a href="https://github.com/denvaar/sternhalma">here</a> and <a href="https://github.com/denvaar/board_games">here</a>. The game is available for now at <a href="https://gameswithfriends.app">gameswithfriends.app</a>, although I’m not sure how long I will keep it there, and the server it’s running on is, “not meant for production.”</p>
+<p>
+  <img src="../img/sternhalma_demo1.gif" alt="" />
+</p>
+<h2>
+Rules of the Game</h2>
+<p>
+I decided to build this game because it’s simple but still fun to play.</p>
+<p>
+Skip this section if you already know the rules.</p>
+<p>
+The goal is to be the first one to move all of your marbles to the triangle on the opposite side of the board. Two to six players are needed to play.</p>
+<p>
+There are two ways to move your marbles:</p>
+<ol>
+  <li>
+Move directly to an empty, neighboring spot on the board.  </li>
+  <li>
+Move to an empty, distant spot on the board by jumping one or more marbles. Changing directions while jumping another marble is not possible, however, once an empty cell is reached, the direction can change. Here’s some pictures of valid and invalid jumps to help illustrate.  </li>
+</ol>
+<div style="text-align:center">
+  <img src="../img/jump_move_rules.png" style="width:100%;max-width:450px" /></div>
+<h2>
+Project Design Overview</h2>
+<p>
+I picked the <a href="https://elixir-lang.org/">Elixir</a> programming language for this project. It’s a lot of fun to work with. I’ll try to demonstrate some of the cool features it has as I get into the code.</p>
+<p>
+The project is split into two separate code repositories. That’s because I didn’t know what I wanted the end-product to be like when I began. <em>Should it run on the web, or just be a console applciation? Could I make it work for both?</em> – these were some questions I had initially.</p>
+<p>
+The first repository can be considered a library. It exposes primitive functions that are needed to manage a game. My intention was that other programs can use this library as a dependency.</p>
+<p>
+I tried to build the library in layers, with the goal that the public API is the only thing that users of the library need to know about.</p>
+<p>
+I didn’t want the library to be too opinionated about how it should be used, which was an interesting goal to try and achieve.</p>
+<p>
+Here are some examples of the what library provides:</p>
+<ul>
+  <li>
+  Data structure to represent a “game board”  </li>
+  <li>
+  Ability to add marbles to the board  </li>
+  <li>
+  Pathfinding  </li>
+  <li>
+  Ability to determine if marbles are in a winning position  </li>
+</ul>
+<p>
+The second repository is a <a href="https://www.phoenixframework.org/">Phoenix</a> web app. It’s what uses the aforementioned library to create a fully-featured game.</p>
+<div>
+  <img src="../img/sternhalma_login_page.png" style="min-width: 49%; width: calc((500px - 100%) * 1000); max-width: 100%;" />
+<img src="../img/sternhalma_board_1.png" style="min-width: 49%; width: calc((500px - 100%) * 1000); max-width: 100%;" /></div>
+<p>
+The web app provides a way for people to play the game, so it needs to do things like:</p>
+<ul>
+  <li>
+  Provide a user interface to the game board  </li>
+  <li>
+  Handle user input as players take turns moving marbles  </li>
+  <li>
+  Facilitate game lobbies  </li>
+  <li>
+  Manage game state  </li>
+</ul>
+<p>
+I found Phoenix to be a good fit for this kind of turn-based game. <a href="https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html">LiveView</a> is the main workhorse that powers user-interaction. It uses Web Sockets to send messages between browser and server. I found the client and server API to be very intuitive and user friendly.</p>
+<p>
+Since it’s a multiplayer game, each action taken must be reflected for all connected players. <a href="https://hexdocs.pm/phoenix_pubsub/Phoenix.PubSub.html">Phoenix PubSub</a> makes that possible, allowing processes to subscribe to and broadcast game state updates.</p>
+<p>
+Elixir has abstractions for managing state, among other things, which actually stem from the technologies (<a href="https://erlang.org/doc/">Erlang / OTP</a>) that it is built on top of. The Phoenix app is able to take advantage of <a href="https://hexdocs.pm/elixir/GenServer.html">GenServer</a> and <a href="https://hexdocs.pm/elixir/DynamicSupervisor.html">DynamicSupervisor</a> processes to manage the game state.</p>
+<p>
+The end-result is a web application that allows players to join a game by entering a code and their name. Once the game begins, they take turns to race their marbles to their “home” or “target” triangle. If a game is full, or already in progress, others can join as a spectator.</p>
+<p>
+That’s the general overview of the project. In these next sections, I’ll share a few of the details and challenges that I found interesting about this project.</p>
+<h2>
+Game Board Representation</h2>
+<p>
+The game board could be thought of as a graph, but really it’s just a grid. However, it’s not a traditional grid, where each cell is four-sided.</p>
+<p>
+The board is a hexagonal grid, and if it wasn’t for <a href="https://www.redblobgames.com/grids/hexagons/">Amit’s insanely useful resources about them</a>, I’d probably not have this game to talk about.</p>
+<p>
+There are three modules at play when it comes to the representing the star-shaped board.</p>
+<ul>
+  <li>
+  <a href="https://github.com/denvaar/sternhalma/blob/master/lib/sternhalma/hex.ex"><code class="inline">Hex</code></a>  </li>
+  <li>
+  <a href="https://github.com/denvaar/sternhalma/blob/master/lib/sternhalma/cell.ex"><code class="inline">Cell</code></a>  </li>
+  <li>
+  <a href="https://github.com/denvaar/sternhalma/blob/master/lib/sternhalma/board.ex"><code class="inline">Board</code></a>  </li>
+</ul>
+<p>
+An Elixir module can be thought of as a “bag of functions” that have similar concerns, or operate on the same data type.</p>
+<p>
+The <code class="inline">Hex</code> module defines a type that represents a grid position, according to <a href="https://www.redblobgames.com/grids/hexagons/">Amit’s guide</a>, as well as functions like <code class="inline">neighbor/2</code>, and <code class="inline">neighbors/1</code> as seen in the snippets below.</p>
+<pre><code class="elixir">@doc &quot;&quot;&quot;
+Return the next Hex coordinate based on a provided direction.
+
+## Examples
+
+    iex&gt; neighbor(Sternhalma.Hex.new({1, -4, 3}), :top_left)
+    %Sternhalma.Hex{x: 0, y: 3, z: -3}
+
+
+&quot;&quot;&quot;
+@spec neighbor(t(), direction()) :: t()
+def neighbor(hex, :bottom_left), do: %Hex{x: hex.x, z: hex.z - 1, y: hex.y + 1}
+def neighbor(hex, :bottom_right), do: %Hex{x: hex.x + 1, z: hex.z - 1, y: hex.y}
+def neighbor(hex, :left), do: %Hex{x: hex.x - 1, z: hex.z, y: hex.y + 1}
+def neighbor(hex, :right), do: %Hex{x: hex.x + 1, z: hex.z, y: hex.y - 1}
+def neighbor(hex, :top_left), do: %Hex{x: hex.x - 1, z: hex.z + 1, y: hex.y}
+def neighbor(hex, :top_right), do: %Hex{x: hex.x, z: hex.z + 1, y: hex.y - 1}</code></pre>
+<pre><code class="elixir">@doc &quot;&quot;&quot;
+Return the surrounding Hex coordinates.
+
+## Examples
+
+    iex&gt; neighbors(Sternhalma.Hex.new({1, -4, 3}))
+    [
+      top_left: %Sternhalma.Hex{x: 0, y: 3, z: -3},
+      top_right: %Sternhalma.Hex{x: 1, y: 2, z: -3},
+      left: %Sternhalma.Hex{x: 0, y: 4, z: -4},
+      right: %Sternhalma.Hex{x: 2, y: 2, z: -4},
+      bottom_left: %Sternhalma.Hex{x: 1, y: 4, z: -5},
+      bottom_right: %Sternhalma.Hex{x: 2, y: 3, z: -5}
+    ]
+
+&quot;&quot;&quot;
+@spec neighbors(t()) :: list({direction(), t()})
+def neighbors(hex) do
+  [:top_left, :top_right, :left, :right, :bottom_left, :bottom_right]
+  |&gt; Enum.map(fn direction -&gt; {direction, neighbor(hex, direction)} end)
+end</code></pre>
+<p>
+The Cell module defines a couple functions and a struct for working with the marbles that can be at various spots on the board.</p>
+<p>
+The Board module contains functions to do things like adding marbles to different triangles. In general, it’s the module that helps with manipulation of the game board.</p>
+<p>
+At just under 150 LOC, the <a href="https://github.com/denvaar/sternhalma/blob/master/lib/sternhalma.ex">public API</a> of the library is pretty small, with a good portion of the module being documentation.</p>
+<h2>
+Pathfinding</h2>
+<p>
+Since players can jump to distant spots on the board, pathfinding is one of the main things that the Sternhalma library takes care of.</p>
+<p>
+I needed to choose a pathfinding algorithm to determine if a player’s selected move from point A to point B was possible. The algorithm also needed to spit back each spot on the board in between points A and B. That’s because applications may want to indicate the exact path that the marble travels.</p>
+<div style="text-align:center">
+  <img src="../img/sternhalma_jumping.gif" width="250px" /></div>
+<p>
+There were a few pathfinding algorithms that I considered. Ultimately I decided to use Breadth First Search (BFS) to traverse the graph, stopping when either there are no more nodes to visit, or when the target node was discovered.</p>
+<p>
+To be honest, I chose BFS because it was simplest to implement. Dijkstra’s algorithm didn’t seem very applicable in this case because the cost of each location on the board would always be the same. Since A-Star (A*) can be thought of as a variation of Dijkstra, I ruled that out as well.</p>
+<p>
+Just because BFS is one of the easiest to implement does not mean I didn’t screw it up several times before getting it right.</p>
+<p>
+My first rendition was something closer to Depth First Search, which proved to be problematic. DFS does not guarantee that the path it takes is the shortest. My code also had a bug that caused an infinite loop to happen in some cases.</p>
+<p>
+This is a code snippet of my final, working version of BFS from the <a href="https://github.com/denvaar/sternhalma/blob/master/lib/sternhalma/pathfinding.ex"><code class="inline">Pathfinding</code> module</a>.</p>
+<pre><code class="elixir">@type path :: %{Cell.t() =&gt; :done | Cell.t()}
+@type visited :: %{Hex.t() =&gt; true}
+
+@spec bfs(Board.t(), Cell.t(), path(), visited(), list(Cell.t())) :: path()
+defp bfs(_board, target, path, _visited, [current | _to_be_explored])
+     when current.position == target.position,
+     do: path
+
+defp bfs(_board, _target, path, _visited, []), do: path
+
+defp bfs(board, target, path, visited, [current | to_be_explored]) do
+  neighbors =
+    current.position
+    |&gt; jumpable_neighbors(board)
+    |&gt; remove_visited_cells(visited)
+
+  path =
+    Enum.reduce(neighbors, path, fn neighbor, path_acc -&gt;
+      Map.put(path_acc, neighbor, current)
+    end)
+
+  visited =
+    Enum.reduce(neighbors, visited, fn neighbor, visited_acc -&gt;
+      Map.put(visited_acc, neighbor.position, true)
+    end)
+
+  bfs(board, target, path, visited, to_be_explored ++ neighbors)
+end</code></pre>
+<p>
+The code reads as follows:</p>
+<ul>
+  <li>
+  Start with the current position  </li>
+  <li>
+  Find the “jumpable” neighbors. These are empty spots on the board that are exactly one occupied spot away from the current position. For example, <code class="inline">B</code>, <code class="inline">C</code>, and <code class="inline">D</code> are <code class="inline">A</code>‘s only jumpable neighbors.  </li>
+</ul>
+<div style="text-align:center">
+  <img src="../img/jumpable_neighbors.png" style="width:100%;max-width:250px" /></div>
+<ul>
+  <li>
+  Filter out any of the neighbors that have already been visited.  </li>
+  <li>
+  For each neighbor that will be visited, add a key-value entry to the <code class="inline">path</code> mapping. The mapping is used to backtrack in order to find the route from target back to the starting position after the function has completed.  </li>
+  <li>
+  Mark every neighboring position as visited so that the function doesn’t get stuck in an infinite loop.  </li>
+  <li>
+  <strong>Append</strong> the new neighbors <strong>to the end</strong> of the existing neighbors and repeat. Appending is important, as BFS relies on a queue to process nodes.  </li>
+</ul>
+<p>
+The first two function heads are <a href="https://elixir-lang.org/getting-started/pattern-matching.html">matched</a> in the “Base case” scenarios:</p>
+<ul>
+  <li>
+  The target location is found.  </li>
+  <li>
+  There are no more neighbors to be explored.  </li>
+</ul>
+<p>
+The return value of the <code class="inline">bfs/5</code> function is passed to <code class="inline">backtrack/3</code>, whose job is to trace back through the key-value mapping to reveal the path taken.</p>
+<pre><code class="elixir">@spec backtrack(path(), nil | Cell.t() | :done, list(Cell.t())) :: list(Cell.t())
+defp backtrack(_path, nil, _result), do: []
+defp backtrack(_path, :done, result), do: result
+
+defp backtrack(path, finish, result) do
+  current = Map.get(path, finish)
+  backtrack(path, current, [finish | result])
+end</code></pre>
+<h2>
+State Management</h2>
+<p>
+How to manage state is always fun to think about. The constraints that a language like Elixir incurs makes this topic all the more interesting.</p>
+<p>
+The Sternhalma library, like any plain Elixir module, can be considered a “bag of functions”. It defines some data structures, and provides some functions that hopefully make building a game easier. There isn’t really any state involved here.</p>
+<p>
+It’s up to the calling code to decide how it wants to handle state. As an example, take a look at the <code class="inline">empty_board/0</code> function.</p>
+<pre><code class="elixir">@doc &quot;&quot;&quot;
+Generate an empty board.
+&quot;&quot;&quot;
+@spec empty_board() :: Board.t()
+defdelegate empty_board(), to: Board, as: :empty</code></pre>
+<p>
+It takes no parameters, and returns a <code class="inline">Board</code> struct. The result of this function can be passed around and chained together with other functions, resulting in a new state of the game board.</p>
+<pre><code class="elixir">board_with_two_players =
+  Sternhalma.empty_board()
+  |&gt; Sternhalma.setup_marbles(&quot;player 1&quot;)
+  |&gt; Sternhalma.setup_marbles(&quot;player 2&quot;)</code></pre>
+<p>
+I found it really nice and simple to build the library like this, but passing the state around is not realistic in complex applications.</p>
+<p>
+The web application, which players interact with to play the game, can take advantage of processes to help manage state. All Elixir code runs within processes in the Erlang Virtual Machine.</p>
+<p>
+Check out <a href="https://medium.com/flatiron-labs/elixir-and-the-beam-how-concurrency-really-works-3cc151cddd61">Sophie DeBenedetto’s article</a> to learn more about the Erlang VM, or the <a href="https://elixir-lang.org/getting-started/processes.html">Elixir tutorial about processes</a> if you’re interested in learning more.</p>
+<p>
+For managing the game state, I’m using <a href="https://hexdocs.pm/elixir/GenServer.html">GenServer</a>, a process that can be used to keep state, and provides a standard way to interact with it.</p>
+<p>
+Games are identified by a code, provided by a player when they join. Each game has it’s very own GenServer process, called <a href="https://github.com/denvaar/board_games/blob/master/lib/board_games/game_server.ex">GameServer</a>.</p>
+<p>
+Inside the <code class="inline">GameServer</code> module, you will find functions like, <code class="inline">join_game/2</code>, <code class="inline">leave_game/2</code>, <code class="inline">start_game/1</code>, and <code class="inline">move_marble/3</code>. These functions make up the client API of the <code class="inline">GameServer</code>.</p>
+<pre><code class="elixir"># ...
+
+@doc &quot;&quot;&quot;
+Move from `start` cell to `finish` cell if possible.
+See `BoardGames.EventHandlers.MoveMarble` for details of what is involved in this.
+&quot;&quot;&quot;
+@spec move_marble(String.t(), BoardLocation.t(), BoardLocation.t()) :: term()
+def move_marble(game_id, start, finish) do
+  GenServer.call(via(game_id), {:move_marble, start, finish})
+end
+
+# ...</code></pre>
+<p>
+Each of these functions have a corresponding <code class="inline">handle_*</code> function, which executes on the “server” side – in the <code class="inline">GameServer</code> process itself.</p>
+<p>
+It’s fair to think of these <code class="inline">handle_*</code> functions as state reducers. They respond to a message, and update their internal state accordingly.</p>
+<pre><code class="elixir"># ...
+
+def handle_call({:move_marble, start, finish}, _from, state) do
+  with {:ok, new_state} &lt;- EventHandlers.MoveMarble.handle({start, finish}, state) do
+    {:reply, {:ok, new_state}, new_state}
+  else
+    {:error, {code, state}} -&gt;
+      {:reply, {:error, code, state}, state}
+  end
+end
+
+# ...</code></pre>
+<p>
+In the snippet above, <code class="inline">{:ok, new_state}</code> or <code class="inline">{:error, code, state}</code> is what gets returned to the calling process. This is how processes communicate with each other - via message passing. In the successful branch of code, you can see a new copy of the game state being returned, along with an <code class="inline">:ok</code> status code.</p>
+<p>
+Here’s the <a href="https://github.com/denvaar/board_games/blob/master/lib/board_games/game_state.ex">shape</a> of <code class="inline">new_state</code>, to give you an idea of what kind of data the process is keeping track of.</p>
+<pre><code class="elixir">@type t :: %GameState{
+          board: list(BoardLocation.t()),
+          id: binary(),
+          last_move: list(BoardLocation.t()),
+          marble_colors: map(),
+          marbles: list(Marble.t()),
+          players: list(String.t()),
+          connected_players: list(String.t()),
+          seconds_remaining: non_neg_integer(),
+          status: game_status(),
+          timer_ref: nil | reference(),
+          turn: nil | String.t(),
+          turn_timer_ref: nil | reference(),
+          winner: nil | String.t()
+        }</code></pre>
+<p>
+Every player in the game has their own LiveView process. User interactions in the browser are sent as events to the LiveView server process.</p>
+<p>
+A LiveView processes has some state of its own – things that don’t need to be shared with other players in the game. An example is when a player moves their marble. It’s a two step process:</p>
+<ol>
+  <li>
+Click the marble to be moved.  </li>
+  <li>
+Click the destination spot on the board.  </li>
+</ol>
+<p>
+Other players don’t need to know about the first step, so the state related to keeping track of the clicked marble can be tracked on the LiveView process.</p>
+<p>
+As for state updates that <em>do</em> need to be shared, PubSub is used to broadcast game state updates to all of the subscribed LiveView processes.</p>
+<p>
+The snippet below shows how the LiveView process calls <code class="inline">GameServer.move_marble/3</code> when a spot on the board is clicked. The game state will then be broadcast if the move was valid.</p>
+<pre><code class="elixir">def handle_event(&quot;board-cell-click&quot;, %{&quot;x&quot; =&gt; x, &quot;y&quot; =&gt; y, &quot;z&quot; =&gt; z}, socket)
+    when socket.assigns.start != nil do
+
+  # ...
+
+  message =
+    with {:ok, game} &lt;- GameServer.move_marble(socket.assigns.game_id, start, board_location) do
+      broadcast_game_state_update!(socket.assigns.game_id, game)
+      nil
+    else
+      {:error, code, _state} -&gt;
+        message_for_code(code)
+    end
+
+  {:noreply, assign(socket, start: nil, message: message)}
+end</code></pre>
+<p>
+GameServer processes are <a href="https://github.com/denvaar/board_games/blob/master/lib/board_games_web/live/sternhalma_live.ex#L165-L172">started up</a> as new games are created, and <a href="https://github.com/denvaar/board_games/blob/master/lib/board_games_web/live/sternhalma_live.ex#L53-L70">destroyed</a> when there are no remaining LiveView processes connected to the game.</p>
+<p>
+An interesting thing about GameServer is that it’s not spawned directly from a LiveView process. It’s actually <a href="https://github.com/denvaar/board_games/blob/master/lib/board_games_web/live/sternhalma_live.ex#L165-L172">spawned by another process</a>, called <a href="https://github.com/denvaar/board_games/blob/master/lib/board_games/game_supervisor.ex">GameSupervisor</a>.</p>
+<p>
+GameSupervisor is a special type of process called a Dynamic Supervisor. It’s job is to watch over it’s children. The GameSupervisor itself is created when the web application first starts up, so that other processes can use it to tell which children to watch over.</p>
+<p>
+  <img src="img/game_supervisor.png" alt="" />
+</p>
+<p>
+If a LiveView were to start a GameServer directly, that would mean that it would get destroyed if the player who was connected to the LiveView process were to disconnect, ending the game for all.</p>
+<h2>
+Animations and Visuals</h2>
+<p>
+Basic CSS and HTML were used to create the user interface for this app. The game became fancy the moment that I slapped an image of a dragon onto the game board, courtesy of Wikipedia.</p>
+<p>
+Each marble, and each empty spot on the board are just HTML buttons. Different CSS classes are applied to DOM elements as the game state changes. I also made use of CSS variables for parts of the UI that are more dynamic, such as a marble color, rotation, left &amp; right position, etc.</p>
+<p>
+All of the UI rendering related code can be found in the <a href="https://github.com/denvaar/board_games/blob/master/lib/board_games_web/views/sternhalma_view.ex"><code class="inline">SternhalmaView</code> module</a>, as well as the <a href="https://github.com/denvaar/board_games/blob/master/lib/board_games_web/templates/sternhalma/sternhalma_live.html.leex">SternhalmaLive template file</a>.</p>
+<p>
+I wanted to try and make it so that playing the game online was close to the same experience of playing in real life.</p>
+<p>
+In real life, players sit behind their home triangle, so in my game, I made it so that the board is rotated such that each player’s home triangle is always at the bottom of their screen. The amount of rotation needed for each player can be found based on how many total players are in the game.</p>
+<pre><code class="elixir">@spec rotation(non_neg_integer()) :: non_neg_integer()
+defp rotation(0), do: 180
+defp rotation(1), do: 0
+defp rotation(2), do: 240
+defp rotation(3), do: 60
+defp rotation(4), do: 120
+defp rotation(5), do: 300
+defp rotation(_player_index), do: 0</code></pre>
+<p>
+  <img src="img/sternhalma_rotation.png" alt="" />
+</p>
+<p>
+Such a simple function for such a nice feature!</p>
+<p>
+Another small, but nice detail is displaying white or black text based on the background color that is behind it.</p>
+<p>
+This isn’t the prettiest looking function, and I won’t pretend to know how to explain the formula it uses, but it can decide whether to use white or black text, based on a background color. I remembered that I had a bash script that does essentially the same thing, and copied from that.</p>
+<pre><code class="elixir">@spec text_color(String.t()) :: String.t()
+defp text_color(&lt;&lt;&quot;#&quot;, hex_color::binary&gt;&gt;) do
+  with {:ok, &lt;&lt;red, green, blue&gt;&gt;} &lt;- Base.decode16(hex_color, case: :mixed) do
+    if red * 0.299 + green * 0.587 + blue * 0.114 &gt; 186 do
+      &quot;#000000&quot;
+    else
+      &quot;#ffffff&quot;
+    end
+  else
+    _ -&gt;
+      # default to black
+      &quot;#000000&quot;
+  end
+end</code></pre>
+<div style="text-align:center">
+  <img src="../img/sternhalma_color_path.png" style="width:100%;max-width:400px" /></div>
+<p>
+The most important animation that I wanted to include was the marble jumping across the board. I fear that I may have bent the rules of LiveView a little bit in order to make this feature possible. Each time a player selects a move, I store a list of each position from the start to the end.</p>
+<p>
+As soon as a valid move is chosen, the GameServer <a href="https://github.com/denvaar/board_games/blob/d9874f46bd93ee54a72f6945f26eb92ddc0c7a29/lib/board_games/event_handlers/move_marble.ex#L29">sends a message to itself</a> which recursively handles each position along the path, <a href="https://github.com/denvaar/board_games/blob/d9874f46bd93ee54a72f6945f26eb92ddc0c7a29/lib/board_games/event_handlers/advance_marble.ex#L68">broadcasting state changes</a> as it goes.</p>
+<p>
+The subscribed LiveView processes receive the state updates on an interval, and render their views accordingly. This is how the animation is achieved, along with the help of <code class="inline">transition: left 0.4s ease-in-out, bottom 0.4s ease-in-out;</code>. It gives me pause because I know that LiveView is <a href="https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html">not meant for doing client-side animations</a>.</p>
+<p>
+The alternative was to make the animation happen client side. I couldn’t come up with a way to do it that didn’t involve some major changes and added complexity. In any case, what I came up with seemed to work well. This is one thing I would love to get some feedback about.</p>
+<h2>
+Documentation, Testing, and Typespecs</h2>
+<p>
+I put an emphasis on writing tests, documentation, and annotating my functions with <a href="https://hexdocs.pm/elixir/typespecs.html">typespecs</a>.</p>
+<p>
+Going the extra mile to add typespecs to my code was well worth it in my opinion. Though Elixir is a dynamically typed language, you can still do some static code analysis with a tool called <a href="http://www.erlang.org/doc/man/dialyzer.html">Dialyzer</a>. Dialyzer notified me of inconsistencies with my code that I would have otherwise missed.</p>
+<p>
+In my opinion, code annotated with typespecs is much more readable as well. Typespecs were especially helpful as I refactored various parts of my application.</p>
+<p>
+I relied heavily on testing while working on the Sternhalma library. The tests I wrote for the <a href="https://github.com/denvaar/sternhalma/blob/master/test/pathfinding_test.exs">pathfinding module</a> saved me lots of time. I added test cases for bugs and edge cases that I encountered along the way, and it gave me confidence that my code was valid as I refactored.</p>
+<p>
+Documentation is a first-class citizen in Elixir. I love how easy it is to write and read documentation for modules and functions. I feel very comfortable writing Elixir code on an airplane because when I have questions, I simply pop open an interactive console, and read the docs for whatever module or function I am wondering about. No need for the internet most of the time.</p>
+<p>
+  <img src="img/sternhalma_docs_1.png" alt="" />
+</p>
+<p>
+Notice the “Examples” section in the screenshot above. That’s not just for user reference – those are <a href="https://hexdocs.pm/elixir/writing-documentation.html#doctests">doctests</a>. That code is actually executed and checked against the result as part of the test suite. Maybe the only thing worse than no documentation is documentation that is wrong. I love tools Elixir offers to help prevent this.</p>
+<p>
+Here’s an example function with typespecs, documentation, and one doctest from the Sternhalma library.</p>
+<pre><code class="elixir">@doc &quot;&quot;&quot;
+Return {x, y} pixel coordinates for a given Hex coordinate.
+
+## Examples
+
+    iex&gt; to_pixel(Sternhalma.Hex.new({1, -4, 3}))
+    {8.267949192431123, 4.0}
+
+
+&quot;&quot;&quot;
+@spec to_pixel(Hex.t()) :: {number(), number()}
+defdelegate to_pixel(position), to: Hex</code></pre>
+<p>
+Running the suite is quick and easy, and the ExUnit testing library is included by default in Elixir projects.</p>
+<div style="text-align:center">
+  <img src="../img/sternhalma_exunit.png" style="width:100%;max-width:400px" /></div>
+<p>
+I did fail to write any tests for the web app ☹️.</p>
+<h2>
+How Did it Turn Out?</h2>
+<p>
+Personally, I’m happy with how the project has turned out – both from a code perspective, as well as the game itself.</p>
+<p>
+I worked on a similar project a few months back, which <strong>almost</strong> worked, but was buggy and a little disappointing in the end. I like to think that I learned from those mistakes here. I haven’t discovered any serious bugs yet (knock on wood…)</p>
+<p>
+One thing that I was trying to accomplish was to make it so that the web application code was not too coupled to the Sternhalma library. I’m not sure if I succeeded at this or not…</p>
+<p>
+Of course there’s no way to eliminate the dependency to the library completely, but I thought that I would be in good shape by putting all references to the Sternhalma library into one module rather than having functions and data structures scattered throughout my entire web app.</p>
+<p>
+That’s the purpose of the <a href="https://github.com/denvaar/board_games/blob/master/lib/board_games/sternhalma_adapter.ex">SternhalmaAdapter module</a>. It’s a boundary between the external library and the web app.</p>
+<p>
+  <img src="img/sternhalma_adapter.png" alt="" />
+</p>
+<p>
+The functions were easy to throw into the module, but eliminating the use of data types throughout the app was difficult. My solution was to <a href="https://github.com/denvaar/board_games/blob/master/lib/board_games/sternhalma_adapter.ex#L106-L146">sanitize, or morph the external data to a different representation</a> that my web app could depend on.</p>
+<p>
+<em>Was this a helpful improvement? Was there a better way to achieve the decoupling that I was after? Does it actually mean that my library is too opinionated?</em> These are questions I’m not sure about.</p>
+<p>
+So far I’ve played the game with a few members of my family. The feedback I received is:</p>
+<ol>
+  <li>
+It’s not immediately apparent that you have to click on the spot on the board you want your marble to end up on. Some people tried to click each point along the path that they wanted to take.  </li>
+  <li>
+10 seconds is not enough time for a turn.  </li>
+  <li>
+The game is harder to play on touch devices, because the screen will sometimes zoom in.  </li>
+</ol>
+<p>
+This was a lot of fun to build and to think about. That’s maybe the most important thing for a side project. Thanks for reading!</p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+          <p class="text-size-body">❤️&nbsp;Thanks for reading! Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">subscribing</a> to be notified when I publish more content.</p>
+          <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://twitter.com/denvaaar">Twitter</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a></p>
+          <p class="">© 2015 - 2022 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

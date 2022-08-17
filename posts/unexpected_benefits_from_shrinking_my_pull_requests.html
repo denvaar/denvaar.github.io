@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Unexpected Benefits From Shrinking My Pull Requests | Denver's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 pv2 md:pv3 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <img src="/Users/denvaar/Desktop/me.png" class="banner-img"/>
+          <p class="mv0 bold heading-size-sm md:heading-size-md md:ml1 align-self-end">
+          <a href="../index.html" class="phantom-a">Denver Smith</a>
+          </p>
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Unexpected Benefits From Shrinking My Pull Requests</h1>
+        <p class="heading-size-xsm">Small pull requests help improve the code review pr ocess, but making it a priority has helped me improve in several ot her ways.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag pink-tag"># software development</span>
+          
+            <span class="tag gray-tag"># soft-skills</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2018-08-28</p>
+        <hr class="divider" />
+      </section>
+      <p>
+<em>Keep pull requests small</em> – this is a well known sentiment among programming teams to improve the code review process. We do this to avoid having our new features and fixes sitting around waiting for peer review. Nobody wants to spend hours reviewing thousands of changed lines of code. It’s just not effective.</p>
+<p>
+Even so, I’ve found myself making exceptions to this best practice. It wasn’t until recently, when these kind of issues were becoming more apparent, that I really started to take this attitude of keeping PR’s small to heart. I invite anyone looking to improve the quality of their code review process to remember this seemingly simple guideline: Keep pull requests small.</p>
+<p>
+Those reviewing the changes will likely realize:</p>
+<ul>
+  <li>
+The PR is more appealing to review because it’s not as much of a time commitment.  </li>
+  <li>
+It’s easier to leave meaningful feedback because it’s simpler to understand.  </li>
+</ul>
+<p>
+Those submitting the changes will likely realize:</p>
+<ul>
+  <li>
+It’ll be approved quicker.  </li>
+  <li>
+When there are changes requested, it’s easier to go ahead and fix them.  </li>
+</ul>
+<h2>
+Unexpected Results</h2>
+<p>
+When I began to personally enforce the goal of creating small PR’s in my own programming, I realized some neat and unexpected benefits.</p>
+<h3>
+1. Organization and Clarity</h3>
+<p>
+It’s always a temptation to immediately begin to write code when starting a new task. Sometimes this lack of planning results in wasted time coding and recoding. In some cases we may even feel the need to start over.</p>
+<p>
+Small PR’s help combat this situation because we are forced to break up the task into smaller pieces. To do that, we must try to grasp the task more fully. I feel more organized while writing code because of this.</p>
+<h3>
+2. Easier to stay on task</h3>
+<p>
+Imagine that you are given a task, and you expect it to take about one week to complete. You decide to do your best to chip away at it until it’s all done, and then submit a PR. Consider the many distractions which we encounter while coding (Slack, YouTube, candy in the break room, The Internet in general…)</p>
+<p>
+In my opinion, it’s hard to stay on task in this scenario. That’s because there’s not really anything dictating your schedule, other than the result of a completed task at the end of the week.</p>
+<p>
+I consider it much easier to stay on task when I can use small iterations of pull requests as personal breakpoints. It’s great to take breaks throughout the day, and I think this gives me a bit more control and stability to appropriately do so.</p>
+<h3>
+3. Increased estimation accuracy</h3>
+<p>
+One of the most difficult aspects of programming is letting people know when something will be finished. Our project managers are especially eager to know. When estimating delivery dates, we have the opportunity to build trust. Failing to meet a deadline is a discouraging feeling. Frederick P. Brooks, Jr., author of the influential software engineering book, <em>The Mythical Man Month</em>, writes about why this is so difficult. One of the culprits he discusses is optimism.</p>
+<blockquote>
+  <p>
+“All programmers are optimists… The first false assumption that underlies the scheduling of systems programming is that <em>all will go well</em>.”  </p>
+</blockquote>
+<p>
+So, we are optimistic about our code. We think, <em>I’m pretty much done, I just have to write the tests</em>. We don’t expect QA to discover bugs in our code. We count on our giant monster-of-a-pull-request to be swiftly approved by our peers.</p>
+<p>
+A natural byproduct of small PR’s is a more accurate depiction of progress. We still need to write tests, we should still plan on QA finding some kind of bug, and we still need to address concerns that come up during peer review. However, these often overlooked details are easier to deal with in smaller iterations – we’re forced to consider them upfront, which makes estimated delivery dates more accurate.</p>
+<h3>
+4. Easier collaboration with teammates</h3>
+<p>
+Sometimes we are assigned a task that depends on something that our teammate has already been working on. So, it goes without much explanation that if we merge our code in smaller, more frequent iterations, that the pieces others might need will be available sooner.</p>
+<h3>
+5. Test quality improved</h3>
+<p>
+Testing is an important part of software development, especially in large applications. Tests allow us to refactor with confidence.</p>
+<p>
+It’s easier to write tests when working in small iterations. Writing tests is time consuming and frustrating when they’re written at the end of a huge task. When I find myself in this position, I start to question the value of writing tests. However, testing can be fun and rewarding when done upfront. My attitude and ability to write good tests has improved from working in small iterations.</p>
+<h2>
+Challenges</h2>
+<p>
+The biggest challenge in my opinion is to figure out the best way to break up the task in order to be done in smaller, more frequent iterations of change. We might see a task as one large indivisible mass. <a href="https://github.com/jnunemaker/flipper">Flipper</a> is a handy tool for feature flipping in Ruby applications. It can be used as a way to turn features on and off for end-users of the application, but it’s also valuable as a tool for developers to implement small changes without fully replacing exiting parts of the application.</p>
+<p>
+Another challenge to beware of is the possibility of creating “dead code.” Sometimes I intentionally duplicate existing code while refactoring, knowing that I will need to remember to go back and clean it up when I have finished all of my small PR’s. The codebase could possibly become full of old, unused code if I forget to cleanup after myself, so I think it’s important to figure out a good strategy with your team to help combat this.</p>
+<h2>
+Conclusion</h2>
+<p>
+So, in summary, I have noticed lots of extra benefits as a result of keeping my PR’s small. I feel like a more organized programmer. I find it easier to stay on task throughout the day. I believe my ability to estimate when things will be completed has become more accurate. Collaboration with my team is easier, and finally, my willingness to invest time writing good tests has grown stronger.</p>
+<p>
+The benefits are worth the challenges, and this has helped me improve as a programmer. I’m confident that those who are willing to keep their PR’s small will see similar benefits.</p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+          <p class="text-size-body">❤️&nbsp;Thanks for reading! Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">subscribing</a> to be notified when I publish more content.</p>
+          <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://twitter.com/denvaaar">Twitter</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a></p>
+          <p class="">© 2015 - 2022 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Content Negotiation & Phoenix | Denver's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 pv2 md:pv3 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <img src="/Users/denvaar/Desktop/me.png" class="banner-img"/>
+          <p class="mv0 bold heading-size-sm md:heading-size-md md:ml1 align-self-end">
+          <a href="../index.html" class="phantom-a">Denver Smith</a>
+          </p>
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Content Negotiation & Phoenix</h1>
+        <p class="heading-size-xsm">A quick demo exploring how HTTP content negotiation works with Phoenix.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag blue-tag"># programming</span>
+          
+            <span class="tag purple-tag"># elixir</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2018-12-06</p>
+        <hr class="divider" />
+      </section>
+      <p>
+I usually try not to post about things that are specific to libraries and frameworks, but I thought this was an interesting look into how one important part of HTTP works.</p>
+<p>
+Web servers mostly deal with HTML documents, but it’s also possible for a server to have multiple content types available for the same resource or page. Web servers perform a process called Content Negotiation, part of HTTP, to determine what content type to give to the client (PDF, CSV, HTML, etc.)</p>
+<p>
+I set up demo application to explore how I might serve several different content types for the same resource using Phoenix. It’s worth mentioning that if your web application includes an API (JSON, for example,) you might not want to use the same url for the API and web. Every use case is different, but for an API, I would recommend keeping it separate with its own unique urls and controllers.</p>
+<h2>
+Use Case</h2>
+<p>
+There’s this really cool website for checking the weather called <a href="http://wttr.in">wttr.in</a>. Not only is it available in the web browser, but it’s also been configured in a way that that if you <code class="inline">curl</code> it in the console, the server sends back a beautiful response of plain ANSI text. I looked at the <a href="https://github.com/chubin/wttr.in/blob/0d76ba4a3e112694665af6653040807835883b22/lib/wttr_srv.py#L123">source code</a> to see how the server knows to return plain text or HTML markup, and it looks like it checks the User-Agent header on the request. It works, but I am going to demonstrate a different way of negotiating content.</p>
+<p>
+  <img src="../img/wttr.png" alt="" />
+</p>
+<h2>
+Accept vs Content-Type</h2>
+<p>
+Accept and Content-Type are two HTTP headers that a web browser sends to a server. They are both used for communicating content type, but there is a difference. Accept is used to to tell the server what type of content it expects the <em>response</em> to be. Content-Type is used to let the server know what type content the <em>request</em> is. So, Accept is for the response, while Content-Type is for the request.</p>
+<h2>
+Configuring Phoenix</h2>
+<p>
+I will set up a page that will respond with plain text as well as HTML, depending on what the client asks for. For simplicity, the resource will just be a listing of bicycle data.</p>
+<p>
+The first step to support multiple content types is to add them to the router pipeline
+e. If Phoenix receives an unknown mime type, then this exception is raised:</p>
+<pre><code>(Phoenix.NotAcceptableError) no supported media type in accept header.</code></pre>
+<p>
+So, I added “text” to the browser pipeline.</p>
+<pre><code class="elixir">pipeline :browser do
+  plug :accepts, [&quot;html&quot;, &quot;text&quot;]
+  plug :fetch_session
+  plug :fetch_flash
+  plug :protect_from_forgery
+  plug :put_secure_browser_headers
+end</code></pre>
+<p>
+If a client sends a request with <code class="inline">_format=</code> as a query parameter, then Phoenix will regard this format as the desired content type instead. More details can be found in the docstring for <code class="inline">accepts</code> (<a href="https://github.com/phoenixframework/phoenix/blob/3b64d58322ab2cb4bdaf6cb
+9662b84170b9bafeb/lib/phoenix/controller.ex#L1061">Reference</a>.)</p>
+<p>
+The controller action should also be updated. Normally, the action might have something like:</p>
+<pre><code class="elixir">render(conn, &quot;index.html&quot;, bikes: bikes)</code></pre>
+<p>
+However, changing <code class="inline">&quot;index.html&quot;</code> to <code class="inline">:index</code> will allow Phoenix to try and determine the matching template.</p>
+<p>
+The final step is to add the appropriate templates. Here is what my HTML template looks like:</p>
+<pre><code class="html">&lt;h1&gt;Listing Bikes&lt;/h1&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Brand&lt;/th&gt;
+      &lt;th&gt;Size&lt;/th&gt;
+      &lt;th&gt;Price&lt;/th&gt;
+
+      &lt;th&gt;&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;%= for bike &lt;- @bikes do %&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;%= bike.brand %&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;%= bike.size %&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;%= bike.price %&gt;&lt;/td&gt;
+
+      &lt;td&gt;
+        &lt;%= link &quot;Show&quot;, to: Routes.bike_path(@conn, :show, bike) %&gt; &lt;%= link
+        &quot;Edit&quot;, to: Routes.bike_path(@conn, :edit, bike) %&gt; &lt;%= link &quot;Delete&quot;,
+        to: Routes.bike_path(@conn, :delete, bike), method: :delete, data:
+        [confirm: &quot;Are you sure?&quot;] %&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;% end %&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;span&gt;&lt;%= link &quot;New Bike&quot;, to: Routes.bike_path(@conn, :new) %&gt;&lt;/span&gt;</code></pre>
+<p>
+And I also added another template, called, “index.text.eex”, so that if a client really wanted the response to be in plain text, Phoenix could choose this template to return.</p>
+<pre><code>BIKES
+
+&lt;%= for bike &lt;- @bikes do %&gt;
+╔═══════╦═════════════════╗
+║ Brand ║ &lt;%= String.pad_leading(bike.brand, 15, &quot; &quot;) %&gt; ║
+╠═══════╬═════════════════╣
+║ Size  ║ &lt;%= String.pad_leading(Integer.to_string(bike.size), 15, &quot; &quot;) %&gt; ║
+╠═══════╬═════════════════╣
+║ Price ║ &lt;%= String.pad_leading(Integer.to_string(bike.price), 15, &quot; &quot;) %&gt; ║
+╚═══════╩═════════════════╝
+
+&lt;% end %&gt;</code></pre>
+<p>
+That’s pretty much it, here’s an example of what the text format looks like in my console. Hitting <code class="inline">http://localhost:4000/bikes</code> from the browser returns a normal HTML list version as you would expect (I’m not going to post a screen shot of that one.)</p>
+<p>
+  <img src="../img/content-type-example.png" alt="" />
+</p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+          <p class="text-size-body">❤️&nbsp;Thanks for reading! Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">subscribing</a> to be notified when I publish more content.</p>
+          <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://twitter.com/denvaaar">Twitter</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a></p>
+          <p class="">© 2015 - 2022 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

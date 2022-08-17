@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Optimization with Timeit | Denver's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 pv2 md:pv3 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <img src="/Users/denvaar/Desktop/me.png" class="banner-img"/>
+          <p class="mv0 bold heading-size-sm md:heading-size-md md:ml1 align-self-end">
+          <a href="../index.html" class="phantom-a">Denver Smith</a>
+          </p>
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Optimization with Timeit</h1>
+        <p class="heading-size-xsm">Code optimization analysis using Python's timeit mo dule.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag blue-tag"># programming</span>
+          
+            <span class="tag green-tag"># python</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2015-06-19</p>
+        <hr class="divider" />
+      </section>
+      <p>
+I needed to compare which way was the fastest for skipping to a certain point in a large CSV file. Python has an awesome module that makes it really easy. It’s called timeit.</p>
+<p>
+I’ve demonstrated one simple way of using timeit to compare three different functions below.</p>
+<pre><code>import timeit
+import os
+import re
+import mmap
+import contextlib
+
+path = &#39;./big.csv&#39;
+
+# Option 1
+def option1():
+    with open(path, &#39;rb&#39;) as f:
+        #size = os.path.getsize(path)
+        size_old = os.path.getsize(&#39;./big2.csv&#39;) # File before more data
+        f.seek(size_old)
+        f.read() # print r.read()
+
+# Option 2
+def option2():
+    with open(path, &#39;r&#39;) as f:
+        content = f.read()
+        i = content.index(&#39;LAST&#39;)
+        f.seek(i)
+        f.readline() # Consume the old line.
+        f.read() # print r.read()
+
+# Option 3
+def option3():
+    with open(path, &#39;r+&#39;) as f:
+        with contextlib.closing(mmap.mmap(f.fileno(), os.O_RDONLY)) as mf:
+            mf.seek(0)
+            m = re.search(&#39;LAST_DATE&#39;, mf)
+            mf.seek(m.start())
+            mf.readline() # Consume the old line.
+            mf.read(m.end()) # print mf.read(m.end())
+
+print `Option 1: `, timeit.timeit(option1, number=5000)
+print `Option 2: `, timeit.timeit(option2, number=5000)
+print `Option 3: `, timeit.timeit(option3, number=5000)</code></pre>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+          <p class="text-size-body">❤️&nbsp;Thanks for reading! Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">subscribing</a> to be notified when I publish more content.</p>
+          <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://twitter.com/denvaaar">Twitter</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a></p>
+          <p class="">© 2015 - 2022 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Python Code Optimization Tips | Denver's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 pv2 md:pv3 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <img src="/Users/denvaar/Desktop/me.png" class="banner-img"/>
+          <p class="mv0 bold heading-size-sm md:heading-size-md md:ml1 align-self-end">
+          <a href="../index.html" class="phantom-a">Denver Smith</a>
+          </p>
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Python Code Optimization Tips</h1>
+        <p class="heading-size-xsm">Tips from Guido Van Rossum about code optimization.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag blue-tag"># programming</span>
+          
+            <span class="tag green-tag"># python</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2015-09-23</p>
+        <hr class="divider" />
+      </section>
+      <p>
+The other day I came across <a href="https://wiki.python.org/moin/PythonSpeed/PerformanceTips">an interesting article</a>, written by the creator of Python, Guido van Rossum. A friend had asked him what would be the best way to convert a list of integers (representing ASCII characters) into a string. In the article, Rossum analysed several different ways to tackle this simple problem. I learned several general tips to keep in mind for when speed and performance is important. This entry demonstrates what I learned from the article, and illustrates some test results as well.</p>
+<h2>
+One: Focus on bottlenecks.</h2>
+<p>
+Code optimization is fun and interesting. It can be tempting to nitpick every line of code in an effort to gain performance increases. It is important, however, to keep in mind that <em>real</em> performance improvement is found only at the bottlenecks. This is obviously not Python-specific. In real-world situations, your efficiency as a developer is often just as valuable as the efficient code that you produce. Only optimize code where a proven speed bottleneck exists. Doing so will save a lot of work and leave you free to tackle more problems. That being said, this tip is not an excuse to be lazy or to write poor code.</p>
+<h2>
+Two: Local variables are faster than globals.</h2>
+<p>
+In Python, function names are considered global constants. That means if you are going to use a built-in function inside a loop, for example, it’s possible to save some overhead by assigning it to a local variable before the loop. Rossum points out that local variables are faster than global variables. Here’s an example to demonstrate:</p>
+<pre><code class="python">def option1(l):
+    string = &quot;&quot;
+    _chr = chr
+    for i in l:
+        string = string + _chr(i)
+    return string
+
+def option2(l):
+    string = &quot;&quot;
+    for i in l:
+        string = string + chr(i)
+    return string</code></pre>
+<p>
+<code class="inline">Option1</code> stores the global built-in function <code class="inline">chr</code> in a local variable, which saves about one second of execution time. Below are the results of executing these pieces of code 100,000 times with a list of 1024 digits.</p>
+<p>
+<code class="inline">Option 1: 11.59 seconds</code>
+<code class="inline">Option 2: 12.74 seconds</code></p>
+<p>
+These results may not seem like much, but applied to some situations, the use of this simple optimization could help drastically improve performance.</p>
+<h2>
+Three: Use functions implemented in C when possible.</h2>
+<p>
+Rossum points out that you can’t really get any faster than C. Choose functions that are implemented in C whenever possible for massive speed-up’s. This means that it’s well worth your time to check the Python documentation for a built-in function that does what you want. Rossum demonstrated the use of a string concatenation function from the string module, which is written in C. I have written the example below to show just how much faster using C code can be.</p>
+<pre><code>import string
+
+def option4(l):
+    return string.joinfields(map(chr, l), &quot;&quot;)</code></pre>
+<p>
+Notice how the code executed around 4 seconds faster than the other two versions:</p>
+<p>
+<code class="inline">Option 1: 11.49 seconds</code>
+<code class="inline">Option 2: 12.64 seconds</code>
+<code class="inline">Option 4: 7.79 seconds</code></p>
+<p>
+What’s even more impressive is this one-line solution using the array module, which is also implemented in C. The array module is for handling sequences of fixed-type numerical data efficiently. A normal Python list is handy because it does not care what type of data you put inside of it, but it’s convenience comes at a performance cost. The Array module only lets you create a sequence of data that is all the same type, which saves lots of overhead and space. The following code completes execution in only 3.76 seconds:</p>
+<pre><code>import array
+
+def option5(l):
+    return array.array(&#39;B&#39;, l).tostring()</code></pre>
+<h2>
+Conclusion</h2>
+<p>
+It’s amazing how small details have potential to make a big impact on code performance. Taking the time to profile your code will reveal performance bottlenecks. It’s important to be aware of what’s going on behind the scenes in the code that you write.</p>
+<p>
+Here are the results of each function:</p>
+<p>
+<code class="inline">Option 1: 11.52 seconds</code>
+<code class="inline">Option 2: 12.65 seconds</code></p>
+<p>
+<code class="inline">Option 4: 7.79 seconds</code>
+<code class="inline">Option 5: 3.76 seconds</code></p>
+<p>
+Check out the article that I have been referencing for more tips and performance results. You can find a link in the introduction, or the URL in the references section below.</p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+          <p class="text-size-body">❤️&nbsp;Thanks for reading! Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">subscribing</a> to be notified when I publish more content.</p>
+          <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://twitter.com/denvaaar">Twitter</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a></p>
+          <p class="">© 2015 - 2022 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

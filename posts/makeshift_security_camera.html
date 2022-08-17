@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Makeshift Security Camera | Denver's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 pv2 md:pv3 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <img src="/Users/denvaar/Desktop/me.png" class="banner-img"/>
+          <p class="mv0 bold heading-size-sm md:heading-size-md md:ml1 align-self-end">
+          <a href="../index.html" class="phantom-a">Denver Smith</a>
+          </p>
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Makeshift Security Camera</h1>
+        <p class="heading-size-xsm">Fun project using the Raspberry Pi camera module to catch creeps, thieves, and what-have-you.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag blue-tag"># programming</span>
+          
+            <span class="tag orange-tag"># projects</span>
+          
+            <span class="tag green-tag"># python</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2017-07-17</p>
+        <hr class="divider" />
+      </section>
+      <h2>
+Dang Thieves</h2>
+<p>
+My wife and I got a little paranoid about thieves coming into our house. Determined to not spend money on a security camera, I set out to build my own working solution. The <a href="https://www.raspberrypi.org/">Raspberry Pi</a> was an obvious choice for this project. I had not done any video-related programming before, so this was a fun challenge. Here’s the requirements for my personal surveillance system:</p>
+<ul>
+  <li>
+Capture video using the Raspberry Pi’s camera module  </li>
+  <li>
+Motion detection!  </li>
+  <li>
+Stream the live video feed to a web page  </li>
+  <li>
+Basic controls to manually operate the system remotely from a web browser  </li>
+  <li>
+Send SMS text messages with a video attachment when motion is detected  </li>
+</ul>
+<p>
+These are pretty standard features for a security system, however, it was kind of a challenge to get it working as I wanted. As I began coding, I found that some of the features were easy to implement on their own, but trying to combine these features was a real challenge. I hope to share some of my solutions and things that I was able to learn. <a href="https://github.com/denvaar/creeper">Here’s a link to all of the source code on GitHub</a>.</p>
+<h2>
+Motion Detection</h2>
+<p>
+  <img src="../img/arm.png" alt="" />
+</p>
+<p>
+This is one of those projects that rely heavily on the awesome work that other people have already created. <a href="http://opencv.org/">OpenCV</a> is an open source computer vision library. I used the Python version to capture frames from the pi’s camera and to determine if something has moved. There’s a lot to how this algorithm works behind the scenes, but here are the basics:</p>
+<p>
+I have a <code class="inline">get_frame</code> method that is continuously called. Inside this method is where the processing happens. An image frame is read from the camera device:</p>
+<pre><code>_, image = self.video.read() # self.video is instance of cv2.VideoCapture(0)</code></pre>
+<p>
+With this image from the video device, I resize it and change the colorspace.</p>
+<pre><code class="python">frame = imutils.resize(image, width=500)
+gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)</code></pre>
+<p>
+At this point the frame looks like this:</p>
+<p>
+  <img src="../img/cv-image1.jpg" alt="" />
+</p>
+<p>
+Then a gaussian blur function is applied to the frame:</p>
+<pre><code class="python">gray = cv2.GaussianBlur(gray, (21, 21), 0)</code></pre>
+<p>
+  <img src="../img/cv-image2.jpg" alt="" />
+</p>
+<p>
+The idea is to compare the contours between two frames. I created an initial frame that is used to compare each new frame against using the <code class="inline">absdiff</code> function. It produces a scary ghost-like image that looks like this:</p>
+<pre><code class="python">frame_delta = cv2.absdiff(self.initial_frame, gray)</code></pre>
+<p>
+  <img src="../img/cv-image3.jpg" alt="" />
+</p>
+<p>
+These images are a result of combining the current frame with the initial frame. Finally, using more cv2 image manipulation functions, I end up with an image that looks like this, and represents a difference between the initial frame and the current frame from the camera:</p>
+<p>
+  <img src="../img/cv-image4.jpg" alt="" />
+</p>
+<p>
+I use this image with the <code class="inline">cv2.findContours</code> function to get the contours in the image. I picked the value 500 to use as an indicator that enough change has happened to alert the system that motion has been detected.</p>
+<pre><code class="python">(_, contours, _) = cv2.findContours(dilated_threshold.copy(),
+                                    cv2.RETR_EXTERNAL,
+                                    cv2.CHAIN_APPROX_SIMPLE)
+for contour in contours:
+    contour_area = cv2.contourArea(contour)
+    if contour_area &gt;= 500:
+        self.last_movement = current_time
+        self.movement_detected = True</code></pre>
+<p>
+I learned a lot about this method of detecting motion from the link at the bottom of the page. Check it out for more information.</p>
+<h2>
+Streaming Video to the Web</h2>
+<p>
+  <img src="../img/creeper.png" alt="" />
+</p>
+<p>
+I was so surprised at how difficult it is to stream video to a web page. I think this was the most challenging part of the project, but once I found a solution, everything started to fall into place.</p>
+<p>
+I decided to go with <a href="http://flask.pocoo.org/">Flask</a> as a web server because (a) I had never used it before, (b) It’s very lightweight and easy to set up, and (c) there were good examples online of how to do streaming.</p>
+<p>
+One challenge I ran into towards the end was that I realized my Flask server could only serve one client connection at a time when streaming video. I did some research and learned that you can use <a href="http://www.gevent.org/">gevent</a> to run the server in a way that allows multiple clients to connect asynchronously. To get this to work I had to modify my camera frame generator function to be threaded.</p>
+<pre><code class="python"># camera_streamer.py
+
+class CameraStream(object):
+    &quot;&quot;&quot;Stream image frames from a camera source&quot;&quot;&quot;
+    thread = None
+    stream = None
+    video_camera = None
+
+    def __init__(self, camera_source, *args, **kwargs):
+        if self.thread is None:
+            CameraStream.video_camera = camera_source
+            CameraStream.thread = Thread(target=self.generate)
+            CameraStream.thread.start()
+
+    def request_stream(self):
+        &quot;&quot;&quot;Return current frame from stream&quot;&quot;&quot;
+
+        return self.stream
+
+    @classmethod
+    def generate(cls):
+        &quot;&quot;&quot;Generate next frame from camera source continuously&quot;&quot;&quot;
+
+        while True:
+            cls.stream = cls.video_camera.get_frame()
+        cls.video_camera = None
+        cls.stream = None
+        cls.thread = None</code></pre>
+<p>
+As for the web interface, it’s nothing too crazy. An HTML <code class="inline">img</code> tag receives frame after frame of encoded JPEG data. In my application this works because Flask allows the usage of a generator function as a response. With the right headers and body you get a nice motion jpeg stream.</p>
+<pre><code class="python">def gen(stream_handle):
+    while True:
+        response = (
+            b&#39;--frame\r\n&#39;
+            b&#39;Content-Type: image/jpeg\r\n\r\n&#39; +
+            stream_handle.request_stream() +
+            b&#39;\r\n\r\n&#39;
+        )
+        yield response
+
+@app.route(&#39;/video_feed&#39;)
+def video_feed():
+    return Response(gen(streamer) or None,
+                    mimetype=&#39;multipart/x-mixed-replace; boundary=frame&#39;)</code></pre>
+<p>
+In the snippet above you can see the generator function that’s continuously yielding frames from the camera. The response is formatted with the correct headers and mimetype for the client(s).</p>
+<p>
+Here’s the relevant bit of code from <code class="inline">index.html</code></p>
+<pre><code>&lt;img src=&quot;{{ url_for(&#39;video_feed&#39;) }}&quot;&gt;</code></pre>
+<p>
+The record and reset buttons on the web interface are just async actions that trigger functions to manipulate the video camera.</p>
+<h2>
+SMS Text Notifications</h2>
+<img style="width:100%" src="../img/sms-example.jpg" />
+<p>
+To my delight, there’s such a thing as an “SMS gateway,” which makes sending text messages from a computer program easy. From what I understand, most carriers have an email address that you can send messages to. <code class="inline">1234567890@mms.att.net</code> for example. The carrier routes the message to the mobile phone number provided. If there’s an error sending the message, you receive an email instead.</p>
+<p>
+The main issue with sending text messages is the size of the attachment. If it’s too big (About 600KB if I am not mistaken) then the message won’t be delivered. With that limitation in mind, I set up ffmpeg to limit the video size to about 590KB, which is about 8 seconds. Notifications are sent either once the file size limit has been reached, or as soon as motion is no longer detected.</p>
+<p>
+There’s nothing else too intriguing about this part of the code, so I will just <a href="https://github.com/denvaar/creeper/blob/master/notifications.py">link to it here</a>.</p>
+<h2>
+Takeaways and Findings</h2>
+<p>
+I feel like each feature of this project was pretty simple to do. The real challenge was connecting the pieces to work together. Software that bridges the gap between what’s on our computer screens and what’s in our physical world is extra exiting to create. Receiving a text message after waving your hand in front of a camera is really cool.</p>
+<p>
+One thing I don’t like about this project, or that I would change in the future, is that it requires the web server to be on the same machine as the camera. This isn’t ideal because my Raspberry Pi isn’t the best web server. In the future, it would be cool to perhaps use ffmpeg to stream the frames from the camera to a remote server.</p>
+<p>
+One of the biggest sources of latency is the crappy wifi dongle I have on my pi. It causes the video to lag behind real-time. I don’t think there’s much I can do about it other than to use ethernet or buy a nicer wifi dongle.</p>
+<p>
+Finally, if I wanted to make this system more robust, I would add some authentication to the web interface. I wouldn’t want anyone just monitoring my camera. I just didn’t add this feature because it was beyond the scope of what I was trying to learn and accomplish.</p>
+<p>
+As I began to work on this project, I realized I would have to take advantage of concurrency using threads and processes to perform subtasks. By doing so, I was able to improve the performance as well as the overall quality of the security system. This project has sparked an interest in computer vision for me. I don’t know if my wife and I will catch any thieves, but they will not be able to take away the things I’ve learned from creating this makeshift security camera.</p>
+<img src="https://media.giphy.com/media/d3mlE7uhX8KFgEmY/source.gif" width="100%" />
+<p>
+I found these resources very helpful while working on this project:</p>
+<ul>
+  <li>
+<a href="https://blog.miguelgrinberg.com/post/video-streaming-with-flask/page/3">Miguel Grindberg’s article on video streaming with Flask</a>  </li>
+  <li>
+<a href="http://www.pyimagesearch.com/2015/05/25/basic-motion-detection-and-tracking-with-python-and-opencv/">Motion detection with OpenCV</a>  </li>
+</ul>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+          <p class="text-size-body">❤️&nbsp;Thanks for reading! Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">subscribing</a> to be notified when I publish more content.</p>
+          <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://twitter.com/denvaaar">Twitter</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a></p>
+          <p class="">© 2015 - 2022 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

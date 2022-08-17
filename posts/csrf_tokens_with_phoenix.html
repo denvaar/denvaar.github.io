@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Close Look at CSRF Tokens | Denver's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 pv2 md:pv3 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <img src="/Users/denvaar/Desktop/me.png" class="banner-img"/>
+          <p class="mv0 bold heading-size-sm md:heading-size-md md:ml1 align-self-end">
+          <a href="../index.html" class="phantom-a">Denver Smith</a>
+          </p>
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Close Look at CSRF Tokens</h1>
+        <p class="heading-size-xsm">Cross-site request foregery is one of many techniqu es an attacker might use to pwn a web application. In this article we take a close look at how exactly CSRF tokens work from the conte xt of the Phoenix Web Framework.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag blue-tag"># programming</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2020-02-19</p>
+        <hr class="divider" />
+      </section>
+      <p>
+I set out to understand how CSRF tokens are generated and validated. I did it by tracing the flow of function calls through a Phoenix web applciation. It was a process that led me down some deep rabbit holes, but ultimately was a rewarding experience. Readers who are less interested in the nitty gritty details of this article can skip to the <a href="#summary">summary section</a> toward the bottom for a TL;DR.</p>
+<p>
+This article details the life of a CSRF token. To begin the journey we will navigate to a page with an HTML form in the body - “/login”, for example. We’ll inspect the fields within the form to see that there’s a hidden <code class="inline">_csrf_token</code> field. It was put in the form automatically.</p>
+<p>
+  <img src="../img/csrf_form_example.png" alt="" />
+</p>
+<p>
+We can take a look at the source code for <a href="https://github.com/phoenixframework/phoenix_html/blob/d41e2f530560af0dbbbc0a2997cbc43b17e7d0c9/lib/phoenix_html/tag.ex#L197"><code class="inline">Phoenix.HTML.form_tag/3</code></a> to see where the magic happens. This is the part of the code that adds a hidden input field to store the token. It is added to the form when the method is “POST”.</p>
+<p>
+Following the code further, we see that <a href="https://github.com/elixir-plug/plug/blob/45a7bf1d4a4a642190aba5bd97c2f11820568fd9/lib/plug/csrf_protection.ex#L214"><code class="inline">Plug.CSRFProtection.get_csrf_token_for/1</code></a> is used to generate the token. Here’s an example of what that function call looks like from an IEx interactive console.</p>
+<pre><code class="elixir">iex(1)&gt; Plug.CSRFProtection.get_csrf_token_for(&quot;/login&quot;)
+&quot;IwAcHGAnampLJz0VOBo5WhIpKRU1BwU5AvQyMK_ZsfkVgLN-WfAxO4lP&quot;</code></pre>
+<p>
+Right now this just looks like a bunch of random characters (spoiler alert: it <em>sort of is</em> just a bunch of random characters). Let’s trace the code a little more to understand how it works, and why it looks like that.</p>
+<p>
+  <img src="../img/why.png" alt="" />
+</p>
+<p>
+It turns out that <code class="inline">get_csrf_token_for/1</code> does some branching and winds up calling <a href="https://github.com/elixir-plug/plug/blob/master/lib/plug/csrf_protection.ex#L210-L224"><code class="inline">Plug.CSRFProtection.get_csrf_token/0</code></a>. According to the docstring, its job is to generate a token and store it in the process dictionary (if the token does not already exist). A token is generated like this:</p>
+<pre><code class="elixir">token = mask(unmasked_csrf_token())</code></pre>
+<p>
+We will ignore the <code class="inline">mask</code> function for a moment, and skip passed a few intermediary function calls to look at <code class="inline">Plug.CSRFProtection.generate_token/0</code>, which is where we finally get down to brass tacks.</p>
+<pre><code class="elixir">defp generate_token do
+  Base.url_encode64(:crypto.strong_rand_bytes(@token_size))
+end</code></pre>
+<p>
+There’s a call to the Erlang function <code class="inline">:crypto.strong_rand_bytes/1</code>, which will generate N random bytes. We’re not going to go any deeper to find out how this function actually works. Random numbers could probably be another article in and of itself.</p>
+<p>
+The random bytes are then Base64 encoded. I already wrote <a href="base64_basics.html">an article about how Base64 works</a>, so we won’t dive into that either. Suffice to say, it makes sense to encode the random bytes into a format that can safely be transmitted using HTTP.</p>
+<p>
+We have now learned how the token is created: it’s a Base64-encoded random string of characters. However, the fun does not stop there, because this is just an “unmasked” token. The unmasked token was passed to another function, <code class="inline">Plug.CSRFProtection.mask/1</code>.</p>
+<pre><code class="elixir"># Plug.CSRFProtection
+
+defp mask(token) do
+  mask = generate_token()
+  Base.encode64(Plug.Crypto.mask(token, mask)) &lt;&gt; mask
+end</code></pre>
+<p>
+Wow, now this is getting interesting. We’re going to have to dive deeper into the <code class="inline">Plug.Crypto</code> module to understand what’s going on here. Let’s figure out:</p>
+<ul>
+  <li>
+  What does it mean to mask the token?  </li>
+  <li>
+  Why mask the token?  </li>
+</ul>
+<h2>
+What does it mean to mask the token?</h2>
+<p>
+To answer the first question, we will dive into the <code class="inline">Plug.Crypto</code> module and look at <code class="inline">mask/2</code>. We’ll return to <code class="inline">Plug.CSRFProtection.mask/1</code> in a moment.</p>
+<pre><code class="elixir">@doc &quot;&quot;&quot;
+Masks the token on the left with the token on the right.
+
+Both tokens are required to have the same size.
+&quot;&quot;&quot;
+@spec mask(binary(), binary()) :: binary()
+def mask(left, right) do
+  mask(left, right, &quot;&quot;)
+end
+
+defp mask(&lt;&lt;x, left::binary&gt;&gt;, &lt;&lt;y, right::binary&gt;&gt;, acc) do
+  mask(left, right, &lt;&lt;acc::binary, x ^^^ y&gt;&gt;)
+end
+
+defp mask(&lt;&lt;&gt;&gt;, &lt;&lt;&gt;&gt;, acc) do
+  acc
+end</code></pre>
+<p>
+Don’t let the recursion, binary pattern matching, and <code class="inline">^^^</code> macro scare you! <code class="inline">^^^</code> is the <a href="https://en.wikipedia.org/wiki/XOR_gate">XOR</a> operator from the Bitwise module. The <code class="inline">mask/2</code> function is recursively XORing each character from the token and the mask. There aren’t many business logic situations that call for XOR, so this is not something we get to use on a daily basis.</p>
+<p>
+Note: <code class="inline">mask/2</code> <a href="https://github.com/elixir-plug/plug_crypto/pull/8">recently changed</a> to just be <code class="inline">:crypto.exor(left, right)</code></p>
+<h2>
+How XOR works</h2>
+<p>
+Say we wanted to XOR “C” and “d” by hand. First, we find the ASCII values of the characters, so 67 and 100. Then we convert the ASCII values to binary, so <code class="inline">1000011</code> and <code class="inline">1100100</code>. Next, we line up the binary values so that it’s easy to compare each bit.</p>
+<p>
+The rules for XOR is that there must be one or the other but not both in order to produce a <code class="inline">1</code>. For example:</p>
+<ul>
+  <li>
+  0 and 0 is 0  </li>
+  <li>
+  1 and 1 is 0  </li>
+  <li>
+  1 and 0 is 1  </li>
+  <li>
+  0 and 1 is 1  </li>
+</ul>
+<pre><code class="bash">1000011  &lt;-- &quot;C&quot;
+1100100  &lt;-- &quot;d&quot;
+-------
+0100111  &lt;-- &quot;&#39;&quot; (XOR Result!)</code></pre>
+<p>
+Finally, we convert the result, <code class="inline">0100111</code>, back to a Base-10 number and then find the corresponding ASCII character. “‘“ is the result of “C” XOR “d”. With this knowledge, we can better understand what <code class="inline">Plug.Crypto.mask/2</code> is doing.</p>
+<p>
+Now we will return back to <code class="inline">Plug.CSRFPrevention</code>‘s version of <code class="inline">mask/1</code>.</p>
+<pre><code class="elixir"># Plug.CSRFProtection
+
+defp mask(token) do
+  mask = generate_token()
+  Base.encode64(Plug.Crypto.mask(token, mask)) &lt;&gt; mask
+end</code></pre>
+<p>
+The function takes a token, then generates a mask. It’s a bit confusing because the mask function itself also has a variable named <code class="inline">mask</code>. Notice that <code class="inline">mask</code> (the variable) is generated in the same way as the token was, so it can really just be thought of as a second token. The token and the mask variable are XORed together, and then Base64-encoded. Finally, the mask variable is also appended onto it all.</p>
+<p>
+We see that we end up with a long value like this:</p>
+<pre><code class="elixir">EghcMBsfIBcaXxAsYSIyUyUHWRAZC3gox16zOKlTprVe0ke6NE1uU97e</code></pre>
+<p>
+We now know <em>what</em> the mask is, but the question of <em>why is all this necessary?</em> still stands.</p>
+<h2>
+Why mask the token?</h2>
+<p>
+Let’s see if there’s any evidence about why this function exists, so We’ll open up a git blame view on GitHub.</p>
+<p>
+  <img src="../img/mask_blame.png" alt="" />
+</p>
+<p>
+Ah-ha! “Mask CSRF tokens to avoid breach attacks” - this is a useful commit message! With <a href="https://www.acunetix.com/blog/articles/breach-attack/">a bit of research</a> about what a breach attack is, we can learn that it’s basically when an attacker is able to send a bunch of requests, and incrementally figure out parts of the response body, even when the responses are encrypted.</p>
+<p>
+The attacker takes advantage of the fact that the responses use compression, and that the size of the compressed responses either grows or shrinks, depending on if one small guess of a character is correct or incorrect. In <a href="https://www.youtube.com/watch?v=CoNKarq1IYA">“SSL, gone in 30 seconds”</a>, the security researchers who discovered this vulnerability explain and demonstrate this attack in great detail.</p>
+<p>
+They have also released <a href="http://breachattack.com/resources/BREACH%20-%20SSL,%20gone%20in%2030%20seconds.pdf">a paper</a> which suggests attack mitigation options. This excerpt explains <code class="inline">Plug.CSRFProtection.mask/1</code>‘s algorithm.</p>
+<blockquote>
+  <p>
+The attack relies on the fact that the targeted secret remains the same between requests. While it is usually impractical to rotate secrets on each request, there is a method due to Tom Berson which can synthesize this effect. Instead of embedding a secret S in a page, on each request, generate a new onetime pad P, and embed <code class="inline">P || (P ⊕ S)</code> in the page. Here, we use <code class="inline">||</code> to denote concatenation, and <code class="inline">⊕</code> to denote XOR.  </p>
+</blockquote>
+<p>
+Masking the token helps prevent an attacker from incrementally guessing characters of a response body. That’s because even though the token may not change between requests, the mask will. Therefore, the token is represented differently every time in the response body. When we start looking at token validation, we will see that the XOR mask can be reversed to reveal the original token.</p>
+<p>
+We now know why the token is masked, as well as what it means to mask it. We also know how an unmasked token is created. However, it’s not enough to just insert a token into the HTML document. The same token is also placed in the user’s browser cookies.</p>
+<h2>
+Session cookies</h2>
+<p>
+If we have a look at the cookies in our browser, we’ll see <em>something</em>, but it obviously doesn’t match the token we looked at from the HTML form. That’s because Phoenix <a href="https://www.phoenixframework.org/blog/sessions">cryptographically signs cookies</a> so that they cannot be tampered with.</p>
+<p>
+Every Phoenix app has a <code class="inline">secret_key_base</code> value defined in <code class="inline">config/config.ex</code>, and this is what Phoenix uses as a signature. However, <code class="inline">secret_key_base</code> is supposed to be a secret value that nobody knows, so it’s not an option to use <code class="inline">secret_key_base</code> directly. Instead, Phoenix relies on the <code class="inline">Plug.Crypto.KeyGenerator</code> module. Here is an excerpt from the docs that summarizes the purpose of the <code class="inline">Plug.Crypto.KeyGenerator</code> module:</p>
+<blockquote>
+  <p>
+…This lets applications have a single secure secret, but avoid reusing that key in multiple incompatible contexts.  </p>
+</blockquote>
+<p>
+We will now take a look at how the application is able to protect the integrity and authenticity of the session cookie data, which includes the CSRF token.</p>
+<h2>
+Generating a session signing key</h2>
+<p>
+<em>How would it be possible to use the application’s secret key in potentially insecure places?</em> <a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto/key_generator.ex"><code class="inline">Plug.Crypto.KeyGenerator</code></a> accomplishes this by implementing an algorithm called Password-Based Key Derivation Function 2, or <a href="https://tools.ietf.org/html/rfc2898#section-5.2">PBKDF2</a>.</p>
+<p>
+It takes a salt and a secret as its inputs. Then it repeatedly applies a pseudo random function (PRF) to create a derived key. An important detail of PBKDF2 is that it allows the program to specify how many times the PRF will be applied. In other words, it allows the program to decide how long the algorithm should take. This helps make brute force attacks less feasible. <a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto/key_generator.ex#L34">The iteration count defaults to 1,000</a> - the recommended minimum.</p>
+<p>
+The PRF used here is HMAC-sha256. Coincidentally, HMAC is also used to sign and verify the session data as a whole, which we will go over in the next section.</p>
+<p>
+By logging the result of <a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto/key_generator.ex#L51-L53"><code class="inline">Plug.Crypto.KeyGenerator.generate/6</code></a> we can see that it a session signing key is only generated once. All subsequent requests use a cached value, which is stored in ETS. Here’s an example of what it looks like (the bitstring is the result, A.K.A. the derived session signing key):</p>
+<pre><code class="elixir">iex(2)&gt; :ets.lookup(Plug.Keys, {&quot;2/JWt8kJK5ybWYFPqXGDZj0o3LuKerv1CnG/F8LVbLi71hZTYllzKxP9HMpT+y0m&quot;, &quot;8yQvCfAG&quot;,
+...(2)&gt;  1000, 32, :sha256})
+[
+  {{&quot;2/JWt8kJK5ybWYFPqXGDZj0o3LuKerv1CnG/F8LVbLi71hZTYllzKxP9HMpT+y0m&quot;,
+    &quot;8yQvCfAG&quot;, 1000, 32, :sha256},
+   &lt;&lt;125, 248, 227, 17, 106, 91, 67, 35, 35, 99, 173, 58, 14, 29, 96, 107, 220,
+     193, 148, 164, 44, 239, 17, 58, 110, 9, 116, 230, 91, 9, 188, 88&gt;&gt;}
+]</code></pre>
+<p>
+Now that we can see how a session signing key is generated from the application’s <code class="inline">secret_key_base</code>, we can learn how it is used to actually sign things.</p>
+<h2>
+Return of the MAC</h2>
+<p>
+As was mentioned above, HMAC is not only used to generate a signing key, but also used in the process of signing the session cookie data. As we will see, the goal of signing the data is not to prevent it from being seen, but rather to verify the authenticity and integrity of the data.</p>
+<p>
+HMAC takes three inputs:</p>
+<ol>
+  <li>
+The message  </li>
+  <li>
+A secret key  </li>
+  <li>
+A hash function  </li>
+</ol>
+<p>
+The output of HMAC is a string of bytes that reflects the message and key which was provided as input to the function. The message is sent along side the HMAC. The idea is that the message cannot be changed because the HMAC would no longer match. The HMAC cannot be changed either, because the secret key is not known (dependent on the strength of the underlying hash function).</p>
+<p>
+A question we might consider is, <em>Why not just use a SHA hash function directly, or some other kind of “checksum” approach?</em> The answer is that HMAC is superior to sha-1, and sha-256 because it protects against <a href="https://crypto.stackexchange.com/questions/3978/understanding-the-length-extension-attack">length extension attacks</a>. Computerphile has a <a href="https://youtu.be/wlSG3pEiQdc">great video about HMAC</a>.</p>
+<p>
+In this example, the message is an Elixir map with the CSRF token. The key is the derived session signing key that we talked about above, and the underlying hash function is sha256.</p>
+<p>
+The function <a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto/message_verifier.ex#L46-L51"><code class="inline">hmac_sha2_sign/3</code></a> is called by <code class="inline">Plug.Crypto.MessageVerifier.sign/3</code>, and we can look at it to understand why the session cookie looks the way it does.</p>
+<pre><code class="elixir"># `payload` and `key` are binaries, digest_type is :sha256
+
+defp hmac_sha2_sign(payload, key, digest_type) do
+  protected = hmac_sha2_to_protected(digest_type)
+  plain_text = signing_input(protected, payload)
+  signature = :crypto.hmac(digest_type, key, plain_text)
+  encode_token(plain_text, signature)
+end</code></pre>
+<p>
+The result of this function will be what we can see in the browser as the value of the cookie:</p>
+<pre><code class="elixir">SFMyNTY.g3QAAAABbQAAAAtfY3NyZl90b2tlbm0AAAAYTEJGLWZrMnNFODFxU1hXVzh2eTEzTXpC._ujkmRgmetIDittd4rvJuNoEvHrIVG0d1-dmW7pQ7mw</code></pre>
+<p>
+Notice that this string of text can be split into three sections between the <code class="inline">&quot;.&quot;</code>‘s. The first section is the result of <code class="inline">hmac_sha2_to_protected(digest_type)</code>. It’s just a Base64-encoded rendition of the string, “HS256”.</p>
+<p>
+The second section is also encoded with Base64. It represents the message that is being signed and comes from <code class="inline">signing_input(protected, payload)</code>. We can have a look at it by decoding and then translating the binary to a term:</p>
+<pre><code class="elixir">&quot;g3QAAAABbQAAAAtfY3NyZl90b2tlbm0AAAAYTEJGLWZrMnNFODFxU1hXVzh2eTEzTXpC&quot;
+|&gt; Base.decode64!()
+|&gt; :erlang.binary_to_term()
+
+# Result: %{&quot;_csrf_token&quot; =&gt; &quot;LBF-fk2sE81qSXWW8vy13MzB&quot;}</code></pre>
+<p>
+The last section is the signature, which comes from <code class="inline">:crypto.hmac(digest_type, key, plain_text)</code>. As we can see from the function arguments, it takes a hash function (<code class="inline">digest_type</code>), a key, and then the message to secure. The signature is also Base64-encoded and <a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto/message_verifier.ex#L74">joined together with the message</a>.</p>
+<p>
+Now that we can see the token is securely stored in the cookie, along with the details behind how that gets created, the last thing to look at is how the data is verified.</p>
+<h2>
+Token Verification</h2>
+<p>
+We have seen that a token is placed in the HTML document, as well as in a cookie. The last thing to cover is how they are verified. In the code below, from the <a href="https://github.com/elixir-plug/plug/blob/master/lib/plug/csrf_protection.ex#L316"><code class="inline">Plug.CSRFProtection</code></a> module, we can start to follow the code to see how token verification happens.</p>
+<pre><code class="elixir">defp verified_request?(conn, csrf_token, allow_hosts) do
+  conn.method in @unprotected_methods ||
+    valid_csrf_token?(conn, csrf_token, conn.body_params[&quot;_csrf_token&quot;], allow_hosts) ||
+    valid_csrf_token?(conn, csrf_token, first_x_csrf_token(conn), allow_hosts) ||
+    skip_csrf_protection?(conn)
+end</code></pre>
+<p>
+<code class="inline">csrf_token</code> comes from the session, and it’s the unmasked version of the token:</p>
+<pre><code class="elixir"># example:
+&quot;zkvLryGmwmy_g3eJQ0kuyRIg&quot;</code></pre>
+<p>
+<code class="inline">conn.body_params[&quot;_csrf_token&quot;]</code> is the masked token from the HTML body:</p>
+<pre><code class="elixir"># example:
+&quot;SS0lL0YUAitPNB0bBH8cEAF/NBsICiwQ3FSc4mEF8YdDcLyZPO_nqXew&quot;</code></pre>
+<p>
+Both of these are sent to <a href="https://github.com/elixir-plug/plug/blob/master/lib/plug/csrf_protection.ex#L327"><code class="inline">valid_csrf_token?/4</code></a> and then to <a href="https://github.com/elixir-plug/plug/blob/master/lib/plug/csrf_protection.ex#L367"><code class="inline">valid_masked_token?/3</code></a>. The mask is <a href="https://github.com/elixir-plug/plug/blob/master/lib/plug/csrf_protection.ex#L330">pattern matched out of the tail end</a> of the token from the HTML body. <code class="inline">Plug.Crypto.masked_compare/3</code> is then able to compare that the tokens match.</p>
+<pre><code class="elixir">@doc &quot;&quot;&quot;
+Compares the two binaries (one being masked) in constant-time to avoid
+timing attacks.
+It is assumed the right token is masked according to the given mask.
+&quot;&quot;&quot;
+@spec masked_compare(binary(), binary(), binary()) :: boolean()
+def masked_compare(left, right, mask)
+    when is_binary(left) and is_binary(right) and is_binary(mask) do
+  byte_size(left) == byte_size(right) and masked_compare(left, right, mask, 0)
+end
+
+defp masked_compare(&lt;&lt;x, left::binary&gt;&gt;, &lt;&lt;y, right::binary&gt;&gt;, &lt;&lt;z, mask::binary&gt;&gt;, acc) do
+  xorred = x ^^^ (y ^^^ z)
+  masked_compare(left, right, mask, acc ||| xorred)
+end
+
+defp masked_compare(&lt;&lt;&gt;&gt;, &lt;&lt;&gt;&gt;, &lt;&lt;&gt;&gt;, acc) do
+  acc === 0
+end</code></pre>
+<p>
+If the tokens don’t match, then the user is met with an error message.</p>
+<p>
+  <img src="../img/csrf_error_message.png" alt="" />
+</p>
+<h2>
+Summary</h2>
+<p>
+To wrap things up let’s do a quick recap of the whole process of when a user visits a page that has a form with HTTP method “POST”. The order of events isn’t meant to be completely accurate - my goal here is to paint a generalized picture of what happens overall.</p>
+<p>
+Phoenix seems to use the <a href="https://en.wikipedia.org/wiki/Cross-site_request_forgery#Double_Submit_Cookie">“Double Submit Cookie”</a> approach when it comes to protecting from CSRF.</p>
+<ol>
+  <li>
+A <code class="inline">GET</code> request issued to “/login” route.  </li>
+  <li>
+HTML markup for the page is generated. <a href="https://github.com/phoenixframework/phoenix_html/blob/d41e2f530560af0dbbbc0a2997cbc43b17e7d0c9/lib/phoenix_html/tag.ex#L197"><code class="inline">Phoenix.HTML.form_tag</code></a> detects that the login form should include a CSRF token, since the form method is <code class="inline">POST</code>.  </li>
+  <li>
+<a href="https://github.com/elixir-plug/plug/blob/45a7bf1d4a4a642190aba5bd97c2f11820568fd9/lib/plug/csrf_protection.ex#L214"><code class="inline">Plug.CSRFProtection.get_csrf_token_for(&quot;/login&quot;)</code></a> is called, and it generates a masked CSRF token. The mask is the result of <a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto.ex#L103-L111">XORing the token and “random bytes” together</a>.  </li>
+  <li>
+The masked token is added as a hidden input field to the login form.  </li>
+  <li>
+The same token is <a href="https://github.com/elixir-plug/plug/blob/master/lib/plug/csrf_protection.ex#L210-L224">added to the process dictionary</a> if it does not already exist.  </li>
+  <li>
+The unmasked token is also <a href="https://github.com/elixir-plug/plug/blob/master/lib/plug/csrf_protection.ex#L404-L413">placed in the session cookies</a>.  </li>
+  <li>
+<a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto/key_generator.ex#L33">A key is derived</a> from the applications <code class="inline">secret_key_base</code> in order to cryptographically sign the data stored in the cookie. This is to prevent the data from being changed by someone other than the application itself. This is done with <a href="https://tools.ietf.org/html/rfc2898#section-5.2">PBKDF2</a>.  </li>
+  <li>
+The data in the cookie (i.e. the CSRF token) <a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto/message_verifier.ex#L89-L94">is Base64-encoded and joined together</a> with the output of <a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto/message_verifier.ex#L49">a HMAC-sha256 function</a>. This helps prevent the data from being tampered with.  </li>
+  <li>
+The application responds to the users browser with the HTML markup, which includes the injected CSRF token in the body of the form, and also uses the <code class="inline">set-cookie</code> response header to set a cookie on the users browser with the same (unmasked) token.  </li>
+</ol>
+<p>
+At this point the user can fill out the form and submit. This will trigger an HTTP POST request, and the tokens will be verified.</p>
+<ol>
+  <li>
+The session data <a href="https://github.com/elixir-plug/plug/blob/master/lib/plug/session/cookie.ex#L96">is verified</a> to ensure it has not been modified. If successful, the unmasked CSRF token <a href="https://github.com/elixir-plug/plug/blob/master/lib/plug/session/cookie.ex#L141">is revealed/returned</a>.  </li>
+  <li>
+The masked token from the HTML body, along with the unmasked token from the session <a href="https://github.com/elixir-plug/plug_crypto/blob/master/lib/plug/crypto.ex#L113-L128">are compared</a>. The correct <a href="https://github.com/elixir-plug/plug/blob/master/lib/plug/csrf_protection.ex#L330">mask is retrievable</a> from the token in the HTML body. The comparison happens in a way that prevents timing attacks.  </li>
+  <li>
+If the tokens match, then there’s not a problem. An error occurs if the tokens do not match.  </li>
+</ol>
+<h2>
+Final thoughts</h2>
+<p>
+That’s about it! As we have seen, there’s a lot of fancy stuff going on as part of this process, and its pretty amazing to try and understand how it all fits together.</p>
+<p>
+It’s this kind of stuff that makes me really appreciate all of the work that people are doing to both make and break software. I think it’s a good practice to take a close look at the technologies, libraries, and frameworks that we use once in a while. It’s a blessing that we don’t have to totally understand all the details in order to create and be productive, but there is definitely value in doing so from time to time.</p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+          <p class="text-size-body">❤️&nbsp;Thanks for reading! Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">subscribing</a> to be notified when I publish more content.</p>
+          <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://twitter.com/denvaaar">Twitter</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a></p>
+          <p class="">© 2015 - 2022 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Open Financial Exchange (OFX) | Denver's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 pv2 md:pv3 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <img src="/Users/denvaar/Desktop/me.png" class="banner-img"/>
+          <p class="mv0 bold heading-size-sm md:heading-size-md md:ml1 align-self-end">
+          <a href="../index.html" class="phantom-a">Denver Smith</a>
+          </p>
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Open Financial Exchange (OFX)</h1>
+        <p class="heading-size-xsm">Some information about using OFX for obtaining fina ncial data.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag blue-tag"># programming</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2017-01-09</p>
+        <hr class="divider" />
+      </section>
+      <h2>
+An Open Standard for Exchanging Financial Data</h2>
+<p>
+One side project that I have had in mind for a few months is an app to help manage my finances. There are already plenty of applications out there to get the job done - I just want to make my own because it sounds like a fun project.</p>
+<p>
+As I began exploring the challenge of how to monitor my bank accounts and pull in things like transaction data, I felt like I hit a road block because I could not find a way to obtain the information without having to pay companies like <a href="https://www.yodlee.com/solutions/industry-solutions/personal-financial-management/">Yodlee</a>, <a href="https://www.mx.com/">MX</a>, and <a href="https://plaid.com/">Plaid</a> to use their services and API’s.</p>
+<p>
+I recently discovered <a href="http://www.ofx.net/about-ofx.html">Open Financial Exchange (OFX)</a>, which is an open standard for exchanging financial data. Though it’s been around since 1997 and is being used by over 7,000 financial institutions, it seems like a somewhat underground and sparsely documented way of interacting with your financial data. From my experience with OFX so far, it’s not the sort of thing you can just Google what you want to know. So, I hope to share some useful information about what I have learned.</p>
+<h2>
+Understand These Basics First</h2>
+<p>
+The best documentation that I have found about OFX is the official specification PDF document (found <a href="http://www.ofx.org/downloads/OFX%202.2.pdf">here</a>.) It’s like 691 pages long and is quite dense, but provides lots of essential information. Pretty much all of what I will be writing here comes from the OFX spec. document.</p>
+<h3>
+1. Versions</h3>
+<p>
+One of the first things to realize is that there are several different versions of the OFX standard. <strong>I will be talking about Version 2.0+ throughout this post</strong>. One great advantage that 2.0 changes about the standard is XML compliance.</p>
+<p>
+Before 2.0, the data was not quite XML, making it more difficult to consume. With XML compliant responses from servers, it’s very easy to use a package or library from your favorite language to consume the data.</p>
+<h3>
+2. Structure and File Format</h3>
+<p>
+The documentation reads that a financial institution’s OFX server may return any standard HTTP response. As for the clients, they should expect to handle HTTP 200, HTTP 400’s, and HTTP 500’s.</p>
+<p>
+The content type of an HTTP request to an OFX server should be <code class="inline">application/x-ofx</code> and content-length should also be included.</p>
+<p>
+The body of an OFX request starts with a normal XML declaration, followed by the OFX declaration.</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;?OFX OFXHEADER=&quot;200&quot; VERSION=&quot;211&quot; SECURITY=&quot;NONE&quot; OLDFILEUID=&quot;NONE&quot; NEWFILEUID=&quot;NONE&quot;?&gt;</code></pre>
+<p>
+These attributes should always be present in the OFX declaration (use <code class="inline">&quot;NONE&quot;</code> if the attribute is not needed.)</p>
+<ul>
+  <li>
+OFXHEADER <code class="inline">- Version number of the OFX declaration.</code>  </li>
+  <li>
+VERSION <code class="inline">- Version number of the OFX data block to come.</code>  </li>
+  <li>
+SECURITY <code class="inline">- The type of application-level security.</code>  </li>
+  <li>
+OLDFILEUID <code class="inline">- Unique identifier of the request file.</code>  </li>
+  <li>
+NEWFILEUID <code class="inline">- Unique identifier of the request file.</code>  </li>
+</ul>
+<p>
+For the body of the OFX request, here’s a quick explanation of some of the tags. One thing to understand about OFX is that everything is either an <em>aggregate</em> or an <em>element</em>. Aggregate tags contain one or more element tags. An element tag contains data.</p>
+<p>
+Here’s an example of what requesting some credit card transactions might look like:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;?OFX OFXHEADER=&quot;200&quot; VERSION=&quot;200&quot; SECURITY=&quot;NONE&quot; OLDFILEUID=&quot;NONE&quot; NEWFILEUID=&quot;NONE&quot;?&gt;
+&lt;OFX&gt;
+    &lt;SIGNONMSGSRQV1&gt;
+        &lt;SONRQ&gt;
+            &lt;DTCLIENT&gt;20170101&lt;/DTCLIENT&gt;
+            &lt;USERID&gt;mybankingid&lt;/USERID&gt;
+            &lt;USERPASS&gt;mypassword&lt;/USERPASS&gt;
+            &lt;LANGUAGE&gt;ENG&lt;/LANGUAGE&gt;
+            &lt;FI&gt;
+                &lt;ORG&gt;Banking Organization&lt;/ORG&gt;
+                &lt;FID&gt;1111&lt;/FID&gt;
+            &lt;/FI&gt;
+            &lt;APPID&gt;QWIN&lt;/APPID&gt;
+            &lt;APPVER&gt;2300&lt;/APPVER&gt;
+        &lt;/SONRQ&gt;
+    &lt;/SIGNONMSGSRQV1&gt;
+    &lt;CREDITCARDMSGSRQV1&gt;
+        &lt;CCSTMTTRNRQ&gt;
+            &lt;TRNUID&gt;fae1f4e9-8012-4441-a681-eb36a357f5a5&lt;/TRNUID&gt;
+            &lt;CLTCOOKIE&gt;4&lt;/CLTCOOKIE&gt;
+            &lt;CCSTMTRQ&gt;
+                &lt;CCACCTFROM&gt;
+                    &lt;ACCTID&gt;1111222233334444&lt;/ACCTID&gt;
+                &lt;/CCACCTFROM&gt;
+                &lt;INCTRAN&gt;
+                    &lt;DTSTART&gt;20161228&lt;/DTSTART&gt;
+                    &lt;INCLUDE&gt;Y&lt;/INCLUDE&gt;
+                &lt;/INCTRAN&gt;
+            &lt;/CCSTMTRQ&gt;
+        &lt;/CCSTMTTRNRQ&gt;
+    &lt;/CREDITCARDMSGSRQV1&gt;
+&lt;/OFX&gt;</code></pre>
+<ul>
+  <li>
+<code class="inline">APPID</code> - An id of the client application. This is usually a short string of characters and is kind of interesting. Most apps will just use the app id of Quickbooks, or Quicken (<code class="inline">QWIN</code> – I’m not sure which one that is for.) This is called <em>ghosting</em>… I am not sure how one obtains their very own <code class="inline">APPID</code>.  </li>
+  <li>
+<code class="inline">APPVER</code> - The version of the client application.  </li>
+  <li>
+<code class="inline">FI</code> - This is an aggregate that contains details about the financial institution you’re trying to talk to. <code class="inline">ORG</code> and <code class="inline">FID</code> elements are included in this. You can find these details <a href="http://www.ofxhome.com/index.php/home/directory">here</a>.  </li>
+  <li>
+<code class="inline">TRNUID</code> - A unique value set by the client that can be used to differentiate responses from the server. The server will send requests with the same value.  </li>
+  <li>
+<code class="inline">ACCTID</code> - The account number.  </li>
+  <li>
+<code class="inline">CCACCTFROM</code> - Aggregate used to identify credit card accounts.  </li>
+  <li>
+<code class="inline">INCLUDE</code> - This is a boolean (<code class="inline">&quot;Y&quot;</code> or <code class="inline">&quot;N&quot;</code>) data element tag that indicates whether to include transactions in the statement download when part of the <code class="inline">INCTRAN</code> aggregate tag. There are other aggregates that <code class="inline">INCLUDE</code> can be part of, so it’s meaning changes based on which aggregate it’s under. You can look at the OFX spec. document to see other examples.  </li>
+  <li>
+<code class="inline">DTSTART</code> - The starting date of request, formatted like this:
+<code class="inline">datetime.now().strftime(&#39;%Y%m%d%H%m%S&#39;)</code>  </li>
+</ul>
+<p>
+There is much more you can do with OFX. I plan on posting more information soon.</p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+          <p class="text-size-body">❤️&nbsp;Thanks for reading! Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">subscribing</a> to be notified when I publish more content.</p>
+          <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://twitter.com/denvaaar">Twitter</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a></p>
+          <p class="">© 2015 - 2022 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>
