@@ -171,6 +171,16 @@ p img {
   color: #ffffff;
 }
 
+.turquoise-tag{
+  background: #17938d;
+  color: #ffffff;
+}
+
+.black-tag{
+  background: #000000;
+  color: #ffffff;
+}
+
 .min-h-vh70 {
   min-height: 70vh;
 }
