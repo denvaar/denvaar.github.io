@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Gathering Time Series Data | Denver's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 md:pv1 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <p class="mv0 bold align-self-end">
+            <a href="../index.html" class="phantom-a">denvaar (writes here)</a>
+          </p> 
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Gathering Time Series Data</h1>
+        <p class="heading-size-xsm">A brief description of an efficient solution to gat her new time series data.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag blue-tag"># programming</span>
+          
+            <span class="tag orange-tag"># projects</span>
+          
+            <span class="tag green-tag"># python</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2015-10-23</p>
+        <hr class="divider" />
+      </section>
+      <h2>
+Introduction</h2>
+<p>
+I have been working on an application that gathers time series data from sensors, located at sites throughout the valley. The application is one piece of a larger system of software (<a href="https://github.com/ODM2">ODM2</a>). Since the data is in <em>almost</em> real time, it’s valuable for many reasons. For instance, it can be used to create forecasting and flood risk models. The data is also used to determine things like, “The water just increased by a foot – here comes a flood wave,” or, “Looks like we had more rainfall one year ago than we do today.”</p>
+<p>
+Here is the context for this particular situation:</p>
+<ul>
+  <li>
+A text file on a web server is updated periodically with streaming time series data.  </li>
+  <li>
+An application periodically connects to the web server to read the file.  </li>
+  <li>
+The time series data is mapped to tables in a relational database for storage and future analysis.  </li>
+</ul>
+<h2>
+Challenges</h2>
+<p>
+The main problem is that the speed of the application is negatively affected as the data file grows larger. It is inefficient to read the entire data file each time, because new data is constantly appended to it. Optimizing the speed of the application is one of the problems to solve.</p>
+<h2>
+Solution</h2>
+<p>
+One way to dramatically improve the speed of the application is to keep a record of the last known byte that was read from the data file. Each time the application reads the data file, it will first check inside of a configuration file to see what the last byte read was. If the file is opened in binary mode, it’s easy to skip, or <code class="inline">seek</code> to that byte number and begin reading from there. After a successful file read, the last byte is logged in the configuration file.</p>
+<p>
+This method works great for local files that exist on the file system. Before this same method will work for remote files, there are a couple extra steps to take. First, check what the path looks like. If the path begins with <code class="inline">http://</code> then it is obviously a web address. Next, simply read the entire data file. Python has a great <a href="https://docs.python.org/2/library/urllib2.html">module</a> that makes this an easy two-line process. Store the data in a temporary file on the file system. <a href="https://pymotw.com/2/tempfile/">Tempfile</a> works great for this. Reading/writing the entire data file may seem like a bottleneck, but it ends up not making much of a difference. The temporary file is deleted as soon as the application is done using it.</p>
+<p>
+With the data on the web now temporarily stored in a local file, the same method mentioned above can now be applied. By reading only the new data in a file, the application’s efficiency is now only closely related to how much new data has been uploaded since the last read.</p>
+<h2>
+Algorithm and Python Implementation</h2>
+<p>
+Here is a sample Python function that will read a file – either local, or remote – and return the newest data.</p>
+<p>
+<em>Note: This function could be refactored and divided into several smaller functions that each perform one specific part of the process.</em></p>
+<pre><code>import pandas as pd
+import logging
+from StringIO import StringIO
+import tempfile
+import os
+import urllib2
+
+def byteReader(filepath, start_byte, datecol, header=0, sep=None, dataBegin=0):
+    try:
+        if filepath.startswith(&#39;http://&#39;):
+            response = urllib2.urlopen(filepath)
+            data = response.read()
+            temp = tempfile.NamedTemporaryFile()
+            try:
+                temp.write(data)
+                temp.seek(0)
+            finally:
+                df = byteReader(temp.name, start_byte, datecol, header, sep, dataBegin)
+                temp.close()
+                return df
+    except AttributeError:
+        logger.error(&quot;Could not read data file!&quot;)
+    df = pd.DataFrame
+    # Check if the data has been modified.
+    if int(os.path.getsize(filepath)) &lt; start_byte:
+        logger.info(&#39;Previous data has been modified.&#39;)
+        start_byte = 0
+    try:
+        with open(filepath, &#39;rb&#39;) as f:
+            logger.info(&#39;Reading from byte %d.&#39; % start_byte)
+            # If we are going to skip to the new location, we need
+            # to make sure and grab the headers for Pandas.
+            if start_byte &gt; 0:
+                header_names = &#39;&#39;
+                for i in range(header):
+                    header_names = f.next()
+                f.seek(int(start_byte))
+                new_data = f.read()
+                finished_data = header_names + new_data
+                if new_data:
+                    logger.info(&#39;New Data.&#39;)
+                    logger.debug(finished_data)
+                else:
+                    logger.info(&#39;No new data.&#39;)
+                df = pd.read_csv(StringIO(finished_data),
+                                    sep=str(sep),
+                                    engine=&#39;python&#39;)
+                df.set_index(datecol, inplace=True)
+            else:
+                # Just begin at the start of the file.
+                f.seek(0)
+                finished_data = f.read()
+                logger.info(&#39;New data.&#39;)
+                logger.debug(finished_data)
+                df = pd.read_csv(StringIO(finished_data),
+                                    header=(header - 1),
+                                    sep=str(sep),
+                                    engine=&#39;python&#39;)
+                df = df.ix[(dataBegin - header) - 1:]
+                df.set_index(datecol, inplace=True)
+    except IOError as e:
+        logger.error(&#39;Skipping &quot;%s&quot; because of %s&#39; % (filepath, e))
+    except Exception as e2:
+        logger.error(&#39;Exception: %s&#39; % e2.message)
+    return df</code></pre>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+          <p class="text-size-body">❤️&nbsp;Thanks for visiting! Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">subscribing</a> to be notified when I publish more content.</p>
+          <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a></p>
+          <p class="">© 2015 - 2023 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

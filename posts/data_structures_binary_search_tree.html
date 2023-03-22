@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Binary Search Tree | Denver's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 md:pv1 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <p class="mv0 bold align-self-end">
+            <a href="../index.html" class="phantom-a">denvaar (writes here)</a>
+          </p> 
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Binary Search Tree</h1>
+        <p class="heading-size-xsm">Review of the basic data structure Binary Search Tr ee (BST)</p>
+        <div>
+          
+          
+
+          
+            <span class="tag blue-tag"># programming</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2017-02-14</p>
+        <hr class="divider" />
+      </section>
+      <h2>
+Overview</h2>
+<p>
+Binary Search Tree is a recursive data structure that is useful for quick searching, insertion, and deletion. It averages a time complexity of <code class="inline">log(n)</code> for these operations. Here is how it compares to some other basic data structures:</p>
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left;">
+Operation      </th>
+      <th style="text-align: left;">
+Array      </th>
+      <th style="text-align: left;">
+Linked List      </th>
+      <th style="text-align: left;">
+Array (sorted)      </th>
+      <th style="text-align: left;">
+BST      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left;">
+search      </td>
+      <td style="text-align: left;">
+<code class="inline">O(n)</code>      </td>
+      <td style="text-align: left;">
+<code class="inline">O(n)</code>      </td>
+      <td style="text-align: left;">
+<code class="inline">O(log n)</code>      </td>
+      <td style="text-align: left;">
+<code class="inline">O(log n)</code>      </td>
+    </tr>
+    <tr>
+      <td style="text-align: left;">
+insert      </td>
+      <td style="text-align: left;">
+<code class="inline">O(1)</code>      </td>
+      <td style="text-align: left;">
+<code class="inline">O(1)</code>      </td>
+      <td style="text-align: left;">
+<code class="inline">O(n)</code>      </td>
+      <td style="text-align: left;">
+<code class="inline">O(log n)</code>      </td>
+    </tr>
+    <tr>
+      <td style="text-align: left;">
+remove      </td>
+      <td style="text-align: left;">
+<code class="inline">O(n)</code>      </td>
+      <td style="text-align: left;">
+<code class="inline">O(n)</code>      </td>
+      <td style="text-align: left;">
+<code class="inline">O(n)</code>      </td>
+      <td style="text-align: left;">
+<code class="inline">O(log n)</code>      </td>
+    </tr>
+  </tbody>
+</table>
+<p>
+In this post, I will go over these three basic operations.</p>
+<h2>
+Properties</h2>
+<ul>
+  <li>
+Each node stores some kind of value (number, string, ect.) and also links to its left and right child nodes (also known as subtrees.)  </li>
+  <li>
+For each node, <code class="inline">n</code> in the tree, all of the values of its left subtree must be less than (or equal to) <code class="inline">n</code>‘s value.  </li>
+  <li>
+For each node, <code class="inline">n</code> in the tree, all ofthe values of its right subtree must be greater than <code class="inline">n</code>‘s value.  </li>
+</ul>
+<p>
+A node can be implemented like this:</p>
+<pre><code class="C">
+/* C++ Binary Search Tree node */
+struct Node {
+    int value;
+    Node *left;
+    Node *right;
+}</code></pre>
+<h2>
+Search</h2>
+<p>
+To check if a value exists within a binary search tree, you can make use of the fact that for any node, it’s left subtree has values less than (or equal to) the node. Same idea for the right subtree – it only contains values greater than node’s value. Because of this property, searching can be done in a fraction of the time of an array or linked list as long as the tree is balanced. In fact, the number of nodes to search is cut in half for each comparison. Searching can be implemented as follows:</p>
+<pre><code class="C">
+/* C++ recursive search */
+Node* SearchRecursive(Node* root, int value) {
+   if (root) {
+       if (root-&gt;value == value) return root;
+       else if (value &lt;= root-&gt;value) return SearchRecursive(root-&gt;left, value);
+       else return SearchRecursive(root-&gt;right, value);
+   }
+   return NULL;
+}</code></pre>
+<p>
+And if you prefer to avoid recursion:</p>
+<pre><code class="C">
+/* C++ iterative search */
+Node* SearchIterative(Node* root, int value) {
+    if (root) {
+        vector&lt;Node*&gt; to_visit;
+        to_visit.push_back(root);
+        while (to_visit.size() &gt; 0) {
+            Node* next = to_visit.back();
+            to_visit.pop_back();
+
+            if (next-&gt;value == value) return next;
+            else if (next-&gt;left &amp;&amp; value &lt;= next-&gt;value) to_visit.push_back(next-&gt;left);
+            else if (next-&gt;right &amp;&amp; value &gt; next-&gt;value) to_visit.push_back(next-&gt;right);
+        }
+    }
+    return NULL;
+}</code></pre>
+<h2>
+Insert</h2>
+<p>
+When inserting a new value into a binary search tree, the basic idea is as follows: Start at the root of the tree. If the root does not exist then create it, and insert the new value. If the root does exist, check if the value being inserted is either less than (or equal to) or greater than the left and right nodes, respectively. Continue down the tree, and the value will be inserted as a new node at the correct spot.</p>
+<pre><code class="C">
+/* C++ recursive insert implementation */
+Node* Insert(Node *root, int value) {
+    if (!root) {
+        root = new Node();
+        root-&gt;value = value;
+    }
+    else if (value &lt;= root-&gt;value) root-&gt;left = Insert(root-&gt;left, value);
+    else root-&gt;right = Insert(root-right, value);
+    return root;
+}
+</code></pre>
+<p>
+The same can be done iteratively:</p>
+<pre><code class="C">
+/* C++ iterative insert implementation */
+Node *Insert(Node *root, int value) {
+    if (!root) {
+        root = new Node();
+        root-&gt;value = value;
+        return root;
+    }
+
+    vector&lt;Node*&gt; to_visit;
+    to_visit.push_back(root);
+    Node *next = root;
+
+    while (to_visit.size() &gt; 0) {
+        next = to_visit.back();
+        to_visit.pop_back();
+
+        if (value &lt;= next-&gt;value) {
+            if (next-&gt;left) to_visit.push_back(next-&gt;left);
+            else {
+                next-&gt;left = new Node();
+                next-&gt;left-&gt;value = value;
+            }
+        }
+        else {
+            if (next-&gt;right) to_visit.push_back(next-&gt;right);
+            else {
+                next-&gt;right = new Node();
+                next-&gt;right-&gt;value = value;
+            }
+        }
+    }
+
+    return root;
+}</code></pre>
+<h2>
+Remove</h2>
+<p>
+Another common operation is removal of items. This is also an efficient operation due to the properties of a binary search tree.</p>
+<p>
+Before removing an element, it must first be found. This is done the same way as implemented above. Once the element is found, there are a couple different scenarios that can happen when removing it.</p>
+<ol>
+  <li>
+It’s simple to remove a leaf node from the tree because there are no subtrees to worry about.  </li>
+  <li>
+It’s also simple to remove a node that has only one subtree, because we can just move the pointer from the parent down to the root of the subtree.  </li>
+  <li>
+It’s a little more tricky to remove an element that has two subtrees because the properties of a BST can become messed up if it’s not done right. To ensure that the BST remains valid, either use the minimum value from the right subtree of the node to be removed, or the maximum value in the left subtree of the node to be removed.  </li>
+</ol>
+<pre><code class="C">
+/* recursive removal */
+Node* Remove(Node* root, int value) {
+    // step 1: find the element to be removed
+    if (root) {
+        if (value &lt; root-&gt;value) root-&gt;left = Remove(root-&gt;left, value);
+        else if (value &gt; root-&gt;value) root-&gt;right = Remove(root-&gt;right, value);
+        else {
+            // here we found the element to remove.
+
+            // Easy case - element is a leaf node.
+            if (!root-&gt;left &amp;&amp; !root-&gt;right) {
+                delete root;
+                root = NULL;
+            }
+
+            // Easy case - element to delete has a subtree on the right.
+            else if (!root-&gt;left) {
+                Node* temp = root;
+                root = root-&gt;right;
+                delete temp;
+            }
+
+            // Easy case - element to delete has a subtree on the left.
+            else if (!root-&gt;right) {
+                Node* temp = root;
+                root = root-&gt;left;
+                delete temp;
+            }
+
+            // Tricky case - element to delete has two subtrees.
+            else {
+                /* Find either the minimum element in the right subtree
+                   or the maximum element in the left subtree. */
+                Node* min = MinNode(root-&gt;right);
+                root-&gt;value = min-&gt;value;
+                // The problem has now been reduced to an easy case.
+                root-&gt;right = Remove(root-&gt;right, min-&gt;value);
+            }
+        }
+    }
+    return root;
+}</code></pre>
+<p>
+In the tricky case and after the minimum element is found, it is copied into the node that’s being removed, and then the problem is reduced down to one of the simpler cases.</p>
+<hr class="thin" />
+<p>
+I’ve gone over search, insert, and delete operations for a binary search tree. Code from this post can be found <a href="https://gist.github.com/denvaar/62ac0e5636b54f76687cd48be9a86e8e">here</a>. There are many more operations and things to learn about this data structure, but I don’t want this post to get too lengthy. Have a look at my <a href="./binary_tree_traversal.html">other article</a>, in which I go over traversal.</p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+          <p class="text-size-body">❤️&nbsp;Thanks for visiting! Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">subscribing</a> to be notified when I publish more content.</p>
+          <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a></p>
+          <p class="">© 2015 - 2023 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

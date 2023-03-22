@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Strategy Design Pattern | Denver's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 md:pv1 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <p class="mv0 bold align-self-end">
+            <a href="../index.html" class="phantom-a">denvaar (writes here)</a>
+          </p> 
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Strategy Design Pattern</h1>
+        <p class="heading-size-xsm">Quick example of the Strategy pattern in Python.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag blue-tag"># programming</span>
+          
+            <span class="tag green-tag"># python</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2015-11-10</p>
+        <hr class="divider" />
+      </section>
+      <p>
+This design pattern is called Strategy Pattern.
+It is used to define a family of algorithms, encapsulates each
+one, and make them interchangeable. Strategy
+design pattern lets an algorithm vary independently
+from clients that use it.</p>
+<h2>
+Code Example</h2>
+<p>
+For example, animals can “walk” in many different ways. Walking could be considered a strategy that is implemented by different types of animals:</p>
+<pre><code class="python">from types import MethodType
+
+
+class Animal(object):
+
+    def __init__(self, *args, **kwargs):
+        self.name = kwargs.pop(&#39;name&#39;, None) or &#39;Animal&#39;
+        if kwargs.get(&#39;walk&#39;, None):
+            self.walk = MethodType(kwargs.pop(&#39;walk&#39;), self)
+
+    def walk(self):
+        &quot;&quot;&quot;
+        Cause animal instance to walk
+
+        Walking funcionallity is a strategy, and is intended to
+        be implemented separately by different types of animals.
+        &quot;&quot;&quot;
+        message = &#39;{} should implement a walk method&#39;.format(
+            self.__class__.__name__)
+        raise NotImplementedError(message)
+
+
+# Here are some different walking algorithms that can be used with Animal
+def snake_walk(self):
+    print(&#39;I am slithering side to side because I am a {}.&#39;.format(self.name))
+
+def four_legged_animal_walk(self):
+    print(&#39;I am using all four of my legs to walk because I am a(n) {}.&#39;.format(
+        self.name))
+
+def two_legged_animal_walk(self):
+    print(&#39;I am standing up on my two legs to walk because I am a {}.&#39;.format(
+        self.name))</code></pre>
+<p>
+Running this example would produce the following output:</p>
+<pre><code class="python">generic_animal = Animal()
+king_cobra = Animal(name=&#39;King Cobra&#39;, walk=snake_walk)
+elephant = Animal(name=&#39;Elephant&#39;, walk=four_legged_animal_walk)
+kangaroo = Animal(name=&#39;Kangaroo&#39;, walk=two_legged_animal_walk)
+
+kangaroo.walk()
+elephant.walk()
+king_cobra.walk()
+# This one will Raise a NotImplementedError to let the programmer
+# know that the walk method is intended to be used as a strategy.
+generic_animal.walk()
+
+# OUTPUT:
+#
+# I am standing up on my two legs to walk because I am a Kangaroo.
+# I am using all four of my legs to walk because I am a(n) Elephant.
+# I am slithering side to side because I am a King Cobra.
+# Traceback (most recent call last):
+#   File &quot;./strategy.py&quot;, line 56, in &lt;
+#     generic_animal.walk()
+#   File &quot;./strategy.py&quot;, line 30, in walk
+#     raise NotImplementedError(message)
+# NotImplementedError: Animal should implement a walk method</code></pre>
+<h2>
+Python-specific Details</h2>
+<p>
+Note that in languages like C++ or Java, this pattern is implemented using an abstract class or an interface to define a a strategy. In Python it makes more sense to just define some functions externally that can be added dynamically to a class using <code class="inline">types.MethodType</code>.</p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+          <p class="text-size-body">❤️&nbsp;Thanks for visiting! Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">subscribing</a> to be notified when I publish more content.</p>
+          <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a></p>
+          <p class="">© 2015 - 2023 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>How to Review Code Well | Denver's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 md:pv1 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <p class="mv0 bold align-self-end">
+            <a href="../index.html" class="phantom-a">denvaar (writes here)</a>
+          </p> 
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">How to Review Code Well</h1>
+        <p class="heading-size-xsm">Plain and simple things for team members to follow when reviewing each other's code.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag blue-tag"># programming</span>
+          
+            <span class="tag gray-tag"># soft-skills</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2021-08-29</p>
+        <hr class="divider" />
+      </section>
+      <p>
+Reviewing code is not usually a difficult task, but it does take time and effort. You will need to use your “soft skills” as well as your technical expertise to do a good job. Though there is plenty that authors can do to help code review go smoothly, these tips are specifically for the reviewers.</p>
+<p>
+Most of these tips are really basic, but often forsaken. Simple things can go a long way…</p>
+<h3>
+Leave Positive Feedback</h3>
+<p>
+Feedback doesn’t have to be strictly critical. Let the author know what they did well too.</p>
+<p>
+I once worked with a some developers whom I had never met in person. My only interaction with them was during code reviews. Their feedback was quite blunt. This was something I grew used to over time, and I actually appreciated it. However, I was always under the impression that they did not trust me, or that I was prone to push poor code. After all, that’s the only feedback I received from them (at least that’s how I interpreted it).</p>
+<p>
+Then one day a long time later, I found out that these developers actually enjoyed working with me. Sadly, this came as a huge surprise. I was shocked and flattered that these people who were constantly criticizing my code actually did trust and value me as a contributor.</p>
+<p>
+It was a fun surprise, but also a bummer that I was under the wrong impression for so long.</p>
+<h3>
+Empathize with the Author</h3>
+<p>
+Try to understand the author’s reasoning by asking questions. It’s easier to have a constructive conversation this way.</p>
+<p>
+  <img src="../img/question_example.png" alt="" />
+</p>
+<p>
+It’s surprising how attached we become to our code. You will build trust with the author if you try to be mindful of their ideas during review.</p>
+<p>
+For example, imagine that you’re the author, and you’ve implemented a fancy way for your GraphQL API to handle filter arguments in a reusable way. You feel clever and proud of yourself! What seems clever and fancy to one person may not be the right solution to the task at hand. It might be a pretty big blow to learn that your changes are received poorly by your peers.</p>
+<p>
+Authors and reviewers need to work objectively, casting aside their emotions and biases. Frame your feedback in the form of a question to allow the other person to share their thoughts.</p>
+<p>
+It’s demotivating when you feel that your ideas are not heard. Whether the author is right or wrong, they will appreciate the chance to explain their ideas to you. We all want to be understood.</p>
+<h3>
+Be Straightforward and Clear</h3>
+<p>
+All this talk of empathizing and emphasizing positivity might paint a picture that your role as peer reviewer is to coddle the author like a precious little baby. Don’t hold back on your feedback, though! There’s no need to be brash, of course, but speak up when something doesn’t sit right with you.</p>
+<p>
+Be as clear as you can when you leave feedback. Spell it out for the author and don’t make them guess what was going through your mind.</p>
+<p>
+You know when you hear your own voice and then think to yourself, <em>Is THAT what my voice sounds like?</em> You’re used to hearing it from the inside of your head, but it sounds a lot different from another perspective.</p>
+<p>
+Leaving clear feedback is a lot like this. Expound on your thoughts to give the author as much context about your suggestion as possible. The author was probably not thinking the same thing as you. If they were, they may have done it “your way” in the first place.</p>
+<p>
+Use complete sentences when leaving feedback. Pretend you are sitting next to the author, reviewing the code together. One word comments can easily be (mis)interpreted as rude or condescending.</p>
+<p>
+  <img src="../img/pr_bad_example.png" alt="" />
+</p>
+<p>
+Be clear about blocking vs non-blocking feedback. For example, your team may agree that any feedback that begins with “nit:” is considered “take it or leave it”.</p>
+<h3>
+Offer Suggestions</h3>
+<p>
+Don’t point out problems without attempting to offering solutions. You can also save the author some time by providing specific links and examples. Instead of saying:</p>
+<blockquote>
+  <p>
+we have a function for this already  </p>
+</blockquote>
+<p>
+Make it more specific:</p>
+<blockquote>
+  <p>
+I like that you made this a reusable function. We actually have one that does the same thing called <code class="inline">save_password_as_plain_text</code> right here: <code class="inline">src/crypto/utils/password.ts:44</code> that you could use.  </p>
+</blockquote>
+<h3>
+You Don’t Need to be an Expert</h3>
+<p>
+Just because you’re reviewing the code doesn’t mean that you have to be the “expert”.</p>
+<p>
+I recently started a new job. Reviewing code has been a fantastic way to become more familiar with the code base. I’m not the expert in most of these reviews, but I am able to learn while contributing to the project.</p>
+<p>
+There’s a chance that you, as a non-expert, have a fresh, outsider’s perspective to offer the author. <a href="https://youtu.be/aME2W2kYwAg?t=214">Don’t forget about the time</a> when Bret “Hitman” Hart helped the programmers of the WWF WrestleMania Arcade game realize that they were dereferencing a null pointer.</p>
+<div style="text-align:center">
+  <img style="min-width: 50%; width: calc((500px - 100%) * 1000); max-width: 100%;" src="../img/brett_hitman_null_ptr.png" /></div>
+<h3>
+Respect the Requirements</h3>
+<p>
+Hopefully the feature that you’re reviewing has some clear requirements written down somewhere. Make sure to understand the context of the pull request.</p>
+<p>
+Obviously this will help you make sense of the changes, but it will also help you know what <em>not</em> to include in your review. Perhaps the author did not include something because it was out of scope. Reviewing changes with the full context of the feature or bug fix will save everyone time.</p>
+<h3>
+Pull Down the Branch</h3>
+<p>
+It’s nice to do a surface-level review, pointing out ways to optimize and enhance the author’s code. What’s even more valuable, however, is a reviewer who is willing to take the code into their own hands to see what it does for themselves.</p>
+<p>
+Just reading the code is not usually enough to do a thorough review.</p>
+<p>
+If you discover a problem, leave clear instructions for the author about how to reproduce it.</p>
+<h3>
+Be Responsive</h3>
+<p>
+Decide with your team how to prioritize code reviews. Be mindful of others’ work so that they are not blocked for too long while waiting for a review.</p>
+<p>
+As an author, it is annoying when someone leaves a review, but fails to respond to your follow-up questions or revisions. It’s reminiscent of the classic <a href="https://www.urbandictionary.com/define.php?term=swoop%20and%20poop">“Swoop and Poop”</a>. Getting your code merged is a pain in the butt when this happens. Proactively check the status of code you have requested changes on. Don’t make the author have to hunt you down.</p>
+<hr class="thin" />
+<p>
+Finally, do yourself a favor and leave your ego behind. You and your team will not reach your full potential if you are unwilling to do this. Review time is as much about strengthening relationships as it is about strengthening the code.</p>
+<p>
+Most of what can be consider a good code review boils down to communication and an eye for detail. Put equal effort into reviewing code as writing code and your team will thank you.</p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+          <p class="text-size-body">❤️&nbsp;Thanks for visiting! Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">subscribing</a> to be notified when I publish more content.</p>
+          <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a></p>
+          <p class="">© 2015 - 2023 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

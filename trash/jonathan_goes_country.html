@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Jonathan Goes Country | denvaar's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 md:pv1 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <p class="mv0 bold align-self-end">
+            <a href="../index.html" class="phantom-a">denvaar (writes here)</a>
+          </p> 
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Jonathan Goes Country</h1>
+        <p class="heading-size-xsm">Review of Jonathan Richman's 1990 album, "Jonathan Goes Country".</p>
+        <div>
+          
+          
+
+          
+            <span class="tag gray-tag"># brain dump</span>
+          
+            <span class="tag gray-tag"># reviews</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2022-11-30</p>
+        <hr class="divider" />
+      </section>
+      <img src="https://upload.wikimedia.org/wikipedia/en/5/54/Jonathangoescountry.jpg" />
+<p>
+Jonathan has taken me on a musical horseback ride on this album. He sings scenes from the American West, the way a grandparent might see it, but this is not Tim McGraw’s country music.</p>
+<p>
+The album features original songs by Jonathan himself, and also some classic country covers. It begins with a catchy, lighthearted song about a girl who he doesn’t see much of anymore because she’s so satisfied with horseback riding. In my mind, this is the girl from grade school who, when you glanced over at her desk, was drawing a picture of a horse. It’s nice to have something in your life that takes up all your attention.</p>
+<p>
+Love is a definite theme in this album, (big surprise), with tracks like “I Must Be King” and “You’re the One for Me”.</p>
+<p>
+In “You’re Crazy for Taking the Bus”, Jonathan is misunderstood and criticized for his decision to take the bus versus a plane, which seems crazy to the status quo. He justifies his choice by simply acknowledging, “Well, I am in fact crazy, so what’s the big deal? What do you expect?”. He describes how he actually would prefer to be next to his guitar anyway, and that he has no trouble sleeping on the bus. He would prefer to be among the gritty, western bus stop towns and the types of people found within.</p>
+<p>
+This track begins to highlight some of the other themes of the album, which I would say are:</p>
+<ul>
+  <li>
+Contentment with the simple things in life.  </li>
+  <li>
+Appreciating the underappreciated.  </li>
+</ul>
+<p>
+These themes are emphasized and driven home in the final track on the album, “A Satisfied Mind”.</p>
+<p>
+“The Corner Store” appeals to those who feel a sense of longing for old ways and a dissatisfaction with the new and “better” things. Change is not always welcome – something that most people can relate to.</p>
+<p>
+“The Neighbors” is the most interesting song on the album. I’ve spent a lot of time trying to decide what it’s actually about. At face value, this is a song about the infidelity of a man who does not care about the harm that he’s doing to his wife. However, in my opinion, this is actually about love and trust in his relationship. I don’t believe Jonathan is a scumbag. He’s obviously not concerned with what other people think, but not maliciously. He’s able to act freely because trust is a foundational element of his relationship with his wife. She knows his character. The woman in the song could be his sister or his mother for all we know. The interesting part of all this is that the listener basically becomes “The Neighbors”, as we are trying to make sense of the song.</p>
+<p>
+I can’t say enough good things about this album.</p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+          <p class="text-size-body">❤️&nbsp;Thanks for visiting! Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">subscribing</a> to be notified when I publish more content.</p>
+          <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a></p>
+          <p class="">© 2015 - 2023 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>
