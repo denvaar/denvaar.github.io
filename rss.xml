@@ -1,0 +1,247 @@
+<rss version="2.0">
+	<channel>
+		<title>denvaar's site</title>
+		<link>https://denvaar.github.io</link>
+		<description>denvaar's personal site. Most of the content is on software development and computer programming. However, other one-off topics are in the mix.</description>
+		<language>en-us</language>
+    <item>
+      <title>Everything Everywhere All at Once</title>
+      <description>Review of the 2022 movie "Everything Everywhere All at Once". Directed by Daniel Kwan and Daniel Scheinert. Starring Michelle Yeoh, Stephanie Hsu, Ke Huy Quan, and Jamie Lee Curtis.</description>
+      <category>brain dump</category>
+      <category>reviews</category>
+      <link>https://denvaar.github.io/trash/everything_everywhere_all_at_once.html</link>
+      <pubDate>Sat Mar 25 23:40:09 MDT 2023</pubDate>
+    </item>
+
+    <item>
+      <title>Jonathan Goes Country</title>
+      <description>Review of Jonathan Richman's 1990 album, "Jonathan Goes Country".</description>
+      <category>brain dump</category>
+      <category>reviews</category>
+      <link>https://denvaar.github.io/trash/jonathan_goes_country.html</link>
+      <pubDate>Wed Nov 30 23:40:09 MST 2022</pubDate>
+    </item>
+
+    <item>
+      <title>S'gaw Karen Language Overview</title>
+      <description>Karen is an under-documented language. This is a high-level overview of some of the charicteristics and attributes of the language.</description>
+      <category>culture</category>
+      <category>language</category>
+      <pubDate>Sun Aug 28 23:40:09 MDT 2022</pubDate>
+      <link>https://denvaar.github.io/posts/sgaw_karen_language.html</link>
+    </item>
+
+    <item>
+      <title>How to Review Code Well</title>
+      <description>Plain and simple things for team members to follow when reviewing each other's code.</description>
+      <category>programming</category>
+      <category>soft-skills</category>
+      <pubDate>Sun Aug 29 23:40:09 MDT 2021</pubDate>
+      <link>https://denvaar.github.io/posts/how_to_review_code.html</link>
+    </item>
+
+    <item>
+      <title>Notes from "Extreme Programming Explained"</title>
+      <description>Summarized chapters and sections from my reading of Kent Beck's "Extreme Programming Explained". Sentiments from one and two-star Amazon reviews of the book. Some of my thoughts about XP as well.</description>
+      <category>software development</category>
+      <category>soft-skills</category>
+      <category>reviews</category>
+      <pubDate>Tue Feb  2 23:40:09 MST 2021</pubDate>
+      <link>https://denvaar.github.io/posts/xp_notes.html</link>
+    </item>
+
+    <item>
+      <title>Building a Multiplayer Board Game</title>
+      <description>I programmed a web application rendition of a board game called Sternhalma.</description>
+      <category>programming</category>
+      <category>projects</category>
+      <category>elixir</category>
+      <pubDate>Sun Jan 17 23:40:09 MST 2021</pubDate>
+      <link>https://denvaar.github.io/posts/board_game.html</link>
+    </item>
+
+    <item>
+      <title>Problem Solving</title>
+      <description>Going meta - Working through a programming problem to understand problem solving techniques.</description>
+      <category>programming</category>
+      <category>python</category>
+      <pubDate>Wed Oct 28 23:40:09 MDT 2020</pubDate>
+      <link>https://denvaar.github.io/posts/problem_solving_example.html</link>
+    </item>
+
+    <item>
+      <title>Close Look at CSRF Tokens</title>
+      <description>Cross-site request foregery is one of many techniqu es an attacker might use to pwn a web application. In this article we take a close look at how exactly CSRF tokens work from the conte xt of the Phoenix Web Framework.</description>
+      <category>programming</category>
+      <pubDate>Wed Feb 19 23:40:09 MST 2020</pubDate>
+      <link>https://denvaar.github.io/posts/csrf_tokens_with_phoenix.html</link>
+    </item>
+
+    <item>
+      <title>Hacktoberfest 2019 Recap</title>
+      <description>A recap of the hack nights that Underbelly held for Hacktoberfest 2019: a global, month-long hackathon.</description>
+      <category>software development</category>
+      <category>programming</category>
+      <pubDate>Fri Nov 15 23:40:09 MST 2019</pubDate>
+      <link>https://denvaar.github.io/posts/hacktoberfest_2019.html</link>
+    </item>
+
+    <item>
+      <title>Content Negotiation &amp; Phoenix</title>
+      <description>A quick demo exploring how HTTP content negotiation works with Phoenix.</description>
+      <category>programming</category>
+      <category>elixir</category>
+      <pubDate>Thu Dec  6 23:40:09 MST 2018</pubDate>
+      <link>https://denvaar.github.io/posts/content_negotiation_and_phoenix.html</link>
+    </item>
+
+    <item>
+      <title>Base64 Basics</title>
+      <description>Base64 is an encoding scheme used to change binary data into text.</description>
+      <category>programming</category>
+      <pubDate>Tue Oct  2 23:40:09 MDT 2018</pubDate>
+      <link>https://denvaar.github.io/posts/base64_basics.html</link>
+    </item>
+
+    <item>
+      <title>Unexpected Benefits From Shrinking My Pull Requests</title>
+      <description>Small pull requests help improve the code review process, but making it a priority has helped me improve in several ot her ways.</description>
+      <category>software development</category>
+      <category>soft-skills</category>
+      <pubDate>Tue Aug 28 23:40:09 MDT 2018</pubDate>
+      <link>https://denvaar.github.io/posts/unexpected_benefits_from_shrinking_my_pull_requests.html</link>
+    </item>
+
+    <item>
+      <title>Planning</title>
+      <description>I have a lot of things that I want to learn and build. I've found that planning and organizing puts me in a better position to take my goals from start to finish.</description>
+      <category>software development</category>
+      <category>soft-skills</category>
+      <pubDate>Tue Apr 10 23:40:09 MDT 2018</pubDate>
+      <link>https://denvaar.github.io/posts/planning_helps_me_finish_things.html</link>
+    </item>
+
+    <item>
+      <title>My Favorite Things From ElixirConf</title>
+      <description>I had the chance to attend LoneStar ElixirConf 2018 - a programming conference in Austin, Texas. I sat in a conference room for two days and listened to people talk. 🎶 These are a few of my favorite things. 🎶</description>
+      <category>programming</category>
+      <category>elixir</category>
+      <pubDate>Sat Feb 24 23:40:09 MST 2018</pubDate>
+      <link>https://denvaar.github.io/posts/favorite_things_from_elixir_conf.html</link>
+    </item>
+
+    <item>
+      <title>Exploring Text Compression</title>
+      <description>Challenges, takeaways, and findings of coding up a famous text compression algorithm.</description>
+      <category>programming</category>
+      <pubDate>Mon Jan 15 23:40:09 MST 2018</pubDate>
+      <link>https://denvaar.github.io/posts/exploring_text_compression.html</link>
+    </item>
+
+    <item>
+      <title>Makeshift Security Camera</title>
+      <description>Fun project using the Raspberry Pi camera module to catch creeps, thieves, and what-have-you.</description>
+      <category>programming</category>
+      <category>projects</category>
+      <category>python</category>
+      <pubDate>Mon Jul 17 23:40:09 MDT 2017</pubDate>
+      <link>https://denvaar.github.io/posts/makeshift_security_camera.html</link>
+    </item>
+
+    <item>
+      <title>On Learning Elixir</title>
+      <description>Exploring a different way of approaching and solving problems with the cool functional language of Elixir.</description>
+      <category>programming</category>
+      <category>elixir</category>
+      <pubDate>Sun Jun 25 23:40:09 MDT 2017</pubDate>
+      <link>https://denvaar.github.io/posts/on_learning_elixir.html</link>
+    </item>
+
+    <item>
+      <title>Diffie-Hellman Key Exchange</title>
+      <description>An explanation of an important public key cryptography algorithm as well as some of the history behind it.</description>
+      <category>programming</category>
+      <pubDate>Mon Jun 19 23:40:09 MDT 2017</pubDate>
+      <link>https://denvaar.github.io/posts/diffie_hellman_key_exchange.html</link>
+    </item>
+
+    <item>
+      <title>More Binary Tree Properties</title>
+      <description>Height and depth of a tree and determining if it's balanced.</description>
+      <category>programming</category>
+      <pubDate>Thu Feb 16 23:40:09 MST 2017</pubDate>
+      <link>https://denvaar.github.io/posts/more_binary_tree_properties.html</link>
+    </item>
+
+    <item>
+      <title>Binary Search Tree</title>
+      <description>Review of the basic data structure Binary Search Tree (BST)</description>
+      <category>programming</category>
+      <pubDate>Tue Feb 14 23:40:09 MST 2017</pubDate>
+      <link>https://denvaar.github.io/posts/data_structures_binary_search_tree.html</link>
+    </item>
+
+    <item>
+      <title>Binary Tree Traversal</title>
+      <description>Overview of Breadth and Depth first traversal in a Binary Tree.</description>
+      <category>programming</category>
+      <pubDate>Sun Feb 12 23:40:09 MST 2017</pubDate>
+      <link>https://denvaar.github.io/posts/binary_tree_traversal.html</link>
+    </item>
+
+    <item>
+      <title>Open Financial Exchange (OFX)</title>
+      <description>Some information about using OFX for obtaining financial data.</description>
+      <category>programming</category>
+      <pubDate>Mon Jan  9 23:40:09 MST 2017</pubDate>
+      <link>https://denvaar.github.io/posts/open_financial_exchange.html</link>
+    </item>
+
+    <item>
+      <title>Strategy Design Pattern</title>
+      <description>Quick example of the Strategy pattern in Python.</description>
+      <category>programming</category>
+      <category>python</category>
+      <pubDate>Tue Nov 10 23:40:09 MST 2015</pubDate>
+      <link>https://denvaar.github.io/posts/design_patterns_strategy.html</link>
+    </item>
+
+    <item>
+      <title>Template Method Design Pattern</title>
+      <description>Example of the Template Method design pattern with Python.</description>
+      <category>programming</category>
+      <category>python</category>
+      <pubDate>Mon Nov  9 23:40:09 MST 2015</pubDate>
+      <link>https://denvaar.github.io/posts/design_patterns_template_method.html</link>
+    </item>
+
+    <item>
+      <title>Gathering Time Series Data</title>
+      <description>A brief description of an efficient solution to gather new time series data.</description>
+      <category>programming</category>
+      <category>projects</category>
+      <category>python</category>
+      <pubDate>Fri Oct 23 23:40:09 MDT 2015</pubDate>
+      <link>https://denvaar.github.io/posts/gathering_time_series_data.html</link>
+    </item>
+
+    <item>
+      <title>Python Code Optimization Tips</title>
+      <description>Tips from Guido Van Rossum about code optimization.</description>
+      <category>programming</category>
+      <category>python</category>
+      <pubDate>Wed Sep 23 23:40:09 MDT 2015</pubDate>
+      <link>https://denvaar.github.io/posts/python_code_optimization_tips.html</link>
+    </item>
+
+    <item>
+      <title>Optimization with Timeit</title>
+      <description>Code optimization analysis using Python's timeit module.</description>
+      <category>programming</category>
+      <category>python</category>
+      <pubDate>Fri Jun 19 23:40:09 MDT 2015</pubDate>
+      <link>https://denvaar.github.io/posts/optimization_with_timeit.html</link>
+    </item>
+	</channel>
+</rss>
+
