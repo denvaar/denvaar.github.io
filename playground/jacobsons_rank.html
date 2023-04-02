@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Jacobson's Rank | denvaar's Site</title>
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+    <meta charset="UTF-8">
+  <link rel="stylesheet" href="../css/jacobsons_rank.css" /></head>
+  <body>
+    <header>
+      <div class="">
+        <div class="">
+          <p class="">
+            <a href="../index.html" class="">Home</a> ->
+            <a href="../playground.html" class="">Playground</a> ->
+            <span>Jacobson's Rank</span>
+          </p> 
+        </div>
+      </div>
+    </header>
+    <h2>Jacobson's Rank</h2>
+
+<p>Adjust the bit array size, n.</p>
+<p>See that R1 and R2 grow sub-linearly with respect to n.</p>
+<input type="range" id="n-slider" autocomplete="off">
+
+<div>
+  <h3 style="margin-bottom: 0;">B</h3>
+  <div class="array-container">
+    <div id="b-array" class="array" style="width: calc(1% - 65px); min-width: 50px;"></div>
+    <div class="actual-size" id="b-size"><b id="n-display-2">10 bits</b></div>
+  </div>
+  <p style="margin-top:0;">n bits</p>
+</div>
+
+<div>
+  <h3 style="margin-bottom: 0;">R1</h3>
+  <div class="array-container">
+    <div id="r1-array" class="r1" style="width: 1.46985%; min-width: 20px;"></div>
+    <div class="actual-size" id="r1-size"><b id="r1-display">4 bits</b></div>
+  </div>
+  <p style="margin-top:0;">n / log²(n) cells, each encoded using log(n) bits</p>
+</div>
+
+<div>
+  <h3 style="margin-bottom: 0;">R2</h3>
+  <div class="array-container">
+    <div id="r2-array" class="r2" style="width: 2.58278%; min-width: 30px;"></div>
+    <div class="actual-size" id="r2-size"><b id="r2-display">6 bits</b></div>
+  </div>
+  <p style="margin-top:0;">n / log(n) cells, each encoded using log(log(n)) bits</p>
+</div>
+
+<div>
+  <span style="color:cadetblue">██████████</span>&nbsp;+
+  <span style="color:mediumpurple">████</span>&nbsp;+
+  <span style="color:pink">███████</span> = <b id="total-bits">19 bits</b>
+</div>
+
+<div>
+  <p>A cumulative rank value is stored for every log²(n) bit "chunk" from B.</p>
+</div>
+
+<div style="padding:10px;margin-top:25px;border:1px solid black;border-radius:4px;width:300px;">
+  <h3>GOTCHA'S</h3>
+  <p>* R1 Stores "cumulative rank" values from B. Since those values can approach n, each cell
+  is encoded using log(n) bits.</p>
+  <p>* R2 Stores "<b>relative</b> cumulative rank" values from B. Since they are reletive, each
+  value can be encoded using log(log(n)) bits.</p>
+</div>
+
+  <script src="../js/jacobsons_rank.js"></script></body>
+</html>

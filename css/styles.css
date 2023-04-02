@@ -334,6 +334,12 @@ a.phantom-a:visited {
 	font-weight: bold;
 }
 
+.site-name {
+	font-weight: normal;
+  margin-bottom: 10px;
+  display: block;
+}
+
 .none {
 	display: none;
 }
@@ -357,6 +363,14 @@ a.phantom-a:visited {
 
 .border-bottom-1-primary:last-of-type {
   border-bottom: none;
+}
+
+.profile-img {
+  width: 75px;
+  border-radius: 50%;
+  float: left;
+  margin-right: 1rem;
+	border: 1px solid var(--banner-background-border);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -422,6 +436,15 @@ a.phantom-a:visited {
 	.md\:ml1 {
 		margin-left: 1.3rem;
 	}
+
+	.md\:mt2 {
+		margin-top: 2rem;
+	}
+
+  .site-name {
+    margin-bottom: unset;
+    display: unset;
+  }
 }
 
 @media (min-width: 720px) {

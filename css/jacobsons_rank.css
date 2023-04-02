@@ -1,0 +1,35 @@
+body {
+  font-family: monospace;
+  margin-left: 10px;
+}
+
+.array-container {
+  display: flex;
+  align-items: center;
+}
+
+.array {
+  display: flex;
+  border: 1px solid black;
+  height: 20px;
+  background-color: cadetblue;
+}
+
+.r1 {
+  display: flex;
+  border: 1px solid black;
+  height: 20px;
+  background-color: mediumpurple;
+}
+
+.r2 {
+  display: flex;
+  border: 1px solid black;
+  height: 20px;
+  background-color: pink;
+}
+
+.actual-size {
+  background-color: white;
+  margin-left: 5px;
+}
