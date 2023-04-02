@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Zero Dependency S3 Downloads in Elixir | denvaar's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 md:pv1 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <p class="mv0 bold align-self-end">
+            <span class="site-name">denvaar's site&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <a href="../index.html" class="phantom-a">writing</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../trash.html" class="phantom-a">brain dump</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../playground.html" class="phantom-a">playground</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../rss.xml" class="phantom-a">rss</a>
+          </p> 
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Zero Dependency S3 Downloads in Elixir</h1>
+        <p class="heading-size-xsm">Download from S3 in Elixir without adding dependency.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag purple-tag"># elixir</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2022-04-17</p>
+        <hr class="divider" />
+      </section>
+      <p>
+Chris McCord has the <a href="https://gist.github.com/chrismccord/37862f1f8b1f5148644b75d20d1cb073">popular S3 upload snippet</a>, and here is something similar, but for downloads.</p>
+<pre><code class="elixir">defmodule S3Downloads do
+  @moduledoc &quot;&quot;&quot;
+  Use at your own risk.
+  
+  Code heavily borrowed from:
+    - https://github.com/ex-aws/ex_aws/blob/main/lib/ex_aws/auth.ex
+    - https://gist.github.com/chrismccord/37862f1f8b1f5148644b75d20d1cb073
+    
+  &quot;&quot;&quot;
+
+  @doc &quot;&quot;&quot;
+  Generate a &quot;presigned&quot; url for an object in S3.
+
+  Follows &quot;AWS Signature Version 4&quot; for Query Parameters.
+  https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-query-string-auth.html
+
+  eg.
+
+  S3Downloads.get_presigned_url(
+    %{region: &quot;us-west-1&quot;, bucket: &quot;example-bucket&quot;, access_key_id: &quot;shhhh&quot;, secret_access_key: &quot;sshhhh&quot;},
+    &quot;object/key/here.txt&quot;,
+    1,
+    [{&quot;response-content-disposition&quot;, ~s(attachment; filename=&quot;file.pdf&quot;)}]
+  )
+  &quot;&quot;&quot;
+  def get_presigned_url(config, object_key, expires_in_minutes, extra_headers \\ []) do
+    with %{
+           bucket: bucket,
+           region: region,
+           access_key_id: access_key_id,
+           secret_access_key: secret_access_key
+         } &lt;- config do
+      now = DateTime.utc_now()
+      expires_in_seconds = expires_in_minutes * 60
+
+      canonical_request =
+        build_canonical_request(
+          access_key_id,
+          bucket,
+          region,
+          object_key,
+          now,
+          expires_in_seconds,
+          extra_headers
+        )
+
+      string_to_sign = build_string_to_sign(now, region, canonical_request)
+
+      signature = build_signature(secret_access_key, now, region, string_to_sign)
+
+      query_params =
+        query_params(access_key_id, region, now, &quot;#{expires_in_seconds}&quot;, extra_headers)
+
+      &quot;https://#{bucket}.s3.amazonaws.com/#{encode_key(object_key)}?#{query_params}&amp;X-Amz-Signature=#{signature}&quot;
+    end
+  end
+
+  def build_canonical_request(
+        access_key_id,
+        bucket,
+        region,
+        object_key,
+        now,
+        expires_in,
+        extra_headers
+      ) do
+    http_verb = &quot;GET&quot;
+    canonical_uri = &quot;/&quot; &lt;&gt; encode_key(object_key)
+    expires_in = &quot;#{expires_in}&quot;
+
+    canonical_query_string = query_params(access_key_id, region, now, expires_in, extra_headers)
+
+    canonical_headers = &quot;host:#{bucket}.s3.amazonaws.com&quot;
+    signed_headers = &quot;host&quot;
+
+    [
+      http_verb,
+      &quot;\n&quot;,
+      canonical_uri,
+      &quot;\n&quot;,
+      canonical_query_string,
+      &quot;\n&quot;,
+      canonical_headers,
+      &quot;\n&quot;,
+      &quot;\n&quot;,
+      signed_headers,
+      &quot;\n&quot;,
+      &quot;UNSIGNED-PAYLOAD&quot;
+    ]
+    |&gt; IO.iodata_to_binary()
+  end
+
+  def build_string_to_sign(date, region, canonical_request) do
+    [
+      &quot;AWS4-HMAC-SHA256&quot;,
+      &quot;\n&quot;,
+      amz_date(date),
+      &quot;\n&quot;,
+      scope(date, region),
+      &quot;\n&quot;,
+      Base.encode16(sha256_hash(canonical_request), case: :lower)
+    ]
+    |&gt; IO.iodata_to_binary()
+  end
+
+  def build_signature(secret_access_key, date, region, string_to_sign) do
+    date_key = sha256_hmac(&quot;AWS4&quot; &lt;&gt; secret_access_key, short_date(date))
+    date_region_key = sha256_hmac(date_key, region)
+    date_region_service_key = sha256_hmac(date_region_key, &quot;s3&quot;)
+    signing_key = sha256_hmac(date_region_service_key, &quot;aws4_request&quot;)
+
+    Base.encode16(sha256_hmac(signing_key, string_to_sign), case: :lower)
+  end
+
+  def query_params(access_key_id, region, date, expires_in, extra_headers) do
+    [
+      {&quot;X-Amz-Algorithm&quot;, &quot;AWS4-HMAC-SHA256&quot;},
+      {&quot;X-Amz-Credential&quot;, amz_credential(access_key_id, region, date)},
+      {&quot;X-Amz-Date&quot;, amz_date(date)},
+      {&quot;X-Amz-Expires&quot;, expires_in},
+      {&quot;X-Amz-SignedHeaders&quot;, &quot;host&quot;}
+    ]
+    |&gt; Kernel.++(extra_headers)
+    |&gt; Enum.map(&amp;qs_encode/1)
+    |&gt; Enum.sort_by(&amp;qs_alphabetical/1)
+    |&gt; Enum.map_join(&quot;&amp;&quot;, &amp;qs_joiner/1)
+  end
+
+  def amz_credential(access_key_id, region, date) do
+    &quot;#{access_key_id}/#{scope(date, region)}&quot;
+  end
+
+  def scope(date, region) do
+    &quot;#{short_date(date)}/#{region}/s3/aws4_request&quot;
+  end
+
+  def qs_alphabetical({query_parameter, _value}) do
+    query_parameter
+  end
+
+  def qs_encode({query_parameter, value}) do
+    {uri_encode(query_parameter), uri_encode(value)}
+  end
+
+  def qs_joiner({query_parameter, value}) do
+    &quot;#{query_parameter}=#{value}&quot;
+  end
+
+  # =========
+  #  utils
+  # =========
+
+  def sha256_hmac(secret, msg), do: :crypto.mac(:hmac, :sha256, secret, msg)
+
+  def sha256_hash(data), do: :crypto.hash(:sha256, data)
+
+  def encode_key(s) do
+    # Amazon made their own fun little rules.
+
+    URI.encode(s, fn c -&gt;
+      should_encode = [
+        ?\s,
+        ?(,
+        ?)
+      ]
+
+      should_not_encode = [?/]
+
+      cond do
+        c in should_encode -&gt; false
+        c in should_not_encode -&gt; true
+        true -&gt; URI.char_unescaped?(c) &amp;&amp; !URI.char_reserved?(c)
+      end
+    end)
+  end
+
+  def uri_encode(s) do
+    URI.encode(s, &amp;valid_path_char?/1)
+  end
+
+  def valid_path_char?(?\s), do: false
+  def valid_path_char?(?/), do: false
+
+  def valid_path_char?(c) do
+    URI.char_unescaped?(c) &amp;&amp; !URI.char_reserved?(c)
+  end
+
+  def amz_date(time) do
+    time
+    |&gt; NaiveDateTime.to_iso8601()
+    |&gt; String.split(&quot;.&quot;)
+    |&gt; List.first()
+    |&gt; String.replace(&quot;-&quot;, &quot;&quot;)
+    |&gt; String.replace(&quot;:&quot;, &quot;&quot;)
+    |&gt; Kernel.&lt;&gt;(&quot;Z&quot;)
+  end
+
+  def short_date(d) do
+    d
+    |&gt; amz_date()
+    |&gt; String.slice(0..7)
+  end
+end</code></pre>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+            <img src="https://avatars.githubusercontent.com/u/10538978" class="profile-img" alt="A picture of me" decoding="async" />
+            <p class="text-size-body">Thanks for visiting. Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">signing up</a> to be notified when I publish more content.</p>
+          <div class="md:mt2">
+            <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a> · <a href="../rss.xml">RSS</a></p>
+          </div>
+          <p class="">© 2015 - 2023 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Mix Format and Vim | denvaar's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 md:pv1 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <p class="mv0 bold align-self-end">
+            <span class="site-name">denvaar's site&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <a href="../index.html" class="phantom-a">writing</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../trash.html" class="phantom-a">brain dump</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../playground.html" class="phantom-a">playground</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../rss.xml" class="phantom-a">rss</a>
+          </p> 
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Mix Format and Vim</h1>
+        <p class="heading-size-xsm">Automatically run mix format on save in NeoVim.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag gray-tag"># vim</span>
+          
+            <span class="tag purple-tag"># elixir</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2022-06-21</p>
+        <hr class="divider" />
+      </section>
+      <p>
+There Are a few challenges when it comes to automatically <code class="inline">mix format</code>-ing your files on save in Vim.</p>
+<ul>
+  <li>
+Needs to happen async, so it doesn’t block you from typing while it’s working.  </li>
+  <li>
+You want to be able to keep your cursor position, not be reset to the top of the file after formatting completes.  </li>
+  <li>
+Formatting should happen smoothly whether doing <code class="inline">:w</code>, or <code class="inline">:wq</code>. Formatting after <code class="inline">:wq</code> gave me trouble in the past and would fail formatting. I think this is because <code class="inline">mix format</code> was called via the editor, but then the editor process exited, so it was getting terminated (I think).  </li>
+</ul>
+<p>
+This simple config seems to do a pretty good job at solving these challenges:</p>
+<p>
+First, in <code class="inline">$nvim_config_dir/ftplugin/elixir.vim</code> (and <code class="inline">eelixir.vim</code>) I have an autocommand set up. It uses <code class="inline">BufWritePost</code> because the work is going to happen async. I think <code class="inline">BufWritePre</code> should be OK too.</p>
+<pre><code class="vim">augroup formatting
+  autocmd! * &lt;buffer&gt;
+  autocmd BufWritePost &lt;buffer&gt; :call elixir#formatting#mix_format()
+augroup END</code></pre>
+<p>
+Then in <code class="inline">$nvim_config_dir/autoload/elixir/formatting.vim</code> I have these two functions.</p>
+<pre><code class="vim">function elixir#formatting#on_mix_format_exit(id, data, event)
+  if a:data &gt; 0
+    echom &quot;⚠ mix format &quot;
+  else
+    execute &#39;edit&#39;
+    echom &quot;✓ mix format &quot;
+  endif
+endfunction
+
+function elixir#formatting#mix_format()
+  let l:filepath = expand(&#39;%:p&#39;)
+  let l:mixformatcmd = &#39;nohup mix format &#39;
+        \. l:filepath
+        \. &#39; 2&gt;&amp;1 &gt; /dev/null&#39;
+
+  call jobstart(
+        \[&#39;bash&#39;, &#39;-c&#39;, mixformatcmd],
+        \{&#39;detach&#39;: 1,
+        \ &#39;on_exit&#39;: function(
+        \ &#39;elixir#formatting#on_mix_format_exit&#39;)})
+endfunction</code></pre>
+<p>
+Since the <code class="inline">mix_format</code> function spawns a job to run the actual <code class="inline">mix format</code> program, it happens in the background so you can continue typing.</p>
+<p>
+Instead of doing just <code class="inline">mix format path/to/file</code>, I am using <code class="inline">nohup</code>, which allows <code class="inline">mix format</code> to keep going even if the parent process dies.</p>
+<p>
+I also set the <code class="inline">detach</code> option on the job so that it will not be killed when nvim exits.</p>
+<p>
+When the job finishes, <code class="inline">on_mix_format_exit</code> is called and checks if <code class="inline">mix format</code> ran with errors or not. <code class="inline">execute edit</code> reloads the buffer contents, which has the formatted version at this point, and it does it without changing where the cursor is at.</p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+            <img src="https://avatars.githubusercontent.com/u/10538978" class="profile-img" alt="A picture of me" decoding="async" />
+            <p class="text-size-body">Thanks for visiting. Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">signing up</a> to be notified when I publish more content.</p>
+          <div class="md:mt2">
+            <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a> · <a href="../rss.xml">RSS</a></p>
+          </div>
+          <p class="">© 2015 - 2023 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>
