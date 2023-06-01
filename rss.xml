@@ -5,6 +5,14 @@
 		<description>denvaar's personal site. Most of the content is on software development and computer programming. However, other one-off topics are in the mix.</description>
 		<language>en-us</language>
     <item>
+      <title>Joe Pera "Car Guy"</title>
+      <description>Spoilers warning. What's the significance (if any) of the "Car Guy" interaction in S3:E1?</description>
+      <category>reviews</category>
+      <link>https://denvaar.github.io/posts/joe_pera_car_guy.html</link>
+      <pubDate>Thu Jun 01 23:40:09 MDT 2023</pubDate>
+    </item>
+
+    <item>
       <title>Everything Everywhere All at Once</title>
       <description>Review of the 2022 movie "Everything Everywhere All at Once". Directed by Daniel Kwan and Daniel Scheinert. Starring Michelle Yeoh, Stephanie Hsu, Ke Huy Quan, and Jamie Lee Curtis.</description>
       <category>brain dump</category>
