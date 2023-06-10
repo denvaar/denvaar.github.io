@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Jacobson's Rank | denvaar's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 md:pv1 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <p class="mv0 bold align-self-end">
+            <span class="site-name">denvaar's site&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <a href="../index.html" class="phantom-a">writing</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../trash.html" class="phantom-a">brain dump</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../playground.html" class="phantom-a">playground</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../rss.xml" class="phantom-a">rss</a>
+          </p> 
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Jacobson's Rank</h1>
+        <p class="heading-size-xsm">Rank is a fundamental operation for Succinct Data Structures. It counts the number of set bits up to a given index in a bit array. How can this be done in constant time and sub-linear space?</p>
+        <div>
+          
+          
+
+          
+            <span class="tag milgreen-tag"># data structures</span>
+          
+            <span class="tag sky-tag"># succinct</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2023-06-09</p>
+        <hr class="divider" />
+      </section>
+      <p>
+Memory usage is usually an afterthought when it comes to algorithms and data structures. We focus more on speed.</p>
+<p>
+Lately, I’ve been interested in succinct data structures, where size matters just as much as speed.</p>
+<p>
+<em>What does it mean to be succicnt?</em> Simply put, it’s the idea that data structures can be squashed down to <a href="https://en.wikipedia.org/wiki/Succinct_data_structure">nearly the smallest possible representation</a>, while still maintaining at least some of their efficient operations.</p>
+<p>
+Usually speed is sacrificed at the expense of space, or vice versa, and so it’s magical that succinct data structures somehow manage to avoid this trade off.</p>
+<p>
+However, there’s another dimension: flexibility. It’s fair to say that many succinct data structures sacrifice flexibility. For instance, you may have to be OK with a static, read-only version of your data structure, where mutation is done “offline”. When applied to the right type of problems, this is an acceptable trade off.</p>
+<p>
+Succinct data structures are commonly created using bit arrays, since the typical data types and pointers are too space expensive. There are some fundamental, “building block” operations that are often used. One such operation is called <code class="inline">rank</code>.</p>
+<p>
+Given a sequence of bits, <code class="inline">B</code>, rank tells you how many set bits there are up to a given position, <code class="inline">idx</code>. The goal is to answer rank queries in constant time, and using no more additional bits than the original bit array (sub-linear space complexity).</p>
+<pre><code class="text">idx  0     6     12    18    24
+    ┌┴─────┴─────┴─────┴─────┴─────
+B   │100110110011011101100111100...
+    └┴─────┴─────┴─────┴─────┴─────
+┌───┬─────────────┐
+│idx│rank₁(B, idx)│
+├───┼─────────────┤
+│  0│            0│
+│  1│            1│
+│  6│            3│
+│ 12│            7│
+│ 18│           11│
+│ 24│           15│
+└───┴─────────────┘</code></pre>
+<p>
+There are several examples of this for a single machine word on Sean Anderson’s <a href="https://graphics.stanford.edu/~seander/bithacks.html">Bit Twiddling Hacks web page</a>, and <code class="inline">gcc</code> also has a <code class="inline">__builtin_popcount</code>. Computing rank in constant time for an arbitrarily long bit array will require some additional bits to be stored alongside the original array, plus some interesting techniques.</p>
+<p>
+Since rank is a building block, used to formulate more sophisticated operations, it must be efficient, but not at the expense of much memory. To be classified as <em>succinct</em>, only a sub-linear amount of additional space can be used.</p>
+<p>
+The strategy ends up being clever combination of these two main ideas:</p>
+<ul>
+  <li>
+Create layers of indirection by subdividing the bit array.  </li>
+  <li>
+Share common pieces of data using lookup tables.  </li>
+</ul>
+<p>
+If we were to precompute the answers to <code class="inline">rank</code> for each offset in the bit array, then that would be a simple way to have constant time complexity, but it would use an enormous amount of space. It would be far from succinct.</p>
+<p>
+For example, if the precomputed answers are stored using <code class="inline">int</code>‘s, that is <code class="inline">sizeof(int) * CHAR_BIT</code> bits <strong>for each bit in the original bit array</strong> – many times more bits than needed.</p>
+<p>
+<em>Assume that all logarithms written as <code class="inline">log(n)</code> are base 2: <code class="inline">log₂(n)</code>. Also note that <code class="inline">log²(n)</code> is equivalent to <code class="inline">log(n) * log(n)</code>.</em></p>
+<p>
+The first tactic is to encode the precomputed answers using a minimal number of bits. The worst-case scenario is a bit array with all <code class="inline">n</code> bits set to <code class="inline">1</code>. It would require only <code class="inline">log(n)</code> <strong>bits</strong> to represent the <code class="inline">rank</code> answers for each offset or index in the bit array, rather than <code class="inline">sizeof(int)</code> <strong>bytes</strong>.</p>
+<pre><code class="text">    ┌───┬───┬───┬───┬───┬───┬───┐
+ B  │   │   │   │   │   │   │   │ n bits
+    └───┴───┴───┴───┴───┴───┴───┘
+      │   │   │   │   │   │   │
+      ▼   ▼   ▼   ▼   ▼   ▼   ▼
+    ┌───┬───┬───┬───┬───┬───┬───┐
+ R1 │   │   │   │   │   │   │   │ n * log(n) bits
+    └───┴───┴───┴───┴───┴───┴───┘
+      precomputed rank values</code></pre>
+<p>
+This encoding brings the memory usage to <code class="inline">O(n * log(n))</code> bits for an auxiliary bit array, <code class="inline">R1</code>, providing constant-time <code class="inline">rank</code> lookups. It’s not succinct though.</p>
+<p>
+The next tactic is to store only a limited number of precomputed answers, rather than storing every single one, in order to save space. Slice up the input data into chunks of size <code class="inline">b</code>, and only store answers up to the beginning of each chunk.</p>
+<p>
+The values in <code class="inline">R1</code> are the number of set bits leading up to the corresponding chunk. The values accumulate from chunk to chunk, so we can think of them as cumulative, partial rank query answers.</p>
+<pre><code class="text">   ┌────────┬────────┬────────┐
+ B │ chunk  : chunk  : chunk  │ n bits
+   └────────┴────────┴────────┘
+   └──┐   ┌─┘ ┌──────┘
+      ▼   ▼   ▼
+    ┌───┬───┬───┐
+ R1 │   │   │   │ n * log(n) / b bits
+    └───┴───┴───┘
+     cumulative rank values</code></pre>
+<p>
+This strategy is akin to multiplying two numbers in your head: You may not have <code class="inline">8 * 12</code> memorized, but you know that <code class="inline">8 * 10 = 80</code>, and that gets you close enough to figure out with your fingers that <code class="inline">8 * 2 = 16</code>, so you reach the final result, <code class="inline">80 + 16 = 96</code>, by doing a quick, memorized lookup, plus a little bit of extra work on your hands.</p>
+<p>
+This obviously reduces the space complexity, but the constant-time lookups are no longer in reach (for now). Two interesting questions to figure out are:</p>
+<ol>
+  <li>
+<em>What size should the chunks be, or how many partial answers to precompute?</em>  </li>
+  <li>
+<em>How is constant time possible?</em>  </li>
+</ol>
+<p>
+Guy Jacobson, who introduced these concepts in his thesis, “Succinct Static Data Structures”, suggested that the chunks should be <code class="inline">b = log²(n)</code> bits.</p>
+<p>
+I’ve been trying to understand why <code class="inline">b = log²(n)</code> is the right choice. I think that it boils down to the fact that when you pick <code class="inline">b</code> to be a multiple of <code class="inline">log(n)</code>, then the <code class="inline">log(n)</code> term in the numerator vanishes. The result is a sub-linear space complexity:</p>
+<pre><code class="text">O(n * log(n) / log²(n)) =
+
+O(n / log(n)) =
+
+ǒ(n)</code></pre>
+<p>
+This is a desired space complexity, but the time complexity is now <code class="inline">O(log²(n))</code>, since we need to scan up to an entire chunk to find the answer. There are more tricks to employ before we can get back to constant query time.</p>
+<p>
+Jacobson also suggested that a two-level auxiliary bit array scheme could improve the query time, while still maintaining sub-linear space complexity. At the top level, we have <code class="inline">R1</code>, which stores precomputed answers up to each chunk of size, <code class="inline">b</code>, just as explained so far. Another auxiliary bit array, <code class="inline">R2</code>, can be used in a similar fashion as <code class="inline">R1</code>. Values in <code class="inline">R2</code> are also partial answers, but relative to each chunk.</p>
+<p>
+Values in <code class="inline">R1</code> correspond to chunks of size <code class="inline">log²(n)</code> from <code class="inline">B</code>. Values from <code class="inline">R2</code> correspond to sub-chunks from <code class="inline">B</code> of size <code class="inline">1/2 * log(n)</code>.</p>
+<p>
+Since values in <code class="inline">R1</code> can approach <code class="inline">n</code>, the total number of bits, they are encoded using <code class="inline">log(n)</code> bits. However, for <code class="inline">R2</code>, the values approach <code class="inline">b</code>, the size of a chunk, so each value can be encoded using even less bits: <code class="inline">log(b)</code>.</p>
+<pre><code class="text">     [more rank values, relative to a chunk]
+    ┌───┬───┬───┬───┬────
+ R2 │   │   │   │   │ ... n * log(b) / 2 * log(n) bits
+    └───┴───┴───┴───┴────
+      ▲   ▲   ▲   ▲   ▲
+   ┌──┘   │   │   │   │
+   │  ┌───┘   │   │   │ ...
+   │  │  ┌────┘   │   │
+   │  │  │  ┌─────┘   │
+   │  │  │  │  ┌──────┘
+   ┌──┬──┬──┬──┬──┬──┬──┬──┬──┐
+ B │ chunk  : chunk  : chunk  │ n bits
+   └──┴──┴──┴──┴──┴──┴──┴──┴──┘
+   └──┐   ┌─┘ ┌──────┘
+      ▼   ▼   ▼
+    ┌───┬───┬───┐
+ R1 │   │   │   │ n * log(n) / b bits
+    └───┴───┴───┘
+     [cumulative rank values]</code></pre>
+<p>
+Armed with the second auxiliary bit array, the time complexity has improved to be <code class="inline">O(log(n))</code>. That’s because we can now perform two constant-time table lookups into <code class="inline">R1</code> and <code class="inline">R2</code>, and then do a linear scan of the remaining bits in <code class="inline">B</code>, which will never be more than the size of a sub-chunk. The space required for <code class="inline">R2</code> is also sub-linear.</p>
+<pre><code class="text">O(n * log(b) / 2 * log(n)) =
+
+O(n * log(b) / log(n)) =
+
+O(n * log(log²(n)) / log(n)) =
+
+O(n * log(2 * log(n)) / log(n)) =
+
+O(n * log(log(n)) / log(n)) =
+
+ǒ(n)</code></pre>
+<p>
+As for getting down to constant query time, the final trick is to consider how few bits there are within each sub-chunk.</p>
+<p>
+Just to put things into perspective, assume that the bit array is under n = 2^128 bits long (a really big number), and that the processor’s word length is 64 bits. In this case, a single call to __builtin_popcountll should suffice, and we can consider this constant time. If n were to be greater than roughly 2^128, then a sub-chunk of <code class="inline">1/2 * log(n)</code> would have more bits than a machine word, and a lookup table containing all possible values can be used instead.</p>
+<p>
+Since the values in the lookup table are relatively small, and highly redundant, a lot of space can be saved. For example, assume that the <code class="inline">x = 1/2 * log(n) = 4</code> sized sub-chunks comes out to 4 bits each (for demo purposes). That would mean that there are <code class="inline">2ˣ = 2⁴</code> possible sequences of bits that a sub-chunk could be:</p>
+<pre><code class="text">0000 0001 0010 0011
+0100 0101 0110 0111
+1000 1001 1010 1011
+1100 1101 1110 1111</code></pre>
+<p>
+The target index to <code class="inline">rank₁(B, idx)</code> probably won’t line up directly with a sub-chunk, so we need to store answers for each offset into each of these <code class="inline">2⁴</code> bit sequences. The answers are represented using <code class="inline">log(x)</code> bits. The math works out to be a sub-linear amount of space as well, due to the size of the sub-chunk, <code class="inline">x</code>.</p>
+<pre><code class="text">- 2ˣ possible bit sequences
+- x number of offsets
+- log(x) bits to encode an answer
+
+O(2ˣ * x * log(x)) =
+
+O(2^(1/2 * log(n)) * 1/2 * log(n) * log(1/2 * log(n))) =
+
+O(√n * log(n) * log(log(n))) =
+
+ǒ(n)</code></pre>
+<p>
+Now it’s finally possible to find rank in constant time and using fewer bits than the original bit array. The final space complexity <a href="../img/jacobson_final_complexity.jpg">comes out to be</a> <code class="inline">O(n * log log n / log n)</code>, which is sub-linear. The process to find <code class="inline">rank₁(B, idx)</code> is as follows:</p>
+<ol>
+  <li>
+Determine which chunk a given index falls into: <code class="inline">index / log²(n)</code>. Use the chunk index to lookup the partial, cumulative rank value in <code class="inline">R1</code>.  </li>
+  <li>
+Determine which sub-chunk the index falls into: <code class="inline">index / ((1/2) * log(n))</code>. Use the sub-chunk index to lookup the partial, relative rank value in <code class="inline">R2</code>.  </li>
+  <li>
+Use either a population count machine instruction, or use a lookup table to get the remaining value based on the remaining bits.  </li>
+  <li>
+Sum the three values to get the complete answer.  </li>
+</ol>
+<p>
+This sounds good in theory, but how does it hold up in practice? I don’t have a good answer to that today. I know that it is super tedious to code this up, though, because of all the bitwise operations, and because of how values are encoded (incomplete demo code <a href="https://github.com/denvaar/bits/blob/main/jacobsons_rank.c">here</a> - beware I’m no C programmer).</p>
+<p>
+Rank may not seem too useful on its own, but it’s a key part of more sophisticated operations on succinct data structures. In Jacobson’s thesis, he showed how it can be used to navigate trees and graphs. It’s also a key part of <a href="https://en.wikipedia.org/wiki/Wavelet_Tree">Wavelet Trees</a>, a data structure used to work with compressed text.</p>
+<p>
+Finally, here are some useful links and references to check out if this sort of thing is also interesting to you:</p>
+<ul>
+  <li>
+Guy Jacobson’s PhD thesis, “Succinct Static Data Structures” <a href="https://dl.acm.org/doi/10.5555/915547">[link]</a>  </li>
+  <li>
+“Compact Data Structures”, by Gonzalo Navarro is a very comprehensive book. <a href="https://www.cambridge.org/core/books/compact-data-structures/68A5983E6F1176181291E235D0B7EB44">[link]</a>  </li>
+  <li>
+An incredibly detailed explanation of this problem on Stack Overflow <a href="https://stackoverflow.com/questions/72580828/what-is-a-succinct-rank-data-structure-how-does-it-work/72580831#72580831">[link]</a>.  </li>
+  <li>
+Ben Langmead’s video (and channel) on YouTube <a href="https://www.youtube.com/watch?v=M1sUZxXVjG8">[link]</a>.  </li>
+  <li>
+Alex Bowe’s blog, which has a lot of content about succinct data structures <a href="https://www.alexbowe.com/articles/">[link]</a>  </li>
+  <li>
+MIT Open Course Ware recording of Erik Demaine’s lecture on succinct data structures <a href="https://youtu.be/3Y2weLDiUWw">[link]</a>.  </li>
+  <li>
+Edward Kmett live coding session <a href="https://youtu.be/9MKEmNNJgFc">[link]</a>.  </li>
+</ul>
+<p>
+<em>Special thanks to <a href="https://www.keithschwarz.com/me/">Keith Schwarz</a>, who went out of his way to help me understand how to mathematically show that <code class="inline">b = log²(n)</code> is <a href="../img/b_der.jpg">the optimal choice of <code class="inline">b</code></a>.</em></p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+            <img src="https://avatars.githubusercontent.com/u/10538978" class="profile-img" alt="A picture of me" decoding="async" />
+            <p class="text-size-body">Thanks for visiting. Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">signing up</a> to be notified when I publish more content.</p>
+          <div class="md:mt2">
+            <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a> · <a href="../rss.xml">RSS</a></p>
+          </div>
+          <p class="">© 2015 - 2023 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

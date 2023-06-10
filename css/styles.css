@@ -181,6 +181,16 @@ p img {
   color: #ffffff;
 }
 
+.milgreen-tag{
+  background: #496855;
+  color: #ffffff;
+}
+
+.sky-tag{
+  background: #08f;
+  color: #ffffff;
+}
+
 .min-h-vh70 {
   min-height: 70vh;
 }
