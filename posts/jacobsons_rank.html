@@ -48,13 +48,13 @@ Lately, I’ve been interested in succinct data structures, where size matters j
 <p>
 <em>What does it mean to be succicnt?</em> Simply put, it’s the idea that data structures can be squashed down to <a href="https://en.wikipedia.org/wiki/Succinct_data_structure">nearly the smallest possible representation</a>, while still maintaining at least some of their efficient operations.</p>
 <p>
-Usually speed is sacrificed at the expense of space, or vice versa, and so it’s magical that succinct data structures somehow manage to avoid this trade off.</p>
+Usually speed is sacrificed at the expense of space, or vice versa, and so it’s magical that succinct data structures somehow manage to avoid this trade off (I will show that this trade off actually still exists, but it’s impressive how the space complexity can be minimized so much).</p>
 <p>
 However, there’s another dimension: flexibility. It’s fair to say that many succinct data structures sacrifice flexibility. For instance, you may have to be OK with a static, read-only version of your data structure, where mutation is done “offline”. When applied to the right type of problems, this is an acceptable trade off.</p>
 <p>
-Succinct data structures are commonly created using bit arrays, since the typical data types and pointers are too space expensive. There are some fundamental, “building block” operations that are often used. One such operation is called <code class="inline">rank</code>.</p>
+Succinct data structures are commonly created using bit arrays, since the usage of typical data types and pointers are too space expensive. There are some fundamental, “building block” operations that are often used. One such operation is called <code class="inline">rank</code>.</p>
 <p>
-Given a sequence of bits, <code class="inline">B</code>, rank tells you how many set bits there are up to a given position, <code class="inline">idx</code>. The goal is to answer rank queries in constant time, and using no more additional bits than the original bit array (sub-linear space complexity).</p>
+Given a sequence of bits, <code class="inline">B</code>, rank tells you how many set bits there are up to a given position, <code class="inline">idx</code>. Since rank is a building block, used to formulate more sophisticated operations, it must be efficient, but not at the expense of much memory. To be classified as <em>succinct</em>, only a sub-linear amount of additional space can be used. The goal is to answer rank queries in constant time, and using no more additional bits than the original bit array (sub-linear space complexity).</p>
 <pre><code class="text">idx  0     6     12    18    24
     ┌┴─────┴─────┴─────┴─────┴─────
 B   │100110110011011101100111100...
@@ -72,14 +72,14 @@ B   │100110110011011101100111100...
 <p>
 There are several examples of this for a single machine word on Sean Anderson’s <a href="https://graphics.stanford.edu/~seander/bithacks.html">Bit Twiddling Hacks web page</a>, and <code class="inline">gcc</code> also has a <code class="inline">__builtin_popcount</code>. Computing rank in constant time for an arbitrarily long bit array will require some additional bits to be stored alongside the original array, plus some interesting techniques.</p>
 <p>
-Since rank is a building block, used to formulate more sophisticated operations, it must be efficient, but not at the expense of much memory. To be classified as <em>succinct</em>, only a sub-linear amount of additional space can be used.</p>
-<p>
-The strategy ends up being clever combination of these two main ideas:</p>
+The strategy ends up being clever combination of these three main ideas:</p>
 <ul>
   <li>
 Create layers of indirection by subdividing the bit array.  </li>
   <li>
 Share common pieces of data using lookup tables.  </li>
+  <li>
+Encode values using a fraction of the “normal” amount bits.  </li>
 </ul>
 <p>
 If we were to precompute the answers to <code class="inline">rank</code> for each offset in the bit array, then that would be a simple way to have constant time complexity, but it would use an enormous amount of space. It would be far from succinct.</p>
@@ -124,7 +124,7 @@ This obviously reduces the space complexity, but the constant-time lookups are n
 <em>How is constant time possible?</em>  </li>
 </ol>
 <p>
-Guy Jacobson, who introduced these concepts in his thesis, “Succinct Static Data Structures”, suggested that the chunks should be <code class="inline">b = log²(n)</code> bits.</p>
+Guy Jacobson, who introduced these concepts in his PhD thesis, “Succinct Static Data Structures”, suggested that the chunks should be <code class="inline">b = log²(n)</code> bits.</p>
 <p>
 I’ve been trying to understand why <code class="inline">b = log²(n)</code> is the right choice. I think that it boils down to the fact that when you pick <code class="inline">b</code> to be a multiple of <code class="inline">log(n)</code>, then the <code class="inline">log(n)</code> term in the numerator vanishes. The result is a sub-linear space complexity:</p>
 <pre><code class="text">O(n * log(n) / log²(n)) =
@@ -173,6 +173,8 @@ O(n * log(log(n)) / log(n)) =
 
 ǒ(n)</code></pre>
 <p>
+There’s an interesting relationship between <code class="inline">R1</code> and <code class="inline">R2</code>, with respect to <code class="inline">b</code>. As the chunk size increases, there are fewer chunks overall, meaning less data stored in <code class="inline">R1</code>. However, that also means that more values are stored in <code class="inline">R2</code>. In ther words, if the <code class="inline">n log n / b</code> term shrinks, then the <code class="inline">n log b / log n</code> grows larger. We can show that the optimal choice for <code class="inline">b</code> is in fact <code class="inline">log²(n)</code> <a href="../img/b_der.jpg">using some calculus</a> (<em>Big thanks to <a href="https://www.keithschwarz.com/me/">Keith Schwarz</a> for showing me how to do this.</em>)</p>
+<p>
 As for getting down to constant query time, the final trick is to consider how few bits there are within each sub-chunk.</p>
 <p>
 Just to put things into perspective, assume that the bit array is under n = 2^128 bits long (a really big number), and that the processor’s word length is 64 bits. In this case, a single call to __builtin_popcountll should suffice, and we can consider this constant time. If n were to be greater than roughly 2^128, then a sub-chunk of <code class="inline">1/2 * log(n)</code> would have more bits than a machine word, and a lookup table containing all possible values can be used instead.</p>
@@ -212,12 +214,20 @@ This sounds good in theory, but how does it hold up in practice? I don’t have 
 <p>
 Rank may not seem too useful on its own, but it’s a key part of more sophisticated operations on succinct data structures. In Jacobson’s thesis, he showed how it can be used to navigate trees and graphs. It’s also a key part of <a href="https://en.wikipedia.org/wiki/Wavelet_Tree">Wavelet Trees</a>, a data structure used to work with compressed text.</p>
 <p>
+Succinct data structures have their place where ever there’s a need to interact with large data sets. Gonzalo Navarro gives one example [¹]:</p>
+<blockquote>
+  <p>
+[…] the DNA of a human genome […] requires slightly less than 800 megabytes if we use only 2 bits per base (A, C, G, T), which fits in the main memory of any desktop PC. However, the suffix tree, a powerful data structure used to efficiently perform sequence analysis on the genome, requires at least 10 bytes per base, that is, more than 30 gigabytes.  </p>
+</blockquote>
+<p>
+So, succinct data structures offer a way to overcome this sort of problem.</p>
+<p>
 Finally, here are some useful links and references to check out if this sort of thing is also interesting to you:</p>
 <ul>
   <li>
 Guy Jacobson’s PhD thesis, “Succinct Static Data Structures” <a href="https://dl.acm.org/doi/10.5555/915547">[link]</a>  </li>
   <li>
-“Compact Data Structures”, by Gonzalo Navarro is a very comprehensive book. <a href="https://www.cambridge.org/core/books/compact-data-structures/68A5983E6F1176181291E235D0B7EB44">[link]</a>  </li>
+[¹] “Compact Data Structures”, by Gonzalo Navarro is a very comprehensive book about succinct data structures. <a href="https://www.cambridge.org/core/books/compact-data-structures/68A5983E6F1176181291E235D0B7EB44">[link]</a>  </li>
   <li>
 An incredibly detailed explanation of this problem on Stack Overflow <a href="https://stackoverflow.com/questions/72580828/what-is-a-succinct-rank-data-structure-how-does-it-work/72580831#72580831">[link]</a>.  </li>
   <li>
