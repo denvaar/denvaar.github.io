@@ -46,7 +46,7 @@ Memory usage is usually an afterthought when it comes to algorithms and data str
 <p>
 Lately, I’ve been interested in succinct data structures, where size matters just as much as speed.</p>
 <p>
-<em>What does it mean to be succicnt?</em> Simply put, it’s the idea that data structures can be squashed down to <a href="https://en.wikipedia.org/wiki/Succinct_data_structure">nearly the smallest possible representation</a>, while still maintaining at least some of their efficient operations.</p>
+<em>What does it mean to be succinct?</em> Simply put, it’s the idea that data structures can be squashed down to <a href="https://en.wikipedia.org/wiki/Succinct_data_structure">nearly the smallest possible representation</a>, while still maintaining at least some of their efficient operations.</p>
 <p>
 Usually speed is sacrificed at the expense of space, or vice versa, and so it’s magical that succinct data structures somehow manage to avoid this trade off (I will show that this trade off actually still exists, but it’s impressive how the space complexity can be minimized so much).</p>
 <p>
@@ -139,7 +139,7 @@ Jacobson also suggested that a two-level auxiliary bit array scheme could improv
 <p>
 Values in <code class="inline">R1</code> correspond to chunks of size <code class="inline">log²(n)</code> from <code class="inline">B</code>. Values from <code class="inline">R2</code> correspond to sub-chunks from <code class="inline">B</code> of size <code class="inline">1/2 * log(n)</code>.</p>
 <p>
-Since values in <code class="inline">R1</code> can approach <code class="inline">n</code>, the total number of bits, they are encoded using <code class="inline">log(n)</code> bits. However, for <code class="inline">R2</code>, the values approach <code class="inline">b</code>, the size of a chunk, so each value can be encoded using even less bits: <code class="inline">log(b)</code>.</p>
+Since values in <code class="inline">R1</code> can approach <code class="inline">n</code>, the total number of bits, they are encoded using <code class="inline">log(n)</code> bits. However, for <code class="inline">R2</code>, the values approach <code class="inline">b</code>, the size of a chunk, so each value can be encoded using even fewer bits: <code class="inline">log(b)</code>.</p>
 <pre><code class="text">     [more rank values, relative to a chunk]
     ┌───┬───┬───┬───┬────
  R2 │   │   │   │   │ ... n * log(b) / 2 * log(n) bits
@@ -173,7 +173,7 @@ O(n * log(log(n)) / log(n)) =
 
 ǒ(n)</code></pre>
 <p>
-There’s an interesting relationship between <code class="inline">R1</code> and <code class="inline">R2</code>, with respect to <code class="inline">b</code>. As the chunk size increases, there are fewer chunks overall, meaning less data stored in <code class="inline">R1</code>. However, that also means that more values are stored in <code class="inline">R2</code>. In ther words, if the <code class="inline">n log n / b</code> term shrinks, then the <code class="inline">n log b / log n</code> grows larger. We can show that the optimal choice for <code class="inline">b</code> is in fact <code class="inline">log²(n)</code> <a href="../img/b_der.jpg">using some calculus</a> (<em>Big thanks to <a href="https://www.keithschwarz.com/me/">Keith Schwarz</a> for showing me how to do this.</em>)</p>
+There’s an interesting relationship between <code class="inline">R1</code> and <code class="inline">R2</code>, with respect to <code class="inline">b</code>. As the chunk size increases, there are fewer chunks overall, meaning less data stored in <code class="inline">R1</code>. However, that also means that more values are stored in <code class="inline">R2</code>. In other words, if the <code class="inline">n log n / b</code> term shrinks, then the <code class="inline">n log b / log n</code> grows larger. We can show that the optimal choice for <code class="inline">b</code> is in fact <code class="inline">log²(n)</code> <a href="../img/b_der.jpg">using some calculus</a> (<em>Big thanks to <a href="https://www.keithschwarz.com/me/">Keith Schwarz</a> for showing me how to do this.</em>)</p>
 <p>
 As for getting down to constant query time, the final trick is to consider how few bits there are within each sub-chunk.</p>
 <p>
@@ -214,7 +214,7 @@ This sounds good in theory, but how does it hold up in practice? I don’t have 
 <p>
 Rank may not seem too useful on its own, but it’s a key part of more sophisticated operations on succinct data structures. In Jacobson’s thesis, he showed how it can be used to navigate trees and graphs. It’s also a key part of <a href="https://en.wikipedia.org/wiki/Wavelet_Tree">Wavelet Trees</a>, a data structure used to work with compressed text.</p>
 <p>
-Succinct data structures have their place where ever there’s a need to interact with large data sets. Gonzalo Navarro gives one example [¹]:</p>
+Succinct data structures have their place wherever there’s a need to interact with large data sets. Gonzalo Navarro gives one example [¹]:</p>
 <blockquote>
   <p>
 […] the DNA of a human genome […] requires slightly less than 800 megabytes if we use only 2 bits per base (A, C, G, T), which fits in the main memory of any desktop PC. However, the suffix tree, a powerful data structure used to efficiently perform sequence analysis on the genome, requires at least 10 bytes per base, that is, more than 30 gigabytes.  </p>
@@ -235,7 +235,7 @@ Ben Langmead’s video (and channel) on YouTube <a href="https://www.youtube.com
   <li>
 Alex Bowe’s blog, which has a lot of content about succinct data structures <a href="https://www.alexbowe.com/articles/">[link]</a>  </li>
   <li>
-MIT Open Course Ware recording of Erik Demaine’s lecture on succinct data structures <a href="https://youtu.be/3Y2weLDiUWw">[link]</a>.  </li>
+MIT OpenCourseWare recording of Erik Demaine’s lecture on succinct data structures <a href="https://youtu.be/3Y2weLDiUWw">[link]</a>.  </li>
   <li>
 Edward Kmett live coding session <a href="https://youtu.be/9MKEmNNJgFc">[link]</a>.  </li>
 </ul>
