@@ -5,6 +5,13 @@
 		<description>denvaar's personal site. Most of the content is on software development and computer programming. However, other one-off topics are in the mix.</description>
 		<language>en-us</language>
     <item>
+      <title>Do a High Five as You Ride Past</title>
+      <description>How and why to go for the classic, but rare high five as you ride past.</description>
+      <category>cycling</category>
+      <link>https://denvaar.github.io/posts/high_five.html</link>
+      <pubDate>Thu Jun 18 23:40:09 MDT 2023</pubDate>
+    </item>
+    <item>
       <title>Jacobson's Rank</title>
       <description>Rank is a fundamental operation for Succinct Data Structures. It counts the number of set bits up to a given index in a bit array. How can this be done in constant time and sub-linear space?</description>
       <category>data structures</category>
