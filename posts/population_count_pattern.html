@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Population Count Pattern | denvaar's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 md:pv1 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <p class="mv0 bold align-self-end">
+            <span class="site-name">denvaar's site&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <a href="../index.html" class="phantom-a">writing</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../trash.html" class="phantom-a">brain dump</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../playground.html" class="phantom-a">playground</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../rss.xml" class="phantom-a">rss</a>
+          </p> 
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">Population Count Pattern</h1>
+        <p class="heading-size-xsm">Understanding why a concise, macro-defined array can be used as a lookup table for finding the number of set bits in a number.</p>
+        <div>
+          
+          
+
+          
+            <span class="tag blue-tag"># programming</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xsm">2023-10-24</p>
+        <hr class="divider" />
+      </section>
+      <p>
+I was looking at Sean Anderson’s “Bit Twiddling Hacks” <a href="https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetTable">page</a>. One method for counting set bits using a lookup table caught my attention.</p>
+<p>
+Here’s a similar version, modified for completeness.</p>
+<pre><code class="c">// https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetTable
+
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+
+#define B2(n) n, n+1, n+1, n+2
+#define B4(n) B2(n), B2(n+1), B2(n+1), B2(n+2)
+#define B6(n) B4(n), B4(n+1), B4(n+1), B4(n+2)
+
+static const uint8_t table[256] = {
+  B6(0), B6(1), B6(1), B6(2)
+};
+
+#define BASE_10 10
+
+int main(int argc, char **argv) {
+  uint64_t target = strtoull(argv[1], NULL, BASE_10);
+  uint8_t count = 0;
+  uint8_t *p = (uint8_t *)&amp;target;
+
+  for (int i = 0; i &lt; sizeof(p); i++) {
+    count += table[p[i]];
+  }
+
+  printf(&quot;Number of set bits in %llu is %u\n&quot;,
+      target, count);
+
+  return 0;
+}</code></pre>
+<p>
+The program takes a number between <code class="inline">[0, 18446744073709551615]</code> and determines its population count, which is the number of bits that are set to 1.</p>
+<p>
+Each 8-bit integer in the <code class="inline">table</code> array is the population count for the given index. The values can only go up to 8, since the indices range from <code class="inline">[0, 255]</code>.</p>
+<p>
+The lookup table is still able to solve the population count for numbers greater than 255 because, for example, <code class="inline">popcount(255)</code> is the same thing as <code class="inline">popcount(15) + popcount(15)</code>.</p>
+<pre><code class="text">┌─────────┬──────────────┐
+│ BASE 10 │    BASE 2    │
+├─────────┼──────────────┤
+│ 255     │    1111 1111 │
+│ 15      │    0000 1111 │
+└─────────┴──────────────┘</code></pre>
+<p>
+Though <code class="inline">target</code> is an <code class="inline">unsigned long long</code>, it’s treated as an array of eight 8-bit values, which are used to index into the lookup table, and then summed up to get the final result.</p>
+<p>
+This is probably not the absolute fastest way to find the population count, and there are even clever ways to use less memory, but the table is based on an interesting pattern that took me a little while to understand why it works.</p>
+<p>
+Not too surprisingly, when binary numbers are enumerated, there’s a pattern of how many <code class="inline">1</code>‘s appear from one number to the next, though it’s not immediately apparent what that pattern is.</p>
+<p>
+Graphing the number of set bits for every binary number helps to visualize the pattern.</p>
+<p>
+  <img src="../img/set_bit_count_1.jpg" alt="Overall pattern of the number of set bits" />
+</p>
+<p>
+Zoom in closer and you can start to pinpoint what the pattern actually is.</p>
+<p>
+  <img src="../img/set_bit_count_2.jpg" alt="Close-up pattern of the number of set bits" />
+</p>
+<p>
+Within each green box there are four population counts, which basically go like this as <code class="inline">n</code> increases:</p>
+<ul>
+  <li>
+Increase  </li>
+  <li>
+Stay the same  </li>
+  <li>
+Increase  </li>
+</ul>
+<p>
+Think of <code class="inline">n</code> as the first point within a box. <em>How do the other points in the same box change, with respect to the first point, <code class="inline">n</code>?</em></p>
+<p>
+They do this: <code class="inline">n+1, n+1, n+2</code>. With knowledge of this pattern, a lookup table of the first four pre-computed bit counts can be created.</p>
+<pre><code class="c">#define B2(n) n, n+1, n+1, n+2
+
+static const uint8_t table[4] = {
+  B2(0)
+};</code></pre>
+<p>
+Not too useful, but the same pattern can be applied to grow the array. Notice in the graph that the green boxes themselves also follow the same pattern: The first box begins lower than the others, the next two boxes stay the same, and the final box sits higher than the others.</p>
+<p>
+It’s the same pattern, so it can be expressed using the existing <code class="inline">B2</code> macro to get pre-computed bit counts for numbers 0 - 15.</p>
+<pre><code class="c">#define B2(n) n, n+1, n+1, n+2
+
+static const uint8_t table[16] = {
+  B2(0), B2(1), B2(1), B2(2)
+};</code></pre>
+<p>
+Another way way to write that is by introducing another macro, <code class="inline">B4</code>, which is based on <code class="inline">B2</code>, but uses the same pattern.</p>
+<pre><code class="c">#define B2(n) n, n+1, n+1, n+2
+#define B4(n) B2(n), B2(n+1), B2(n+1), B2(n+2)
+
+static const uint8_t table[16] = {
+  B4(0)
+};</code></pre>
+<p>
+<code class="inline">B2</code> yields four values, and so <code class="inline">B4</code> provides 16 since it uses <code class="inline">B2</code> four times. This same pattern continues. Each pink box represents all four green boxes, and it’s clear to see that it also follows the <code class="inline">n, n+1, n+1, n+2</code> pattern.</p>
+<p>
+  <img src="../img/set_bit_count_3.jpg" alt="Number of set bits" />
+</p>
+<p>
+It’s the same steps as before to code this up: Define another macro that calls the previous version four times, each following the same pattern for <code class="inline">n</code>.</p>
+<pre><code class="c">#define B2(n) n, n+1, n+1, n+2
+#define B4(n) B2(n), B2(n+1), B2(n+1), B2(n+2)
+#define B6(n) B4(n), B4(n+1), B4(n+1), B4(n+2)
+
+static const uint8_t table[64] = {
+  B6(0)
+};</code></pre>
+<p>
+Every time a macro is defined in terms of the previous one, it’s increasing the total number of array elements by four fold.</p>
+<p>
+It’s a simple pattern (<a href="https://oeis.org/A000120">A000120</a>) that was not apparent to me when I first read the code. It got me thinking, <em>There must be a formula that can be used to find the number of set bits for a given number, N.</em></p>
+<p>
+Well, I couldn’t figure it out on my own, so I had to look it up online and found the <a href="https://en.wikipedia.org/wiki/Digit_sum">digit sum</a> definition. This formula gives the sum of all digits in a number, for any base, <code class="inline">b</code>.</p>
+<svg width="100%" xmlns="http://www.w3.org/2000/svg" width="227.928px" height="56.360px" viewBox="0 -1868.1 12593.1 3114" xmlns="xmlns">
+  <defs><path id="MJX-100-TEX-LO-2211" d="M60 948Q63 950 665 950H1267L1325 815Q1384 677 1388 669H1348L1341 683Q1320 724 1285 761Q1235 809 1174 838T1033 881T882 898T699 902H574H543H251L259 891Q722 258 724 252Q725 250 724 246Q721 243 460 -56L196 -356Q196 -357 407 -357Q459 -357 548 -357T676 -358Q812 -358 896 -353T1063 -332T1204 -283T1307 -196Q1328 -170 1348 -124H1388Q1388 -125 1381 -145T1356 -210T1325 -294L1267 -449L666 -450Q64 -450 61 -448Q55 -446 55 -439Q55 -437 57 -433L590 177Q590 178 557 222T452 366T322 544L56 909L55 924Q55 945 60 948Z"></path><path id="MJX-100-TEX-I-1D456" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"></path><path id="MJX-100-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-100-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path id="MJX-100-TEX-N-230A" d="M174 734Q174 735 175 737T177 740T180 744T184 747T189 749T196 750Q206 748 214 735V-210H310H373Q401 -210 411 -213T422 -230T411 -247T369 -251Q362 -251 338 -251T298 -250H190Q178 -246 174 -234V734Z"></path><path id="MJX-100-TEX-N-6C" d="M42 46H56Q95 46 103 60V68Q103 77 103 91T103 124T104 167T104 217T104 272T104 329Q104 366 104 407T104 482T104 542T103 586T103 603Q100 622 89 628T44 637H26V660Q26 683 28 683L38 684Q48 685 67 686T104 688Q121 689 141 690T171 693T182 694H185V379Q185 62 186 60Q190 52 198 49Q219 46 247 46H263V0H255L232 1Q209 2 183 2T145 3T107 3T57 1L34 0H26V46H42Z"></path><path id="MJX-100-TEX-N-6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z"></path><path id="MJX-100-TEX-N-67" d="M329 409Q373 453 429 453Q459 453 472 434T485 396Q485 382 476 371T449 360Q416 360 412 390Q410 404 415 411Q415 412 416 414V415Q388 412 363 393Q355 388 355 386Q355 385 359 381T368 369T379 351T388 325T392 292Q392 230 343 187T222 143Q172 143 123 171Q112 153 112 133Q112 98 138 81Q147 75 155 75T227 73Q311 72 335 67Q396 58 431 26Q470 -13 470 -72Q470 -139 392 -175Q332 -206 250 -206Q167 -206 107 -175Q29 -140 29 -75Q29 -39 50 -15T92 18L103 24Q67 55 67 108Q67 155 96 193Q52 237 52 292Q52 355 102 398T223 442Q274 442 318 416L329 409ZM299 343Q294 371 273 387T221 404Q192 404 171 388T145 343Q142 326 142 292Q142 248 149 227T179 192Q196 182 222 182Q244 182 260 189T283 207T294 227T299 242Q302 258 302 292T299 343ZM403 -75Q403 -50 389 -34T348 -11T299 -2T245 0H218Q151 0 138 -6Q118 -15 107 -34T95 -74Q95 -84 101 -97T122 -127T170 -155T250 -167Q319 -167 361 -139T403 -75Z"></path><path id="MJX-100-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path id="MJX-100-TEX-N-2061" d=""></path><path id="MJX-100-TEX-I-1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-100-TEX-N-230B" d="M229 734Q229 735 230 737T232 740T235 744T239 747T244 749T251 750Q262 748 269 735V-235Q266 -240 256 -249L147 -250H77Q43 -250 32 -247T21 -230T32 -213T72 -209Q79 -209 99 -209T133 -210H229V734Z"></path><path id="MJX-100-TEX-N-A0" d=""></path><path id="MJX-100-TEX-I-1D45A" d="M21 287Q22 293 24 303T36 341T56 388T88 425T132 442T175 435T205 417T221 395T229 376L231 369Q231 367 232 367L243 378Q303 442 384 442Q401 442 415 440T441 433T460 423T475 411T485 398T493 385T497 373T500 364T502 357L510 367Q573 442 659 442Q713 442 746 415T780 336Q780 285 742 178T704 50Q705 36 709 31T724 26Q752 26 776 56T815 138Q818 149 821 151T837 153Q857 153 857 145Q857 144 853 130Q845 101 831 73T785 17T716 -10Q669 -10 648 17T627 73Q627 92 663 193T700 345Q700 404 656 404H651Q565 404 506 303L499 291L466 157Q433 26 428 16Q415 -11 385 -11Q372 -11 364 -4T353 8T350 18Q350 29 384 161L420 307Q423 322 423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 181Q151 335 151 342Q154 357 154 369Q154 405 129 405Q107 405 92 377T69 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-100-TEX-I-1D45C" d="M201 -11Q126 -11 80 38T34 156Q34 221 64 279T146 380Q222 441 301 441Q333 441 341 440Q354 437 367 433T402 417T438 387T464 338T476 268Q476 161 390 75T201 -11ZM121 120Q121 70 147 48T206 26Q250 26 289 58T351 142Q360 163 374 216T388 308Q388 352 370 375Q346 405 306 405Q243 405 195 347Q158 303 140 230T121 120Z"></path><path id="MJX-100-TEX-I-1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path><path id="MJX-100-TEX-I-1D44F" d="M73 647Q73 657 77 670T89 683Q90 683 161 688T234 694Q246 694 246 685T212 542Q204 508 195 472T180 418L176 399Q176 396 182 402Q231 442 283 442Q345 442 383 396T422 280Q422 169 343 79T173 -11Q123 -11 82 27T40 150V159Q40 180 48 217T97 414Q147 611 147 623T109 637Q104 637 101 637H96Q86 637 83 637T76 640T73 647ZM336 325V331Q336 405 275 405Q258 405 240 397T207 376T181 352T163 330L157 322L136 236Q114 150 114 114Q114 66 138 42Q154 26 178 26Q211 26 245 58Q270 81 285 114T318 219Q336 291 336 325Z"></path><path id="MJX-100-TEX-N-2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path><path id="MJX-100-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-100-TEX-N-2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="munderover"><g data-mml-node="mo" transform="translate(469.2,0)"><use data-c="2211" xlink:href="#MJX-100-TEX-LO-2211"></use></g><g data-mml-node="TeXAtom" transform="translate(617.4,-1087.9) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D456" xlink:href="#MJX-100-TEX-I-1D456"></use></g><g data-mml-node="mo" transform="translate(345,0)"><use data-c="3D" xlink:href="#MJX-100-TEX-N-3D"></use></g><g data-mml-node="mn" transform="translate(1123,0)"><use data-c="30" xlink:href="#MJX-100-TEX-N-30"></use></g></g><g data-mml-node="TeXAtom" transform="translate(0,1237.8) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mo"><use data-c="230A" xlink:href="#MJX-100-TEX-N-230A"></use></g><g data-mml-node="msub" transform="translate(444,0)"><g data-mml-node="mi"><use data-c="6C" xlink:href="#MJX-100-TEX-N-6C"></use><use data-c="6F" xlink:href="#MJX-100-TEX-N-6F" transform="translate(278,0)"></use><use data-c="67" xlink:href="#MJX-100-TEX-N-67" transform="translate(778,0)"></use></g><g data-mml-node="mn" transform="translate(1311,-241.4) scale(0.707)"><use data-c="32" xlink:href="#MJX-100-TEX-N-32"></use></g></g><g data-mml-node="mo" transform="translate(2158.6,0)"><use data-c="2061" xlink:href="#MJX-100-TEX-N-2061"></use></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(2325.2,0)"><g data-mml-node="mi"><use data-c="1D45B" xlink:href="#MJX-100-TEX-I-1D45B"></use></g></g><g data-mml-node="mo" transform="translate(2925.2,0)"><use data-c="230B" xlink:href="#MJX-100-TEX-N-230B"></use></g></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(2549.1,0)"><g data-mml-node="mfrac"><g data-mml-node="mrow" transform="translate(220,676)"><g data-mml-node="mi"><use data-c="1D45B" xlink:href="#MJX-100-TEX-I-1D45B"></use></g><g data-mml-node="mtext" transform="translate(600,0)"><use data-c="A0" xlink:href="#MJX-100-TEX-N-A0"></use></g><g data-mml-node="mi" transform="translate(850,0)"><use data-c="1D45A" xlink:href="#MJX-100-TEX-I-1D45A"></use></g><g data-mml-node="mi" transform="translate(1728,0)"><use data-c="1D45C" xlink:href="#MJX-100-TEX-I-1D45C"></use></g><g data-mml-node="mi" transform="translate(2213,0)"><use data-c="1D451" xlink:href="#MJX-100-TEX-I-1D451"></use></g><g data-mml-node="mtext" transform="translate(2733,0)"><use data-c="A0" xlink:href="#MJX-100-TEX-N-A0"></use></g><g data-mml-node="msup" transform="translate(2983,0)"><g data-mml-node="mi"><use data-c="1D44F" xlink:href="#MJX-100-TEX-I-1D44F"></use></g><g data-mml-node="TeXAtom" transform="translate(462,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D456" xlink:href="#MJX-100-TEX-I-1D456"></use></g><g data-mml-node="mo" transform="translate(345,0)"><use data-c="2B" xlink:href="#MJX-100-TEX-N-2B"></use></g><g data-mml-node="mn" transform="translate(1123,0)"><use data-c="31" xlink:href="#MJX-100-TEX-N-31"></use></g></g></g><g data-mml-node="mo" transform="translate(4864.9,0)"><use data-c="2212" xlink:href="#MJX-100-TEX-N-2212"></use></g><g data-mml-node="mi" transform="translate(5865.1,0)"><use data-c="1D45B" xlink:href="#MJX-100-TEX-I-1D45B"></use></g><g data-mml-node="mtext" transform="translate(6465.1,0)"><use data-c="A0" xlink:href="#MJX-100-TEX-N-A0"></use></g><g data-mml-node="mi" transform="translate(6715.1,0)"><use data-c="1D45A" xlink:href="#MJX-100-TEX-I-1D45A"></use></g><g data-mml-node="mi" transform="translate(7593.1,0)"><use data-c="1D45C" xlink:href="#MJX-100-TEX-I-1D45C"></use></g><g data-mml-node="mi" transform="translate(8078.1,0)"><use data-c="1D451" xlink:href="#MJX-100-TEX-I-1D451"></use></g><g data-mml-node="mtext" transform="translate(8598.1,0)"><use data-c="A0" xlink:href="#MJX-100-TEX-N-A0"></use></g><g data-mml-node="msup" transform="translate(8848.1,0)"><g data-mml-node="mi"><use data-c="1D44F" xlink:href="#MJX-100-TEX-I-1D44F"></use></g><g data-mml-node="TeXAtom" transform="translate(462,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D456" xlink:href="#MJX-100-TEX-I-1D456"></use></g></g></g></g><g data-mml-node="msup" transform="translate(4644,-716.4)"><g data-mml-node="mi"><use data-c="1D44F" xlink:href="#MJX-100-TEX-I-1D44F"></use></g><g data-mml-node="mi" transform="translate(462,289) scale(0.707)"><use data-c="1D456" xlink:href="#MJX-100-TEX-I-1D456"></use></g></g><rect width="9804" height="60" x="120" y="220"></rect></g></g></g></g></svg>
+<p>
+For base 2 specifically, it can be written like this:</p>
+<svg width="100%" xmlns="http://www.w3.org/2000/svg" width="122.968px" height="67.632px" viewBox="0 -2241.7 6793.8 3736.8" xmlns="xmlns">
+  <defs><path id="MJX-142-TEX-I-1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-142-TEX-N-2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path><path id="MJX-142-TEX-LO-2211" d="M60 948Q63 950 665 950H1267L1325 815Q1384 677 1388 669H1348L1341 683Q1320 724 1285 761Q1235 809 1174 838T1033 881T882 898T699 902H574H543H251L259 891Q722 258 724 252Q725 250 724 246Q721 243 460 -56L196 -356Q196 -357 407 -357Q459 -357 548 -357T676 -358Q812 -358 896 -353T1063 -332T1204 -283T1307 -196Q1328 -170 1348 -124H1388Q1388 -125 1381 -145T1356 -210T1325 -294L1267 -449L666 -450Q64 -450 61 -448Q55 -446 55 -439Q55 -437 57 -433L590 177Q590 178 557 222T452 366T322 544L56 909L55 924Q55 945 60 948Z"></path><path id="MJX-142-TEX-I-1D456" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"></path><path id="MJX-142-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-142-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-142-TEX-N-230A" d="M174 734Q174 735 175 737T177 740T180 744T184 747T189 749T196 750Q206 748 214 735V-210H310H373Q401 -210 411 -213T422 -230T411 -247T369 -251Q362 -251 338 -251T298 -250H190Q178 -246 174 -234V734Z"></path><path id="MJX-142-TEX-N-6C" d="M42 46H56Q95 46 103 60V68Q103 77 103 91T103 124T104 167T104 217T104 272T104 329Q104 366 104 407T104 482T104 542T103 586T103 603Q100 622 89 628T44 637H26V660Q26 683 28 683L38 684Q48 685 67 686T104 688Q121 689 141 690T171 693T182 694H185V379Q185 62 186 60Q190 52 198 49Q219 46 247 46H263V0H255L232 1Q209 2 183 2T145 3T107 3T57 1L34 0H26V46H42Z"></path><path id="MJX-142-TEX-N-6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z"></path><path id="MJX-142-TEX-N-67" d="M329 409Q373 453 429 453Q459 453 472 434T485 396Q485 382 476 371T449 360Q416 360 412 390Q410 404 415 411Q415 412 416 414V415Q388 412 363 393Q355 388 355 386Q355 385 359 381T368 369T379 351T388 325T392 292Q392 230 343 187T222 143Q172 143 123 171Q112 153 112 133Q112 98 138 81Q147 75 155 75T227 73Q311 72 335 67Q396 58 431 26Q470 -13 470 -72Q470 -139 392 -175Q332 -206 250 -206Q167 -206 107 -175Q29 -140 29 -75Q29 -39 50 -15T92 18L103 24Q67 55 67 108Q67 155 96 193Q52 237 52 292Q52 355 102 398T223 442Q274 442 318 416L329 409ZM299 343Q294 371 273 387T221 404Q192 404 171 388T145 343Q142 326 142 292Q142 248 149 227T179 192Q196 182 222 182Q244 182 260 189T283 207T294 227T299 242Q302 258 302 292T299 343ZM403 -75Q403 -50 389 -34T348 -11T299 -2T245 0H218Q151 0 138 -6Q118 -15 107 -34T95 -74Q95 -84 101 -97T122 -127T170 -155T250 -167Q319 -167 361 -139T403 -75Z"></path><path id="MJX-142-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path id="MJX-142-TEX-N-2061" d=""></path><path id="MJX-142-TEX-N-230B" d="M229 734Q229 735 230 737T232 740T235 744T239 747T244 749T251 750Q262 748 269 735V-235Q266 -240 256 -249L147 -250H77Q43 -250 32 -247T21 -230T32 -213T72 -209Q79 -209 99 -209T133 -210H229V734Z"></path><path id="MJX-142-TEX-S3-230A" d="M246 -949V1450H308V-887H571V-949H246Z"></path><path id="MJX-142-TEX-S3-230B" d="M274 -887V1450H336V-949H11V-887H274Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D45B" xlink:href="#MJX-142-TEX-I-1D45B"></use></g><g data-mml-node="mo" transform="translate(822.2,0)"><use data-c="2212" xlink:href="#MJX-142-TEX-N-2212"></use></g><g data-mml-node="mstyle" transform="translate(1866.9,0) scale(1.2)"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="munderover"><g data-mml-node="mo" transform="translate(469.2,0)"><use data-c="2211" xlink:href="#MJX-142-TEX-LO-2211"></use></g><g data-mml-node="TeXAtom" transform="translate(617.4,-1087.9) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D456" xlink:href="#MJX-142-TEX-I-1D456"></use></g><g data-mml-node="mo" transform="translate(345,0)"><use data-c="3D" xlink:href="#MJX-142-TEX-N-3D"></use></g><g data-mml-node="mn" transform="translate(1123,0)"><use data-c="31" xlink:href="#MJX-142-TEX-N-31"></use></g></g><g data-mml-node="TeXAtom" transform="translate(0,1237.8) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mo"><use data-c="230A" xlink:href="#MJX-142-TEX-N-230A"></use></g><g data-mml-node="msub" transform="translate(444,0)"><g data-mml-node="mi"><use data-c="6C" xlink:href="#MJX-142-TEX-N-6C"></use><use data-c="6F" xlink:href="#MJX-142-TEX-N-6F" transform="translate(278,0)"></use><use data-c="67" xlink:href="#MJX-142-TEX-N-67" transform="translate(778,0)"></use></g><g data-mml-node="mn" transform="translate(1311,-241.4) scale(0.707)"><use data-c="32" xlink:href="#MJX-142-TEX-N-32"></use></g></g><g data-mml-node="mo" transform="translate(2158.6,0)"><use data-c="2061" xlink:href="#MJX-142-TEX-N-2061"></use></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(2325.2,0)"><g data-mml-node="mi"><use data-c="1D45B" xlink:href="#MJX-142-TEX-I-1D45B"></use></g></g><g data-mml-node="mo" transform="translate(2925.2,0)"><use data-c="230B" xlink:href="#MJX-142-TEX-N-230B"></use></g></g></g></g><g data-mml-node="mstyle" transform="translate(2382.4,0) scale(0.708)"><g data-mml-node="TeXAtom" data-mjx-texclass="OPEN"><g data-mml-node="mo" transform="translate(0 -0.5)"><use data-c="230A" xlink:href="#MJX-142-TEX-S3-230A"></use></g></g><g data-mml-node="mfrac" transform="translate(583,0)"><g data-mml-node="mi" transform="translate(333.5,676)"><use data-c="1D45B" xlink:href="#MJX-142-TEX-I-1D45B"></use></g><g data-mml-node="msup" transform="translate(220,-716.4)"><g data-mml-node="mn"><use data-c="32" xlink:href="#MJX-142-TEX-N-32"></use></g><g data-mml-node="mi" transform="translate(533,289) scale(0.707)"><use data-c="1D456" xlink:href="#MJX-142-TEX-I-1D456"></use></g></g><rect width="1027" height="60" x="120" y="220"></rect></g><g data-mml-node="TeXAtom" data-mjx-texclass="CLOSE" transform="translate(1850,0)"><g data-mml-node="mo" transform="translate(0 -0.5)"><use data-c="230B" xlink:href="#MJX-142-TEX-S3-230B"></use></g></g></g></g></g></g></svg>
+<p>
+I’m still trying to figure out how to get to the base 2 case from the general case.</p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+            <img src="https://avatars.githubusercontent.com/u/10538978" class="profile-img" alt="A picture of me" decoding="async" />
+            <p class="text-size-body">Thanks for visiting. Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">signing up</a> to be notified when I write more things.</p>
+          <div class="md:mt2">
+            <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a> · <a href="../rss.xml">RSS</a></p>
+          </div>
+          <p class="">© 2015 - 2023 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

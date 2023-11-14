@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Optimization with Timeit | denvaar's Site</title>
+    <title>C Preprocessor for Array Values | denvaar's Site</title>
     <link rel="stylesheet" href="../css/styles.css" />
     <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
     <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
@@ -26,63 +26,50 @@
     </header>
     <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
       <section>
-        <h1 class="mt0 heading-size-sm md:heading-size-md">Optimization with Timeit</h1>
-        <p class="heading-size-xsm">Code optimization analysis using Python's timeit mo dule.</p>
+        <h1 class="mt0 heading-size-sm md:heading-size-md">C Preprocessor for Array Values</h1>
+        <p class="heading-size-xsm">Macros don't need to conform to C syntax.</p>
         <div>
           
           
 
           
-            <span class="tag blue-tag"># programming</span>
-          
-            <span class="tag green-tag"># python</span>
+            <span class="tag gray-tag"># c</span>
           
         </div>
-        <p class="m0 mt1 heading-size-xsm">2015-06-19</p>
+        <p class="m0 mt1 heading-size-xsm">2023-10-21</p>
         <hr class="divider" />
       </section>
       <p>
-I needed to compare which way was the fastest for skipping to a certain point in a large CSV file. Python has an awesome module that makes it really easy. It’s called timeit.</p>
+A good way to think of, <code class="inline">#define</code>, and other pre-processor directives, is basically as a “find and replace” operation that happens before the code is compiled. You don’t follow C syntax as in the rest of the program body.</p>
+<pre><code class="c">#define VALUE 42
+static const unsigned int array[1] = { VALUE };</code></pre>
 <p>
-I’ve demonstrated one simple way of using timeit to compare three different functions below.</p>
-<pre><code>import timeit
-import os
-import re
-import mmap
-import contextlib
+It’s easy to see that the value of <code class="inline">VALUE</code> can be used in the creation of an array. And <code class="inline">#define</code> can be used to create function-like macros too:</p>
+<pre><code class="c">#define PLUS_ONE(n) n+1
+static const unsigned int array[1] = { PLUS_ONE(41) };</code></pre>
+<p>
+The previous two code snippets would ultimately result in the same executable. Just to drive home the idea that this is basically a “find and replace” happening, the following two snippets are also equal (in terms of the end result).</p>
+<pre><code class="c">#define A 1
+#define B 2
+static const unsigned int array[2] = { A, B };</code></pre>
+<pre><code class="c">#define AB 1, 2
+static const unsigned int array[2] = { AB };</code></pre>
+<p>
+Invoke the C Preprocessor using, <code class="inline">cpp &lt;filename&gt;</code>, to see the substitutions it made. Both snippets result in the same thing.</p>
+<pre><code># 1 &quot;macro_demo.c&quot;
+# 1 &quot;&lt;built-in&gt;&quot; 1
+# 1 &quot;&lt;built-in&gt;&quot; 3
+# 369 &quot;&lt;built-in&gt;&quot; 3
+# 1 &quot;&lt;command line&gt;&quot; 1
+# 1 &quot;&lt;built-in&gt;&quot; 2
+# 1 &quot;macro_demo.c&quot; 2
 
-path = &#39;./big.csv&#39;
 
-# Option 1
-def option1():
-    with open(path, &#39;rb&#39;) as f:
-        #size = os.path.getsize(path)
-        size_old = os.path.getsize(&#39;./big2.csv&#39;) # File before more data
-        f.seek(size_old)
-        f.read() # print r.read()
+static const unsigned int array[2] = { 1, 2 };
 
-# Option 2
-def option2():
-    with open(path, &#39;r&#39;) as f:
-        content = f.read()
-        i = content.index(&#39;LAST&#39;)
-        f.seek(i)
-        f.readline() # Consume the old line.
-        f.read() # print r.read()
-
-# Option 3
-def option3():
-    with open(path, &#39;r+&#39;) as f:
-        with contextlib.closing(mmap.mmap(f.fileno(), os.O_RDONLY)) as mf:
-            mf.seek(0)
-            m = re.search(&#39;LAST_DATE&#39;, mf)
-            mf.seek(m.start())
-            mf.readline() # Consume the old line.
-            mf.read(m.end()) # print mf.read(m.end())
-
-print `Option 1: `, timeit.timeit(option1, number=5000)
-print `Option 2: `, timeit.timeit(option2, number=5000)
-print `Option 3: `, timeit.timeit(option3, number=5000)</code></pre>
+int main(void) {
+  return 0;
+}</code></pre>
 
     </div>
     <footer>
