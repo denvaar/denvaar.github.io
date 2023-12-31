@@ -1,21 +1,28 @@
 <rss version="2.0">
 	<channel>
 		<title>denvaar's site</title>
-		<link>https://denvaar.github.io</link>
+		<link>https://denvaar.dev</link>
 		<description>denvaar's personal site. Most of the content is on software development and computer programming. However, other one-off topics are in the mix.</description>
 		<language>en-us</language>
+    <item>
+      <title>365 Walks In 2023</title>
+      <description>Walking goal completed.</description>
+      <category>health</category>
+      <link>https://denvaar.dev/posts/365_walks.html</link>
+      <pubDate>Sun Dec 31 23:40:09 MDT 2023</pubDate>
+    </item>
     <item>
       <title>Population Count Pattern</title>
       <description>Understanding why a concise, macro-defined array can be used as a lookup table for finding the number of set bits in a number.</description>
       <category>programming</category>
-      <link>https://denvaar.github.io/posts/population_count_pattern.html</link>
+      <link>https://denvaar.dev/posts/population_count_pattern.html</link>
       <pubDate>Tue Oct 24 23:40:09 MDT 2023</pubDate>
     </item>
     <item>
       <title>Do a High Five as You Ride Past</title>
       <description>How and why to go for the classic, but rare high five as you ride past.</description>
       <category>cycling</category>
-      <link>https://denvaar.github.io/posts/high_five.html</link>
+      <link>https://denvaar.dev/posts/high_five.html</link>
       <pubDate>Thu Jun 18 23:40:09 MDT 2023</pubDate>
     </item>
     <item>
@@ -23,14 +30,14 @@
       <description>Rank is a fundamental operation for Succinct Data Structures. It counts the number of set bits up to a given index in a bit array. How can this be done in constant time and sub-linear space?</description>
       <category>data structures</category>
       <category>succinct</category>
-      <link>https://denvaar.github.io/posts/jacobsons_rank.html</link>
+      <link>https://denvaar.dev/posts/jacobsons_rank.html</link>
       <pubDate>Thu Jun 09 23:40:09 MDT 2023</pubDate>
     </item>
     <item>
       <title>Joe Pera "Car Guy"</title>
       <description>Spoilers warning. What's the significance (if any) of the "Car Guy" interaction in S3:E1?</description>
       <category>reviews</category>
-      <link>https://denvaar.github.io/posts/joe_pera_car_guy.html</link>
+      <link>https://denvaar.dev/posts/joe_pera_car_guy.html</link>
       <pubDate>Thu Jun 01 23:40:09 MDT 2023</pubDate>
     </item>
 
@@ -39,7 +46,7 @@
       <description>Review of the 2022 movie "Everything Everywhere All at Once". Directed by Daniel Kwan and Daniel Scheinert. Starring Michelle Yeoh, Stephanie Hsu, Ke Huy Quan, and Jamie Lee Curtis.</description>
       <category>brain dump</category>
       <category>reviews</category>
-      <link>https://denvaar.github.io/posts/everything_everywhere_all_at_once.html</link>
+      <link>https://denvaar.dev/posts/everything_everywhere_all_at_once.html</link>
       <pubDate>Sat Mar 25 23:40:09 MDT 2023</pubDate>
     </item>
 
@@ -48,7 +55,7 @@
       <description>Review of Jonathan Richman's 1990 album, "Jonathan Goes Country".</description>
       <category>music</category>
       <category>reviews</category>
-      <link>https://denvaar.github.io/posts/jonathan_goes_country.html</link>
+      <link>https://denvaar.dev/posts/jonathan_goes_country.html</link>
       <pubDate>Wed Nov 30 23:40:09 MST 2022</pubDate>
     </item>
 
@@ -58,7 +65,7 @@
       <category>culture</category>
       <category>language</category>
       <pubDate>Sun Aug 28 23:40:09 MDT 2022</pubDate>
-      <link>https://denvaar.github.io/posts/sgaw_karen_language.html</link>
+      <link>https://denvaar.dev/posts/sgaw_karen_language.html</link>
     </item>
 
     <item>
@@ -67,7 +74,7 @@
       <category>programming</category>
       <category>soft-skills</category>
       <pubDate>Sun Aug 29 23:40:09 MDT 2021</pubDate>
-      <link>https://denvaar.github.io/posts/how_to_review_code.html</link>
+      <link>https://denvaar.dev/posts/how_to_review_code.html</link>
     </item>
 
     <item>
@@ -77,7 +84,7 @@
       <category>soft-skills</category>
       <category>reviews</category>
       <pubDate>Tue Feb  2 23:40:09 MST 2021</pubDate>
-      <link>https://denvaar.github.io/posts/xp_notes.html</link>
+      <link>https://denvaar.dev/posts/xp_notes.html</link>
     </item>
 
     <item>
@@ -87,7 +94,7 @@
       <category>projects</category>
       <category>elixir</category>
       <pubDate>Sun Jan 17 23:40:09 MST 2021</pubDate>
-      <link>https://denvaar.github.io/posts/board_game.html</link>
+      <link>https://denvaar.dev/posts/board_game.html</link>
     </item>
 
     <item>
@@ -96,7 +103,7 @@
       <category>programming</category>
       <category>python</category>
       <pubDate>Wed Oct 28 23:40:09 MDT 2020</pubDate>
-      <link>https://denvaar.github.io/posts/problem_solving_example.html</link>
+      <link>https://denvaar.dev/posts/problem_solving_example.html</link>
     </item>
 
     <item>
@@ -104,7 +111,7 @@
       <description>Cross-site request foregery is one of many techniqu es an attacker might use to pwn a web application. In this article we take a close look at how exactly CSRF tokens work from the conte xt of the Phoenix Web Framework.</description>
       <category>programming</category>
       <pubDate>Wed Feb 19 23:40:09 MST 2020</pubDate>
-      <link>https://denvaar.github.io/posts/csrf_tokens_with_phoenix.html</link>
+      <link>https://denvaar.dev/posts/csrf_tokens_with_phoenix.html</link>
     </item>
 
     <item>
@@ -113,7 +120,7 @@
       <category>software development</category>
       <category>programming</category>
       <pubDate>Fri Nov 15 23:40:09 MST 2019</pubDate>
-      <link>https://denvaar.github.io/posts/hacktoberfest_2019.html</link>
+      <link>https://denvaar.dev/posts/hacktoberfest_2019.html</link>
     </item>
 
     <item>
@@ -122,7 +129,7 @@
       <category>programming</category>
       <category>elixir</category>
       <pubDate>Thu Dec  6 23:40:09 MST 2018</pubDate>
-      <link>https://denvaar.github.io/posts/content_negotiation_and_phoenix.html</link>
+      <link>https://denvaar.dev/posts/content_negotiation_and_phoenix.html</link>
     </item>
 
     <item>
@@ -130,7 +137,7 @@
       <description>Base64 is an encoding scheme used to change binary data into text.</description>
       <category>programming</category>
       <pubDate>Tue Oct  2 23:40:09 MDT 2018</pubDate>
-      <link>https://denvaar.github.io/posts/base64_basics.html</link>
+      <link>https://denvaar.dev/posts/base64_basics.html</link>
     </item>
 
     <item>
@@ -139,7 +146,7 @@
       <category>software development</category>
       <category>soft-skills</category>
       <pubDate>Tue Aug 28 23:40:09 MDT 2018</pubDate>
-      <link>https://denvaar.github.io/posts/unexpected_benefits_from_shrinking_my_pull_requests.html</link>
+      <link>https://denvaar.dev/posts/unexpected_benefits_from_shrinking_my_pull_requests.html</link>
     </item>
 
     <item>
@@ -148,7 +155,7 @@
       <category>software development</category>
       <category>soft-skills</category>
       <pubDate>Tue Apr 10 23:40:09 MDT 2018</pubDate>
-      <link>https://denvaar.github.io/posts/planning_helps_me_finish_things.html</link>
+      <link>https://denvaar.dev/posts/planning_helps_me_finish_things.html</link>
     </item>
 
     <item>
@@ -157,7 +164,7 @@
       <category>programming</category>
       <category>elixir</category>
       <pubDate>Sat Feb 24 23:40:09 MST 2018</pubDate>
-      <link>https://denvaar.github.io/posts/favorite_things_from_elixir_conf.html</link>
+      <link>https://denvaar.dev/posts/favorite_things_from_elixir_conf.html</link>
     </item>
 
     <item>
@@ -165,7 +172,7 @@
       <description>Challenges, takeaways, and findings of coding up a famous text compression algorithm.</description>
       <category>programming</category>
       <pubDate>Mon Jan 15 23:40:09 MST 2018</pubDate>
-      <link>https://denvaar.github.io/posts/exploring_text_compression.html</link>
+      <link>https://denvaar.dev/posts/exploring_text_compression.html</link>
     </item>
 
     <item>
@@ -175,7 +182,7 @@
       <category>projects</category>
       <category>python</category>
       <pubDate>Mon Jul 17 23:40:09 MDT 2017</pubDate>
-      <link>https://denvaar.github.io/posts/makeshift_security_camera.html</link>
+      <link>https://denvaar.dev/posts/makeshift_security_camera.html</link>
     </item>
 
     <item>
@@ -184,7 +191,7 @@
       <category>programming</category>
       <category>elixir</category>
       <pubDate>Sun Jun 25 23:40:09 MDT 2017</pubDate>
-      <link>https://denvaar.github.io/posts/on_learning_elixir.html</link>
+      <link>https://denvaar.dev/posts/on_learning_elixir.html</link>
     </item>
 
     <item>
@@ -192,7 +199,7 @@
       <description>An explanation of an important public key cryptography algorithm as well as some of the history behind it.</description>
       <category>programming</category>
       <pubDate>Mon Jun 19 23:40:09 MDT 2017</pubDate>
-      <link>https://denvaar.github.io/posts/diffie_hellman_key_exchange.html</link>
+      <link>https://denvaar.dev/posts/diffie_hellman_key_exchange.html</link>
     </item>
 
     <item>
@@ -200,7 +207,7 @@
       <description>Height and depth of a tree and determining if it's balanced.</description>
       <category>programming</category>
       <pubDate>Thu Feb 16 23:40:09 MST 2017</pubDate>
-      <link>https://denvaar.github.io/posts/more_binary_tree_properties.html</link>
+      <link>https://denvaar.dev/posts/more_binary_tree_properties.html</link>
     </item>
 
     <item>
@@ -208,7 +215,7 @@
       <description>Review of the basic data structure Binary Search Tree (BST)</description>
       <category>programming</category>
       <pubDate>Tue Feb 14 23:40:09 MST 2017</pubDate>
-      <link>https://denvaar.github.io/posts/data_structures_binary_search_tree.html</link>
+      <link>https://denvaar.dev/posts/data_structures_binary_search_tree.html</link>
     </item>
 
     <item>
@@ -216,7 +223,7 @@
       <description>Overview of Breadth and Depth first traversal in a Binary Tree.</description>
       <category>programming</category>
       <pubDate>Sun Feb 12 23:40:09 MST 2017</pubDate>
-      <link>https://denvaar.github.io/posts/binary_tree_traversal.html</link>
+      <link>https://denvaar.dev/posts/binary_tree_traversal.html</link>
     </item>
 
     <item>
@@ -224,7 +231,7 @@
       <description>Some information about using OFX for obtaining financial data.</description>
       <category>programming</category>
       <pubDate>Mon Jan  9 23:40:09 MST 2017</pubDate>
-      <link>https://denvaar.github.io/posts/open_financial_exchange.html</link>
+      <link>https://denvaar.dev/posts/open_financial_exchange.html</link>
     </item>
 
     <item>
@@ -233,7 +240,7 @@
       <category>programming</category>
       <category>python</category>
       <pubDate>Tue Nov 10 23:40:09 MST 2015</pubDate>
-      <link>https://denvaar.github.io/posts/design_patterns_strategy.html</link>
+      <link>https://denvaar.dev/posts/design_patterns_strategy.html</link>
     </item>
 
     <item>
@@ -242,7 +249,7 @@
       <category>programming</category>
       <category>python</category>
       <pubDate>Mon Nov  9 23:40:09 MST 2015</pubDate>
-      <link>https://denvaar.github.io/posts/design_patterns_template_method.html</link>
+      <link>https://denvaar.dev/posts/design_patterns_template_method.html</link>
     </item>
 
     <item>
@@ -252,7 +259,7 @@
       <category>projects</category>
       <category>python</category>
       <pubDate>Fri Oct 23 23:40:09 MDT 2015</pubDate>
-      <link>https://denvaar.github.io/posts/gathering_time_series_data.html</link>
+      <link>https://denvaar.dev/posts/gathering_time_series_data.html</link>
     </item>
 
     <item>
@@ -261,7 +268,7 @@
       <category>programming</category>
       <category>python</category>
       <pubDate>Wed Sep 23 23:40:09 MDT 2015</pubDate>
-      <link>https://denvaar.github.io/posts/python_code_optimization_tips.html</link>
+      <link>https://denvaar.dev/posts/python_code_optimization_tips.html</link>
     </item>
 
     <item>
@@ -270,7 +277,7 @@
       <category>programming</category>
       <category>python</category>
       <pubDate>Fri Jun 19 23:40:09 MDT 2015</pubDate>
-      <link>https://denvaar.github.io/posts/optimization_with_timeit.html</link>
+      <link>https://denvaar.dev/posts/optimization_with_timeit.html</link>
     </item>
 	</channel>
 </rss>

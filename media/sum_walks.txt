@@ -1,0 +1,12 @@
+Mix.install([:jason])
+
+"all_walks.json"
+|> File.read!()
+|> Jason.decode!()
+|> Enum.reduce({0, 0}, fn data, {dist_acc, time_acc} ->
+  {dist_acc + data["distance"], time_acc + data["elapsed_time"]}
+end)
+|> then(fn {distance, time} ->
+  IO.puts("Total miles: #{distance * 0.000621371}")
+  IO.puts("Total minutes: #{time / 60}")
+end)
