@@ -47,16 +47,17 @@
 }
 
 :root {
-	--button-background-color: cornflowerblue;
-	--button-color: white;
-	--primary-text-color: #323d48;
-	--muted-text-color: #8796a6;
-	--background-color: #ffffff;
-	--banner-background-color: #f1faff;
-	--banner-background-border: #dbe5ea;
-	--anchor-color: #4949df;
 	--anchor-color-visited: #6f6fa6;
+	--anchor-color: #4949df;
+	--background-color: #ffffff;
+	--banner-background-border: #dbe5ea;
+	--banner-background-color: #f1faff;
+	--button-background-color: #5c8de3;
+	--button-color: #ffffff;
+	--muted-text-color: #8796a6;
+	--primary-text-color: #323d48;
 	--text-selection-background-color: #afeed0;
+  --code-background-color: #ebecee;
 }
 
 [data-theme:dark] {
@@ -70,6 +71,7 @@
 	--anchor-color: #ffffff;
 	--anchor-color-visited: #c1c1c1;
 	--text-selection-background-color: #1a1919;
+  --code-background-color: #2d2d2d;  
 }
 
 ::-moz-selection,
@@ -94,7 +96,13 @@ a:visited {
 }
 
 code.inline {
+  background-color: var(--code-background-color);
   word-wrap: anywhere;
+  padding-left: 0.3em;
+  padding-right: 0.3em;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  border-radius: 4px;
 }
 
 pre code {
@@ -106,6 +114,7 @@ pre {
 	margin-left: -1rem;
 	margin-right: -1rem;
 }
+
 
 p img {
 	width: 100%;
@@ -171,22 +180,22 @@ p img {
   color: #ffffff;
 }
 
-.turquoise-tag{
+.turquoise-tag {
   background: #17938d;
   color: #ffffff;
 }
 
-.black-tag{
+.black-tag {
   background: #000000;
   color: #ffffff;
 }
 
-.milgreen-tag{
+.milgreen-tag {
   background: #496855;
   color: #ffffff;
 }
 
-.sky-tag{
+.sky-tag {
   background: #08f;
   color: #ffffff;
 }
@@ -246,6 +255,10 @@ p img {
 	font-size: 1.3em;
 }
 
+.heading-size-xxsm {
+	font-size: 0.9em;
+}
+
 .heading-shadow {
 	color: var(--banner-background-color);
 	text-shadow: var(--primary-text-color) 0px 8px, cornflowerblue 0px -8px;
@@ -301,6 +314,10 @@ p img {
 
 .mt1 {
 	margin-top: 1rem;
+}
+
+.mb0 {
+  margin-bottom: 0;
 }
 
 .ml1 {
@@ -361,7 +378,15 @@ a.phantom-a:visited {
 }
 
 .divider:after {
-	content: "∿∿∿∿∿∿∿∿";
+  /* content: "⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹"; */
+  /* content: "⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅"; */
+  /* content: "∴∵∴∵∴∵∴∵∴∵∴∵∴∵"; */
+  /* content: "≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣"; */
+  /* content: "⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀"; */
+  /* content: "⑇⑇⑇⑇⑇⑇⑇⑇⑇⑇⑇⑇⑇⑇⑇⑇"; */
+  /* content: "⑇⑉⑇⑇⑉⑇⑇⑇⑉⑇⑇⑇⑇⑇⑇⑉⑇⑇⑇⑇"; */
+  /* content: "⑇⑉⑇⑇⑉⑇⑇⑇⑉⑇⑇⑇⑇⑇⑇⑉⑇⑇⑇⑈ ⑈ ⑈ ⑇"; */
+	content: "∿∿∿∿∿∿∿∿∿∿∿∿∿∿∿∿";
 	/* Ratio -> font-size/letter-spacing = 6.25 */
 	letter-spacing: -4.8px;
 	font-size: 30px;
@@ -385,16 +410,17 @@ a.phantom-a:visited {
 
 @media (prefers-color-scheme: dark) {
 	:root {
+		--background-color: #38383d;
+		--banner-background-border: #2d2d35;
+		--banner-background-color: #3d3d46;
 		--button-background-color: #43d7a6;
 		--button-color: #3d3d46;
-		--primary-text-color: #b5beca;
 		--muted-text-color: #8796a6;
-		--background-color: #38383d;
-		--banner-background-color: #3d3d46;
-		--banner-background-border: #2d2d35;
-	        --anchor-color: #ffffff;
-	        --anchor-color-visited: #c1c1c1;
+		--primary-text-color: #b5beca;
 		--text-selection-background-color: #1a1919;
+    --anchor-color-visited: #c1c1c1;
+    --anchor-color: #ffffff;
+    --code-background-color: #2d2d2d;  
 	}
 }
 

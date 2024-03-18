@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Hacktoberfest 2019 Recap | denvaar's Site</title>
+    <title>Representing Data | denvaar's Site</title>
     <link rel="stylesheet" href="../css/styles.css" />
     <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
     <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
@@ -26,24 +26,90 @@
     </header>
     <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
       <section>
-        <h1 class="m0 heading-size-sm md:heading-size-md">Hacktoberfest 2019 Recap</h1>
-        <p class="m0 mt1 heading-size-xsm">A recap of the hack nights that Underbelly held for Hacktoberfest 2019: a global, month-long hackathon.</p>
+        <h1 class="m0 heading-size-sm md:heading-size-md">Representing Data</h1>
+        <p class="m0 mt1 heading-size-xsm">Example of how the same data can be represented in an alternate way.</p>
         <div>
           <p class="m0 mt1 heading-size-xxsm">keywords</p>
           
           
 
           
-            <span class="tag pink-tag">software development</span>
+            <span class="tag gray-tag">encoding</span>
           
-            <span class="tag blue-tag">programming</span>
+            <span class="tag gray-tag">c</span>
           
         </div>
-        <p class="m0 mt1 heading-size-xxsm">2019-11-15</p>
+        <p class="m0 mt1 heading-size-xxsm">2024-03-11</p>
         <hr class="divider" />
       </section>
       <p>
-I look forward to Hacktoberfest every year. My employer, <a href="https://underbelly.is/">Underbelly</a>, hosted some hack nights for the community this year. <a href="https://underbelly.is/writing-about/lessons-from-hacktoberfest">Here is an article</a> I wrote about that experience.</p>
+Here’s a C program that writes, “bananas\0”, into a raw binary file.</p>
+<pre><code class="c">// encoding_demo.c
+
+#include &lt;stdio.h&gt;
+
+int main(void) {
+  char *bananas = &quot;bananas&quot;;
+  FILE *file = fopen(&quot;bananas&quot;, &quot;wb&quot;);
+
+  fwrite(bananas, sizeof(bananas), 1, file);
+  fclose(file);
+
+  return 0;
+}</code></pre>
+<p>
+Compile the program and use <code class="inline">xxd -b</code> to view how the data is arranged.</p>
+<pre><code class="bash">$ clang -Wall -Werror -pedantic encoding_demo.c -o demo
+$ ./demo
+$ xxd -b bananas</code></pre>
+<pre><code class="text">00000000: 01100010 01100001 01101110 01100001 01101110 01100001  banana
+00000006: 01110011 00000000                                      s.</code></pre>
+<p>
+The first column shows the memory address. The first six bytes are shown along the top (middle) row,
+and the last two bytes are on the bottom row. Since these bytes are printable, you can see
+the text “bananas” listed in the last column. “.” represents <code class="inline">null</code>.</p>
+<p>
+The number <code class="inline">32476749030646114</code> happens to share the same encoding as the text “bananas\0”. The following
+program writes the same result into the binary file called, <code class="inline">bananas</code>. It’s the same sequence of bits.</p>
+<pre><code class="c">#include &lt;stdint.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(void) {
+  uint64_t bananas = 32476749030646114ULL;
+
+  FILE *file = fopen(&quot;bananas&quot;, &quot;wb&quot;);
+
+  fwrite(&amp;bananas, sizeof(uint64_t), 1, file);
+  fclose(file);
+
+  return 0;
+}</code></pre>
+<p>
+Similarly, a character pointer can be used to iterate through the bits of the large number, one byte at
+a time.</p>
+<pre><code class="c">#include &lt;stdint.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(void) {
+  uint64_t bananas = 32476749030646114ULL;
+  char *bp = (char *)&amp;bananas;
+
+  for (int i = 0; i &lt; (int)sizeof(uint64_t) - 1; i++) {
+    printf(&quot;%c&quot;, *bp);
+    bp++;
+  }
+
+  // prints &quot;bananas&quot;
+
+  return 0;
+}</code></pre>
+<p>
+So, the same data can be represented in multiple ways. <em>Why pick a seemingly random number to
+represent text?</em> While this is just an example, similar techniques are sometimes useful. Compression
+is one area where creative techniques are used to represent data.</p>
+<p>
+While no compression has been performed in the examples above, the basic understanding of how
+memory is arranged and interpreted is important to understand first.</p>
 
     </div>
     <footer>

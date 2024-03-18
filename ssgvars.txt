@@ -1,4 +1,13 @@
 ---
+page: trash/encoding.md
+template: templates/trash_detail_template.html.eex
+title: Representing Data
+date_published: 2024-03-11
+summary: Example of how the same data can be represented in an alternate way.
+tags: encoding,c
+---
+
+---
 page: posts/365_walks.md
 template: templates/post_detail_template.html.eex
 title: 365 Walks In 2023
