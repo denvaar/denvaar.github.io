@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Puzzle</title>
+    <style>
+        body {
+          background: #1A241C;
+          }
+
+        @keyframes fadeInOpacity {
+          0% {
+            opacity: 0;
+          }
+          100% {
+            opacity: 1;
+          }
+        }
+
+        .fade-in {
+          animation-name: fadeInOpacity;
+          animation-iteration-count: 1;
+          animation-timing-function: ease-in;
+          animation-duration: 3s;
+        }
+
+        #message {
+          text-align: center;
+          padding: 50px;
+          margin: 50px;
+          font-family: Papyrus;
+          color: #6f2e2e;
+          font-size: 20px;
+          background-image: url(https://t3.ftcdn.net/jpg/03/66/10/14/360_F_366101427_8yazUJK82fDrLi4YtpnQO3DJ4dTygxoe.jpg);
+          opacity: 0;
+        }
+
+        #table {
+          margin-top: 50px;
+          border: 20px solid #c89594;
+          border-radius: 20px;
+        }
+
+          .tile1, .tile2, .tile3, .tile4, .tile5, .tile6, .tile7, .tile8, .tile9 {
+            display: table-cell;
+            width: 178px;
+            height: 178px;
+            border: 1px solid #1A241C;
+            background: url("./puzzle_image.jpg");
+            cursor: pointer;
+          }
+
+          .tile1 {background-position: left top;}
+          .tile2 {background-position: center top;}
+          .tile3 {background-position: right top;}
+          .tile4 {background-position: left center;}
+          .tile5 {background-position: center center;}
+          .tile6 {background-position: right center;}
+          .tile7 {background-position: left bottom;}
+          .tile8 {background-position: center bottom;}
+          .tile9 {background: #37513c; cursor: default;}
+    </style>
+
+  </head>
+  <body>
+  <center><div id="table" style="display: table;">
+     <div id="row1" style="display: table-row;">
+        <div id="cell11" class="tile1" onClick="clickTile(1,1);"></div>
+        <div id="cell12" class="tile2" onClick="clickTile(1,2);"></div>
+        <div id="cell13" class="tile3" onClick="clickTile(1,3);"></div>
+     </div>
+     <div id="row2" style="display: table-row;">
+        <div id="cell21" class="tile4" onClick="clickTile(2,1);"></div>
+        <div id="cell22" class="tile5" onClick="clickTile(2,2);"></div>
+        <div id="cell23" class="tile6" onClick="clickTile(2,3);"></div>
+     </div>
+     <div id="row3" style="display: table-row;">
+        <div id="cell31" class="tile7" onClick="clickTile(3,1);"></div>
+        <div id="cell32" class="tile8" onClick="clickTile(3,2);"></div>
+        <div id="cell33" class="tile9" onClick="clickTile(3,3);"></div>
+     </div>
+  </div>
+  </center>
+  <p id="message">Search the drive! A New Folder appeareth.</p>
+	<script>
+
+
+    window.onload = shuffle;
+
+    function swapTiles(cell1,cell2) {
+      var temp = document.getElementById(cell1).className;
+      document.getElementById(cell1).className = document.getElementById(cell2).className;
+      document.getElementById(cell2).className = temp;
+    }
+
+    function shuffle() {
+      for (var row=1;row<=3;row++) { //For each row of the 3x3 grid
+         for (var column=1;column<=3;column++) { //For each column in this row
+
+          var row2=Math.floor(Math.random()*3 + 1); //Pick a random row from 1 to 3
+          var column2=Math.floor(Math.random()*3 + 1); //Pick a random column from 1 to 3
+
+          swapTiles("cell"+row+column,"cell"+row2+column2); //Swap the look & feel of both cells
+        }
+      }
+    }
+
+    function checkPuzzle() {
+      const isComplete = [
+        ["cell11", "tile1"],
+        ["cell12", "tile2"],
+        ["cell13", "tile3"],
+        ["cell21", "tile4"],
+        ["cell22", "tile5"],
+        ["cell23", "tile6"],
+        ["cell31", "tile7"],
+        ["cell32", "tile8"],
+        ["cell33", "tile9"]
+      ].every(([id, className]) => {
+        const element = document.getElementById(id);
+
+        return element.className === className;
+      });
+
+      if (isComplete) {
+        let audio = new Audio("sounds/win.mp3");
+        audio.play();
+        document.getElementById("message").classList.add("fade-in");
+        document.getElementById("message").style.opacity = 1;
+      }
+    }
+
+    function clickTile(row,column) {
+      var cell = document.getElementById("cell"+row+column);
+      var tile = cell.className;
+      if (tile!="tile9") {
+           const swipeSounds = [
+             "swipe1.mp3",
+             "swipe2.mp3",
+             "swipe3.mp3",
+             "swipe4.mp3",
+             "swipe5.mp3"
+           ];
+
+           const randomIdx = Math.floor(Math.random() * swipeSounds.length);
+
+           let audio = new Audio("sounds/" + swipeSounds[randomIdx]);
+           audio.play();
+           //Checking if white tile on the right
+           if (column<3) {
+             if ( document.getElementById("cell"+row+(column+1)).className=="tile9") {
+               swapTiles("cell"+row+column,"cell"+row+(column+1));
+               checkPuzzle();
+               return;
+             }
+           }
+           //Checking if white tile on the left
+           if (column>1) {
+             if ( document.getElementById("cell"+row+(column-1)).className=="tile9") {
+               swapTiles("cell"+row+column,"cell"+row+(column-1));
+               checkPuzzle();
+               return;
+             }
+           }
+             //Checking if white tile is above
+           if (row>1) {
+             if ( document.getElementById("cell"+(row-1)+column).className=="tile9") {
+               swapTiles("cell"+row+column,"cell"+(row-1)+column);
+               checkPuzzle();
+               return;
+             }
+           }
+           //Checking if white tile is below
+           if (row<3) {
+             if ( document.getElementById("cell"+(row+1)+column).className=="tile9") {
+               swapTiles("cell"+row+column,"cell"+(row+1)+column);
+               checkPuzzle();
+               return;
+             }
+           }
+      }
+
+    }
+
+
+  </script>
+  </body>
+</html>
