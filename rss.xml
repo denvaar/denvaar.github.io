@@ -5,6 +5,13 @@
 		<description>denvaar's personal site. Most of the content is on software development and computer programming. However, other one-off topics are in the mix.</description>
 		<language>en-us</language>
     <item>
+      <title>Web App Development Retrospective</title>
+      <description>I developed a web app for my wife's landscape design business. It's been in use for a couple of years now. This is a summary of the technology, and some of the challenges I faced.</description>
+      <category>programming</category>
+      <link>https://denvaar.dev/posts/primula_app_retro.html</link>
+      <pubDate>Sun June 02 23:40:09 MDT 2024</pubDate>
+    </item>
+    <item>
       <title>365 Walks In 2023</title>
       <description>Walking goal completed.</description>
       <category>health</category>

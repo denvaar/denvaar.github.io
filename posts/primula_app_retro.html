@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Web App Development Retrospective | denvaar's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 md:pv1 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <p class="mv0 bold align-self-end">
+            <span class="site-name">denvaar's site&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <a href="../index.html" class="phantom-a">writing</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../trash.html" class="phantom-a">brain dump</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../playground.html" class="phantom-a">playground</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../rss.xml" class="phantom-a">rss</a>
+          </p> 
+        </div>
+      </div>
+    </header>
+    <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="m0 heading-size-sm md:heading-size-md">Web App Development Retrospective</h1>
+        <p class="m0 mt1 heading-size-xsm">I developed a web app for my wife's landscape design business. It's been in use for a couple of years now. This is a summary of the technology, and some of the challenges I faced.</p>
+        <div>
+          <p class="m0 mt1 heading-size-xxsm">keywords</p>
+          
+          
+
+          
+            <span class="tag blue-tag">programming</span>
+          
+        </div>
+        <p class="m0 mt1 heading-size-xxsm">2024-06-02</p>
+        <hr class="divider" />
+      </section>
+      <p>
+I built a web app for my wife’s landscape design business. It’s been in use for roughly two years now, so it’s about time to do a retrospective to reflect on how it’s working, and how it has been to build and maintain.</p>
+<p>
+This will be more technology-focused than what you might expect from a traditional product case study.</p>
+<p>
+Here’s the thing: I don’t love doing “product work”, but I still get the occasional itch to try and build something useful and user-facing. Also, <em>what better person to work with (and hopefully impress) than my spouse?</em></p>
+<p>
+Niccole creates landscape design plans for her clients. We created an app to address two main things:</p>
+<ol>
+  <li>
+    <p>
+Give Niccole at <a href="https://primula.design">Primula Horticulture &amp; Design</a> a centralized place to manage her projects and communicate the updates with clients. Project updates include things like contract signing, file uploads, and collecting feedback throughout the design process. Prior to the new app, all of these things happened via phone calls, text messages, and emails, and so it felt disorganized for Niccole.    </p>
+  </li>
+  <li>
+    <p>
+Make it easy for her clients to see the status of their project(s). Clients were generally satisfied communicating via phone and email prior to the new application, but it was sometimes difficult for them to know what point of the design process that their project was in. There were also some occasional file sharing issues, since this would happen mainly over email.    </p>
+  </li>
+</ol>
+<h3>
+Web vs Mobile/Native</h3>
+<p>
+We chose web app instead of a native app because:</p>
+<ol>
+  <li>
+    <p>
+Well, I don’t know native app development, and I’m not about to learn that crap.    </p>
+  </li>
+  <li>
+    <p>
+A fair amount of clients fit an older demographic, who have a hard enough time simply using email. To require clients to download an app didn’t seem right. Client age aside, I personally hate when I have to install an app. I know this may be a personal bias, though.    </p>
+  </li>
+  <li>
+    <p>
+A web app can be used from basically any device. Niccole needs to use the app from her computer, while her clients should have the freedom to access it however they prefer.    </p>
+  </li>
+</ol>
+<h3>
+Overall Stack</h3>
+<p>
+The app is hosted on <a href="https://fly.io/">Fly.io</a>. It’s an Elixir/Phoenix app, backed by a Postgres database.</p>
+<p>
+I used <a href="https://hexdocs.pm/phoenix_live_view/welcome.html">Phoenix LiveView</a> instead of something like React.</p>
+<p>
+There’s also a dedicated server to handle PDF generation, using <a href="https://gotenberg.dev/">Gotenberg</a>.</p>
+<p>
+Other miscellaneous pieces of the puzzle are: S3 for file storage; Twilio for SMS messaging; SendGrid for emails; and <a href="https://tailwindui.com">Tailwind UI</a> for good looks.</p>
+<h3>
+Thoughts on Fly.io</h3>
+<p>
+I’m pretty happy with Fly.io overall. It’s simple to deploy your app using their CLI. It’s nice that you can deploy your app close to your users. Especially since Niccole’s clients are all local.</p>
+<p>
+Fly seems to be one of the most Elixir-centric “Platform as a Service” companies (even before Chris McCord began working there), so this was a factor that led me to try them out in production.</p>
+<p>
+I have noticed some <a href="https://news.ycombinator.com/item?id=34742946">disappointment on Hacker News</a> around reliability issues, but I haven’t had much trouble with our app over the course of two years. Probably because it’s relatively small potatoes.</p>
+<p>
+I did run into one noteworthy problem where I could no longer SSH into my Postgres server, due to a problematic change on their end. The support team was quick to respond, but the solution was to make a copy of the database and deploy a fresh instance. It all worked out fine in the end.</p>
+<h3>
+Phoenix LiveView In Production</h3>
+<p>
+Not all of the app required that SPA-feel, but here are a few features that we did want to have a real-time user experience:</p>
+<ul>
+  <li>
+    <p>
+A dashboard for the client, which displays their project status, updated in real-time.    </p>
+  </li>
+  <li>
+    <p>
+Document signing (basically a simplified DocuSign experience).    </p>
+  </li>
+  <li>
+    <p>
+In-app notifications for clients.    </p>
+  </li>
+  <li>
+    <p>
+Ability to upload and edit files for Niccole.    </p>
+  </li>
+</ul>
+<p>
+It’s great that I didn’t have to build a separate front-end application, with a REST API to send it data.</p>
+<p>
+My main pain point with LiveView was that it’s still not quite at <code class="inline">v1.0</code>. The last time I experimented with LiveView was <a href="https://youtu.be/W28SJZUkQAc?si=P7LyfKJoWo-oruiC">about 4 years ago</a>, with <code class="inline">v0.4.0</code>. As you can imagine, <code class="inline">v0.4</code> is a lot different than <code class="inline">v0.17.5</code>, which is what our app runs (and is now very outdated).</p>
+<p>
+All the change is a good thing, because LiveView is much more powerful now than before, but it really took me by surprise. I found it difficult to understand some of the new changes. I felt as though my code was immediately outdated. It was difficult to find up-to-date information beyond the official docs. Updating UI components became quite tedious and repetitive because some of the component abstractions like slots, <code class="inline">Phoenix.Component</code>, <code class="inline">Phoenix.LiveComponent</code> just didn’t quite click for me. I am not proud of some of the code I ended up with.</p>
+<p>
+I think we can chalk it up as a skill issue on my part, though. I would still pick LiveView again if I had a do-over. I don’t find it as immediately intuitive as writing React components, though.</p>
+<h3>
+Elixir</h3>
+<p>
+I chose Elixir simply because I’m most familiar with it. There are a lot of things that make Elixir awesome (out of scope for this article). For the sake of this app, I could have chosen basically any language that has a web framework and been fine.</p>
+<h3>
+PDF Generation with Gotenberg</h3>
+<p>
+A key part of the app was to generate a PDF document, which is a signed Signature of Work agreement. The process goes like this:</p>
+<ol>
+  <li>
+The Client is directed to the SoW page after account creation.  </li>
+  <li>
+The Client reads the agreement and may choose to sign and accept.    <ul>
+      <li>
+It’s just a LiveView-backed HTML page where the user can draw their signature.      </li>
+    </ul>
+  </li>
+  <li>
+Upon acceptance, a static version of the signed HTML page is sent to the Gotenberg service.  </li>
+  <li>
+The Gotenberg service responds with the PDF document. It’s uploaded to S3, and made available on the client’s dashboard.  </li>
+</ol>
+<p>
+Gotenberg’s <a href="https://gotenberg.dev/docs/routes#url-into-pdf-route">URL to PDF route</a> works like a charm. It’s simple to deploy as well, since it’s literally just a one-line Dockerfile.</p>
+<pre><code>FROM gotenberg/gotenberg:7.3.1</code></pre>
+<h3>
+Tailwind UI Components</h3>
+<p>
+I ended up purchasing access to the library of pre-made UI components from Tailwind CSS. Front-end is not my forte, so I found that it was worth my time and money to take this shortcut.</p>
+<p>
+There’s a large amount of components to pick from, and they are pretty easy to tweak, so I’d recommend doing this if you don’t love front-end, but still need a pretty app.</p>
+<h3>
+App Reception</h3>
+<p>
+One of the goals was to give Niccole a centralized location to manage her projects, and communicate with clients. She was heavily involved in the planning and design of the app, so it has met her needs quite well. We made small adjustments to the app over the past couple years as pain points were realized.</p>
+<p>
+Another goal was to notify clients about the status of their project. Niccole’s design process involves several phases, with client feedback needed along the way. Clients are sent notifications via text message and/or email throughout the design process, as the project progresses. Sometimes action is required of them before the project can continue.</p>
+<p>
+Niccole says that seeing others use the app has revealed even more opportunities to improve her client interactions.</p>
+<p>
+We knew that the app would have to work well for a variety of users, each with different levels of technological abilities. Simplicity was one of the main goals. Despite creating an app that both Niccole and I feel is very simple, some clients still struggle and get tripped up.</p>
+<p>
+For example, we didn’t expect so many clients to let their account registration link expire. The expiration is a feature that prevents the Signature of Work document from sitting around, unsigned for too long. We don’t have an automatic way to recover from that scenario. Consequentially, I have spent a lot of time manually changing database fields to reset client accounts.</p>
+<p>
+I think it’s important to realize that the app is not the product here. The product is the landscape design plan that Niccole hands over to the client. So, I wanted this app to be helpful, easy to use, and non-intrusive. I think it’s been a net-positive, but to be honest, I’m not sure if I was able to check all of those boxes.</p>
+
+    </div>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+            <img src="https://avatars.githubusercontent.com/u/10538978" class="profile-img" alt="A picture of me" decoding="async" />
+            <p class="text-size-body">Thanks for visiting. Consider <a href="https://cdn.forms-content.sg-form.com/4b5e7331-1dd5-11ed-a12f-aeadcf3fdeb2">signing up</a> to be notified when I write more things.</p>
+          <div class="md:mt2">
+            <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a> · <a href="../rss.xml">RSS</a></p>
+          </div>
+          <p class="">© 2015 - 2024 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

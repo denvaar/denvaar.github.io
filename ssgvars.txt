@@ -1,4 +1,13 @@
 ---
+page: posts/primula_app_retro.md
+template: templates/post_detail_template.html.eex
+title: Web App Development Retrospective
+date_published: 2024-06-02
+summary: I developed a web app for my wife's landscape design business. It's been in use for a couple of years now. This is a summary of the technology, and some of the challenges I faced.
+tags: programming
+---
+
+---
 page: trash/encoding.md
 template: templates/trash_detail_template.html.eex
 title: Representing Data
