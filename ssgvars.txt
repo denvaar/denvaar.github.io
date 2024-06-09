@@ -1,4 +1,13 @@
 ---
+page: posts/the_holdovers_review.md
+template: templates/post_detail_template.html.eex
+title: The Holdovers
+date_published: 2024-06-09
+summary: My summary / review / thoughts about the 2023 film, The Holdovers. Directed by Alexander Payne and written by David Hemingson.
+tags: reviews
+---
+
+---
 page: posts/primula_app_retro.md
 template: templates/post_detail_template.html.eex
 title: Web App Development Retrospective
