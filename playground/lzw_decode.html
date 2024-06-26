@@ -1,0 +1,129 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>LZW Decoding | denvaar's Site</title>
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+    <meta charset="UTF-8">
+  <link rel="stylesheet" href="../css/lzw_decode.css" /></head>
+  <body>
+    <header>
+      <div class="">
+        <div class="">
+          <p class="">
+            <a href="../index.html" class="">Home</a> ->
+            <a href="../playground.html" class="">Playground</a> ->
+            <span>LZW Decoding</span>
+          </p> 
+        </div>
+      </div>
+    </header>
+    <h3>LZW Decode Visualization</h3>
+<p id="hint" style="display:none;font-style:italic;">(confused? you might want to start <a href="lzw_encode.html">here</a>)</p>
+<div class="fieldContainer">
+  <label for="input" class="fieldLabel">input (comma separated)</label>
+  <textarea id="input" name="input" autocomplete="off" autofocus style="height:50px;"></textarea>
+</div>
+
+<div style="margin-top:1rem;">
+  <div class="fieldContainer">
+    <label for="result" class="fieldLabel">result</label>
+    <textarea id="result" name="result" autocomplete="off" readonly></textarea>
+  </div>
+</div>
+
+
+<div style="display:flex;margin-top:12px;">
+  <div style="flex:1;">
+    <fieldset style="height:40px;">
+      <legend>Controls</legend>
+      <button id="step-button">Step</button>
+      <button id="play-button">Play</button>
+      <button id="pause-button">Pause</button>
+      <button id="reset-button">Reset</button>
+    </fieldset>
+  </div>
+  <div style="flex:1;">
+    <fieldset style="height:40px;">
+      <legend>Playback Speed</legend>
+        <input type="radio" id="slow" name="speed" value="2000" />
+        <label for="slow">Slow</label>
+
+        <input type="radio" id="medium" name="speed" value="700" data-should-be-default="true" />
+        <label for="medium">Medium</label>
+
+        <input type="radio" id="fast" name="speed" value="200" />
+        <label for="fast">Fast</label>
+
+        <input type="radio" id="prestissimo" name="speed" value="5" />
+        <label for="prestissimo">Prestissimo</label>
+    </fieldset>
+  </div>
+</div>
+
+
+<div style="display:flex;margin-top:1rem;">
+  <div style="flex:1;max-width:700px;">
+    <div>
+      <fieldset>
+        <legend>Variables</legend>
+          <div style="display:flex;border-bottom:1px solid #000000;">
+            <div style="flex:1;">encoding</div>
+            <div style="flex:1;">symbols</div>
+            <div style="flex:1;">working</div>
+            <div style="flex:1;">aug</div>
+            <div style="flex:1;">code</div>
+          </div>
+          <div style="display:flex;font-weight:bold;">
+            <div id="var-encoding" style="flex:1;" >&nbsp;</div>
+            <div id="var-symbols" style="flex:1;" >&nbsp;</div>
+            <div id="var-working" style="flex:1;" >&nbsp;</div>
+            <div id="var-aug" style="flex:1;" >&nbsp;</div>
+            <div id="var-code" style="flex:1;" >&nbsp;</div>
+          </div>
+      </fieldset>
+    </div>
+    <div>
+      <pre id="algo" class="codeBlock">
+<span class="line">algorithm decode(<span class="var">encodings</span>):</span>
+<span class="line">    define <span class="var">working</span> as an empty string.</span>
+<span class="line">    define <span class="var">symbol_table</span> 0 to 256.</span>
+<span class="line">    for each <span class="var">encoding</span> in <span class="var">encodings</span>:</span>
+<span class="line">        is <span class="var">encoding</span> is in <span class="var">symbol_table</span>?</span>
+<span class="line">            define <span class="var">symbols</span> as <span class="var">encoding</span>.</span>
+<span class="line">        else:</span>
+<span class="line">            define <span class="var">symbols</span> as concatenation of <span class="var">working</span> and <span class="var">working[0]</span>.</span>
+<span class="line">        for each <span class="var">symbol</span> in <span class="var">symbols</span>:</span>
+<span class="line">            output <span class="var">symbol</span>.</span>
+<span class="line">            define <span class="var">aug</span> as concatenation of <span class="var">working</span> and <span class="var">symbol</span>.</span>
+<span class="line">            is <span class="var">aug</span> in the <span class="var">symbol_table</span>?</span>
+<span class="line">                assign <span class="var">working</span> as <span class="var">aug</span>.</span>
+<span class="line">            else:</span>
+<span class="line">                add <span class="var">aug</span> to <span class="var">symbol_table</span> with key of <span class="var">code</span>.</span>
+<span class="line">                assign <span class="var">working</span> as <span class="var">symbol</span>.</span>
+<span class="line">                increment <span class="var">code</span>.</span></pre>
+    </div>
+  </div>
+  <div style="margin-left:1rem;margin-right:1rem;">
+    <div class="table">
+      <div id="table-header">
+        <span>Symbol</span>
+        <span>Encoding</span>
+      </div>
+      <div id="table-body">
+        <div class="table-row" style="color:gray;">
+          <span class="table-cell" style="font-weight:normal !important;"><i>reserved</i></span>
+          <span class="table-cell" style="font-weight:normal !important;">256</span>
+        </div>
+        <div class="table-row" style="border-top:1px dashed #000000 !important;color:gray;">
+          <span class="table-cell" style="font-weight:normal !important;"><i>not shown</i></span>
+          <span class="table-cell" style="font-weight:normal !important;">0-255</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script src="../js/lzw_decode.js"></script></body>
+</html>

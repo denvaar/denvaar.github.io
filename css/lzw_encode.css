@@ -1,0 +1,90 @@
+body {
+  font-family: Monospace;
+}
+
+fieldset {
+  border: 1px solid #000000;
+}
+
+textarea {
+  resize: none;
+}
+
+button {
+  font-family: Monospace;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: unset;
+}
+
+input[type="radio"], input[type="radio"] + label {
+  cursor: pointer;
+}
+
+input[type="checkbox"], input[type="checkbox"] + label {
+  cursor: pointer;
+}
+
+.symbol {
+  padding: 2px;
+  font-weight: bold;
+  font-size: 16px;
+  display: inline-block;
+}
+
+.inputVizContainer {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 8px;
+  overflow-y: scroll;
+  flex: 1;
+}
+
+.outputVizContainer {
+  position: relative;
+  margin-top: 20px;
+  margin-bottom: 8x;
+  padding: 8px;
+  overflow-y: scroll;
+  flex: 1;
+}
+
+.table {
+  min-width: 225px;
+}
+
+#table-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px;
+  margin-right: 10px;
+}
+
+#table-body {
+  max-height: 80vh;
+  overflow-y: scroll;
+}
+
+.table-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px;
+  border-top: 1px solid black;
+}
+
+.table-cell {
+  font-weight: bold;
+  padding: 2px;
+}
+
+.currentSymbol {
+  background-color: #0000ff;
+  color: #ffffff;
+}
+
+.s {
+  background-color: #00ff00;
+  color: #000000;
+}
