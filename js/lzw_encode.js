@@ -4,10 +4,12 @@ var skipSteps;
 var pause;
 var playing;
 var lastSymbolCode;
+var globalOutput;
 
 document.addEventListener("DOMContentLoaded", initialize);
 
 function initialize(event) {
+  globalOutput = [];
   running = false;
   skipSteps = false;
   inputSymbols = [];
@@ -17,7 +19,7 @@ function initialize(event) {
   });
 
   const defaultInputText =
-    "a bandaid, a bandana, a banana, and a banjo. abracadabra!";
+    "LZW compression takes advantage of data redundancy. English text, for example, tends to have common patterns that are repeated. LZW moves through the data one character (or symbol) at a time. Each character is added to a buffer. The buffer grows larger as it encounters sequences that it has seen before. It resets after a new sequence is discovered. New sequences are added to a look-up table. Single characters are encoded using their ASCII values. Sequences of characters are added and increasingly encoded with a value > 256. Watch how the sequence, \"zzzzzzzzzz\", is encoded, and it should give you an idea of how LZW encodes repeated characters. It's not pictured here, but each symbol can be represented using a variable amount of bits due to the deterministic way that the symbols are created. Symbols at the beginning are typically encoded using 9 bits. The number of bits used for each symbol increases from there. Since the encoding process is so deterministic, there is basically no overhead that needs to be encoded in order for the data to be reconstructed. The table can be recreated as part of the decoding process. What's interesting (to me, at least) about LZW is: Rather than attempting to minimize the number of symbols/bits, it instead acheives compression by taking common sequences and encoding them using MORE bits.";
 
   document.getElementById("input").value = defaultInputText;
   document.getElementById("pause-button").disabled = true;
@@ -52,18 +54,7 @@ function initialize(event) {
 function onDecodeClick(event) {
   event.preventDefault();
 
-  const encodings = [
-    ...document.querySelector("#output-symbols").querySelectorAll(".symbol")
-  ].map(symbolElement => {
-    const encoding = parseInt(symbolElement.textContent);
-    if (Number.isInteger(encoding) === false) {
-      const content = formatText(symbolElement.textContent, true).charCodeAt(0);
-
-      return parseInt(content);
-    } else {
-      return encoding;
-    }
-  });
+  const encodings = [...globalOutput];
 
   const queryParams = new URLSearchParams({ encodings });
   window.open(`lzw_decode.html?${queryParams}`, "_blank");
@@ -74,7 +65,8 @@ function onEncodingsCheckboxClick(event) {
     const outputSymbolElements = [
       ...document.querySelector("#output-symbols").querySelectorAll(".symbol")
     ].map(symbolElement => {
-      if (Number.isInteger(parseInt(symbolElement.textContent)) === false) {
+      const encoding = parseInt(symbolElement.textContent);
+      if (Number.isInteger(encoding) === false || encoding <= 255) {
         const content = formatText(symbolElement.textContent, true).charCodeAt(
           0
         );
@@ -84,6 +76,7 @@ function onEncodingsCheckboxClick(event) {
 
         return newSymbolElement;
       } else {
+        symbolElement.innerText = encoding;
         return symbolElement;
       }
     });
@@ -379,8 +372,6 @@ function updateDebugOutput(variables) {
 }
 
 async function step(variables) {
-  // console.log(variables);
-
   await pause;
 
   highlightCurrentSymbol(variables);
@@ -457,6 +448,7 @@ async function compress(input) {
       monitoredVariables.output.push(
         monitoredVariables.symbolTable[monitoredVariables.s]
       );
+      globalOutput = monitoredVariables.output;
 
       monitoredVariables.symbolTable[monitoredVariables.key] =
         monitoredVariables.symbolCode;
@@ -472,6 +464,7 @@ async function compress(input) {
   monitoredVariables.output.push(
     monitoredVariables.symbolTable[monitoredVariables.s]
   );
+  globalOutput = monitoredVariables.output;
 
   await step(monitoredVariables);
 
@@ -500,7 +493,8 @@ function onStepButtonClicked(event) {
     running = true;
     document.getElementById("input").disabled = true;
     setupInputSymbols();
-    compress(inputSymbols).then(() => {
+    compress(inputSymbols).then(output => {
+      globalOutput = output;
       running = false;
       document.getElementById("debug-cond").innerHTML =
         "Flush `window` to output.\n\nDone.";
@@ -515,7 +509,6 @@ function setupInputSymbols() {
   inputSymbols = escapeUnicode(document.getElementById("input").value).split(
     ""
   );
-  //inputSymbols = document.getElementById("input").value.split("");
 
   const inputSymbolsElement = document.getElementById("input-symbols");
 
@@ -556,10 +549,4 @@ function escapeUnicode(str) {
             .join("")
     )
     .join("");
-}
-
-function unescapeUnicode(str) {
-  return str.replaceAll(/\\u{([\da-f]{1,6})}|\\u([\da-f]{4})/gi, (_, p1, p2) =>
-    String.fromCodePoint(Number.parseInt(p1 ?? p2, 16))
-  );
 }
