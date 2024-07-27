@@ -5,6 +5,14 @@
 		<description>denvaar's personal site. Most of the content is on software development and computer programming. However, other one-off topics are in the mix.</description>
 		<language>en-us</language>
     <item>
+      <title>A Philosophy of Software Design Book Review</title>
+      <description>My review of A Philosophy of Software Design by John Ousterhout</description>
+      <category>reviews,programming</category>
+      <link>https://denvaar.dev/posts/a_philosophy_of_software_design_review.html</link>
+      <pubDate>Sat Jul 27 23:40:09 MDT 2024</pubDate>
+    </item>
+    <item>
+    <item>
       <title>The Holdovers</title>
       <description>My summary / review / thoughts about the 2023 film, The Holdovers. Directed by Alexander Payne and written by David Hemingson.</description>
       <category>reviews</category>
