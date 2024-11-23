@@ -1,6 +1,6 @@
 <rss version="2.0">
 	<channel>
-		<title>denvaar's site</title>
+		<title>denvaar's website</title>
 		<link>https://denvaar.dev</link>
 		<description>denvaar's personal site. Most of the content is on software development and computer programming. However, other one-off topics are in the mix.</description>
 		<language>en-us</language>
@@ -11,7 +11,6 @@
       <link>https://denvaar.dev/posts/a_philosophy_of_software_design_review.html</link>
       <pubDate>Sat Jul 27 23:40:09 MDT 2024</pubDate>
     </item>
-    <item>
     <item>
       <title>The Holdovers</title>
       <description>My summary / review / thoughts about the 2023 film, The Holdovers. Directed by Alexander Payne and written by David Hemingson.</description>
