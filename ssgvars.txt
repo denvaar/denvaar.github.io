@@ -388,6 +388,12 @@ template: templates/post_detail_template.html.eex
 ---
 
 ---
+page: photos.md
+template: templates/photos_index_template.html.eex
+photos_path: ./img
+---
+
+---
 page: index.md
 template: templates/post_index_template.html.eex
 ---

@@ -50,7 +50,7 @@
         --anchor-color-visited: #6f6fa6;
         --anchor-color: #244ae0;
         --background-color: #ffffff;
-        --banner-background-border: #dbe5ea;
+        --banner-background-border: #f1faff;
         --banner-background-color: #f1faff;
         --button-background-color: #5c8de3;
         --button-color: #ffffff;
@@ -61,17 +61,17 @@
 }
 
 [data-theme:dark] {
+        --anchor-color-visited: #c1c1c1;
+        --anchor-color: #ffffff;
+        --background-color: #181a21;
+        --banner-background-border: #21242e;
+        --banner-background-color: #21242e;
         --button-background-color: #43d7a6;
         --button-color: #3d3d46;
+        --code-background-color: #2d2d2d;
+        --muted-text-color: #8796a6;
         --primary-text-color: #b5beca;
-        --muted-text-color: #69727d;
-        --background-color: #38383d;
-        --banner-background-color: #3d3d46;
-        --banner-background-border: #2d2d35;
-        --anchor-color: #ffffff;
-        --anchor-color-visited: #c1c1c1;
         --text-selection-background-color: #0000ff;
-        --code-background-color: #000000;
 }
 
 ::-moz-selection,
@@ -82,10 +82,16 @@
 
 body {
         margin: 0;
-        height: 100%;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
         font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, sans-serif;
         background-color: var(--background-color);
         color: var(--primary-text-color);
+}
+
+main {
+	flex: 1;
 }
 
 a {
@@ -134,7 +140,7 @@ p img {
         padding-top: 5px;
         padding-bottom: 5px;
 
-        border-radius: 4px;
+        border-radius: 0px;
 
         font-size: 14px;
         font-family: "Source Code Pro";
@@ -295,8 +301,16 @@ p img {
         padding: 1rem;
 }
 
+.pt1 {
+        padding-top: 1rem;
+}
+
 .pt2 {
         padding-top: 2rem;
+}
+
+.pb25rem {
+  padding-bottom: 25rem;
 }
 
 .pv3 {
@@ -339,6 +353,10 @@ p img {
         max-width: 700px;
 }
 
+.max-w1000 {
+        max-width: 1000px;
+}
+
 .mh-auto {
         margin-left: auto;
         margin-right: auto;
@@ -377,25 +395,10 @@ a.phantom-a:visited {
 }
 
 .divider {
-        border: none;
-        margin: 0;
-        color: #c32ced;
+        border: 4px dashed;
+        border-color: var(--primary-text-color);
 }
 
-.divider:after {
-        /* content: "⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹⊹"; */
-        /* content: "⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅"; */
-        /* content: "∴∵∴∵∴∵∴∵∴∵∴∵∴∵"; */
-        /* content: "≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣"; */
-        /* content: "⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀⑀"; */
-        /* content: "⑇⑇⑇⑇⑇⑇⑇⑇⑇⑇⑇⑇⑇⑇⑇⑇"; */
-        /* content: "⑇⑉⑇⑇⑉⑇⑇⑇⑉⑇⑇⑇⑇⑇⑇⑉⑇⑇⑇⑇"; */
-        /* content: "⑇⑉⑇⑇⑉⑇⑇⑇⑉⑇⑇⑇⑇⑇⑇⑉⑇⑇⑇⑈ ⑈ ⑈ ⑇"; */
-        content: "∿∿∿∿∿∿∿∿∿∿∿∿∿∿∿∿";
-        /* Ratio -> font-size/letter-spacing = 6.25 */
-        letter-spacing: -4.8px;
-        font-size: 30px;
-}
 
 .border-bottom-1-primary {
         border-bottom: 1px solid var(--primary-text-color);
@@ -413,19 +416,23 @@ a.phantom-a:visited {
         border: 1px solid var(--banner-background-border);
 }
 
+.vertical-photo {
+  max-width: 95%;
+}
+
 @media (prefers-color-scheme: dark) {
         :root {
-                --background-color: #15151e;
-                --banner-background-border: #343440;
-                --banner-background-color: #21212f;
-                --button-background-color: #43d7a6;
-                --button-color: #3d3d46;
-                --muted-text-color: #8796a6;
-                --primary-text-color: #b5beca;
-                --text-selection-background-color: #0000ff;
-                --anchor-color-visited: #c1c1c1;
-                --anchor-color: #ffffff;
-                --code-background-color: #2d2d2d;
+        --anchor-color-visited: #c1c1c1;
+        --anchor-color: #ffffff;
+        --background-color: #181a21;
+        --banner-background-border: #21242e;
+        --banner-background-color: #21242e;
+        --button-background-color: #43d7a6;
+        --button-color: #3d3d46;
+        --code-background-color: #2d2d2d;
+        --muted-text-color: #8796a6;
+        --primary-text-color: #b5beca;
+        --text-selection-background-color: #0000ff;
         }
 }
 
@@ -490,7 +497,14 @@ a.phantom-a:visited {
                 margin-bottom: unset;
                 display: unset;
         }
+
+        .vertical-photo {
+          max-width: 75%;
+        }
 }
 
 @media (min-width: 720px) {
+        .vertical-photo {
+          max-width: 50%;
+        }
 }
