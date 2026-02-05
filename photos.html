@@ -7,6 +7,76 @@
     <title>Photos | denvaar's Site</title>
     <link rel="stylesheet" href="css/styles.css" />
     <link type="image/x-icon" rel="icon" href="favicon.ico">
+    <style>
+              .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-auto-flow: dense;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .bento-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bento-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .wide {
+            grid-column: span 2;
+        }
+
+        .tall {
+            grid-row: span 2;
+        }
+
+        .square {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        @media (max-width: 600px) {
+            .wide, .square {
+                grid-column: span 1;
+            }
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+      /* Modal Styles */
+      #image-modal {
+        border: none;
+        padding: 0;
+        background: transparent;
+        max-width: 100%;
+        max-height: 100%;
+        outline: none;
+      }
+
+      #image-modal::backdrop {
+        background: rgba(255, 255, 255, 0.90);
+        backdrop-filter: blur(5px);
+      }
+
+      #modal-img {
+        display: block;
+        max-width: 100%;
+        max-height: 90vh;
+        margin: auto;
+      }
+
+      @media (max-width: 800px) { .masonry-grid { grid-template-columns: repeat(2, 1fr); } }
+      @media (max-width: 500px) { .masonry-grid { grid-template-columns: 1fr; } }
+    </style>
   </head>
   <body>
     <header>
@@ -24,93 +94,340 @@
       </div>
     </header>
     <main>
-      <div class="p1 mh-auto max-w1000 text-size-body">
-        <div class="text-center pb25rem">
-          <h1>
-Photos</h1>
-<div style="padding-bottom:10rem;">
-</div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/tractor.jpg" width="100%" />
-    <p>2025-09-01</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/parade-spooky.jpg" width="100%" />
-    <p>2025-09-01</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/parade-candy-throw.jpg" width="100%" />
-    <p>2025-09-01</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/parade-trompet.jpg" class="vertical-photo"/>
-    <p>2025-09-01</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/parade-arms.jpg" class="vertical-photo"/>
-    <p>2025-09-01</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/burger-boy.jpg" class="vertical-photo"/>
-    <p>2025-08-29</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/window-sliver.jpg" class="vertical-photo"/>
-    <p>2025-08-17</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/window-statues.jpg" class="vertical-photo"/>
-    <p>2025-08-17</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/garage.jpg" class="vertical-photo"/>
-    <p>2025-08-14</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/roller-rink-reflection.jpg" class="vertical-photo"/>
-    <p>2025-07-12</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/building.jpg" width="100%" />
-    <p>2025-07-11</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/carwash.jpg" width="100%" />
-    <p>2025-07-10</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/carwash-gas-station.jpg" width="100%" />
-    <p>2025-07-10</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/man-in-shed.jpg" width="100%" />
-    <p>2025-07-XX</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/greenhouse.jpg" width="100%" />
-    <p>2025-07-06</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/clothes-on-bed.jpg" width="100%" />
-    <p>2025-07-06</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/mtb.jpg" width="100%" />
-    <p>2025-06-27</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/speed.jpg" class="vertical-photo"/>
-    <p>2025-06-21</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/bianchi.jpg" class="vertical-photo"/>
-    <p>2025-06-17</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/feet.jpg" class="vertical-photo"/>
-    <p>2025-06-11</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/light-truck.jpg" width="100%" />
-    <p>2025-05-30</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/baseball-conversation.jpg" width="100%" />
-    <p>2025-05-24</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/climb.jpg" width="100%" />
-    <p>2025-04-26</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/outback.jpg" width="100%" />
-    <p>2025-04-18</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/yellowstone.jpg" width="100%" />
-    <p>2025-04-11</p></div>
-<div class="pb25rem">
-      <img loading="lazy" src="img/photos/beach-bathrooms.jpg" width="100%" />
-    <p>2025-02-XX</p></div>
+      <div style="margin-top:100px;"></div>
+      <div id="grid" class="p1 bento-grid">
+        
 
-        </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-31-12-A7C02094-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2026-01-31-12-A7C02079.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-31-12-A7C02063-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-31-04-A7C02221.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-31-02-A7C02190.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-31-01-A7C02120-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-30-07-A7C02019-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-23-08-A7C01809.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2026-01-23-08-A7C01806.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2026-01-23-08-A7C01794.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2026-01-22-10-A7C01786.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-22-09-A7C01773.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-18-03-A7C01729-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-18-03-A7C01727-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-18-02-A7C01705-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-18-01-A7C01616-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-18-01-A7C01610.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-18-01-A7C01577-3.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-18-01-A7C01576-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2026-01-18-01-A7C01567.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-18-01-A7C01565-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2026-01-17-12-A7C01527-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-17-12-A7C01525-3.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-12-12-DSC00663.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-12-12-DSC00650.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-12-02-DSC00720.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-11-12-A7C01490.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2026-01-11-12-A7C01454.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-10-11-A7C01443.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2026-01-10-11-A7C01431.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-10-11-A7C01425-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-10-09-A7C01404-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2026-01-10-09-A7C01400.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-09-10-A7C01371-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2026-01-09-10-A7C01363.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2026-01-09-09-A7C01326.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2026-01-09-08-A7C01318.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2026-01-09-05-A7C01308-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2026-01-09-05-A7C01295-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-12-31-05-DSC00546_12-31-2025.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-12-31-04-A7C01192_12-31-2025.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-12-28-09-A7C01110-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-12-27-10-A7C01043.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-12-27-10-A7C01025.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-12-23-03-DSC00335-2_12-25-2025.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-12-23-01-DSC00308_12-25-2025.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-12-19-03-DSC00219xx.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2025-12-13-10-A7C00543-winston.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-12-10-05-A7C00425.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-12-10-05-A7C00401-3.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-12-06-07-DSC00204.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-11-29-03-DSC00103-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-11-13-11-DSC09736-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-10-25-10-DSC09672-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-10-25-09-DSC09599-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-10-18-11-DSC08945-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-10-18-10-DSC08661-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-10-05-02-DSC08512-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-10-04-11-DSC08343-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-10-04-11-DSC08332-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-10-04-11-DSC08321-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2025-10-04-11-DSC08317-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-10-04-11-DSC08299-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2025-10-04-09-DSC08289-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-10-03-11-DSC08206-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-09-01-10-DSC08016-2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-09-01-10-DSC08012-v2.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2025-09-01-10-DSC08007.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2025-09-01-10-DSC07981.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-09-01-10-DSC07913.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-09-01-10-DSC07906.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-08-28-08-DSC07775-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-08-28-08-DSC07770-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2025-08-17-02-DSC07560-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-08-09-09-DSC06893-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-08-09-09-DSC06890-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2025-08-09-09-DSC06878-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-07-18-07-DSC05127.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item tall" onclick="openModal(this)">
+            <img src="img/photos/2025-07-18-07-DSC05123-edited.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2025-07-11-08-DSC04820.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
+          <div class="bento-item wide" onclick="openModal(this)">
+            <img src="img/photos/2025-05-24-04-DSC01927.jpg" loading="lazy" oncontextmenu="return false;" />
+          </div>
+        
       </div>
+
+      <dialog id="image-modal" onclick="this.close()">
+        <img id="modal-img" src="" alt="Full size view">
+      </dialog>
     </main>
     <footer>
       <div class="p1 pv2 bg-banner muted-text banner-border-top">
@@ -119,7 +436,7 @@ Photos</h1>
           <div class="md:mt2">
             <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a> · <a href="../rss.xml">RSS</a> · <a href="https://buymeacoffee.com/denvaar">Buy Me Coffee</a></p>
           </div>
-          <p class="">© 2015 - 2025 Denver Smith</p>
+          <p class="">© 2015 - 2026 Denver Smith</p>
         </div>
       </div>
     </footer>
