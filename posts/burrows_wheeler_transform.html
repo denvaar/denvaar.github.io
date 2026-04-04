@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Burrows Wheeler Transform for Compression | denvaar's Site</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" disabled="disabled" title="dark" href="../css/tomorrow-night.min.css" />
+    <link rel="stylesheet" disabled="disabled" title="light" href="../css/google-light.min.css" />
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <header>
+      <div class="p1 md:pv1 bg-banner banner-border-bottom">
+        <div class="mh-auto max-w700 inline md:flex">
+          <p class="mv0 bold align-self-end">
+            <span class="site-name">denvaar's&nbsp;&nbsp;<span style="text-shadow: #3fd1a1 -2px -2px 5px, #0058ff 1px 1px 8px, #cf42d3 3px 2px 6px;;">w e b s i t e</span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <a href="../index.html" class="phantom-a">writing</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../trash.html" class="phantom-a">brain dump</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../playground.html" class="phantom-a">playground</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="photos.html" class="phantom-a">photos</a>&nbsp;&nbsp;•&nbsp;&nbsp;
+            <a href="../rss.xml" class="phantom-a">rss</a>
+          </p> 
+        </div>
+      </div>
+    </header>
+    <main>
+      <div class="p1 pt2 mh-auto max-w700 text-size-body min-h-vh70">
+      <section>
+        <h1 class="m0 heading-size-sm md:heading-size-md">Burrows Wheeler Transform for Compression</h1>
+        <p class="m0 mt1 heading-size-xsm">How does the BWT work, and why is it useful for compression?</p>
+        <p class="m0 mt1 heading-size-xxsm">2026-04-04</p>
+        <div>
+          
+          
+
+          
+            <span class="tag blue-tag">programming</span>
+          
+        </div>
+      </section>
+      <p>
+The Burrows-Wheeler Transform is a “compression booster” that can be used alongside
+other techniques to improve the predictability of a given text, thus resulting in a
+more effective overall compression pipeline.</p>
+<p>
+Consider the following text as an example.</p>
+<pre><code class="text">supercalifragilisticexpialidocious</code></pre>
+<p>
+Apply an encoding like Huffman to the input to get variable-length codes for each symbol.</p>
+<pre><code class="text">Input: supercalifragilisticexpialidocious
+
+Symbol  Freq    Huffman Code
+----------------------------
+i       7       00
+a       3       010
+c       3       1111
+e       2       1110
+l       3       1100
+o       2       1000
+p       2       1011
+r       2       1010
+s       3       1001
+u       2       11011
+x       1       01110
+d       1       01111
+f       1       01100
+g       1       01101
+t       1       11010</code></pre>
+<p>
+Notice that frequent symbols are encoded with less bits. Now the
+input string can be represented using 126 bits instead of 272, or about
+54% less than if each symbol were to be represented using 8 bits. There’s
+a bit of additional space overhead that comes along with this encoding, but
+that’s besides the point here.</p>
+<p>
+Leveraging the overall frequency of symbols is not the only way to achieve
+compression. The Huffman Coding above is an example of Zero-Order Entropy
+compression, since it does not take into account each symbol’s “context”.</p>
+<p>
+When compressing a text, there’s often contextual information that can be
+leveraged to improve results. For example, consider the fact that certain
+letters or words tend to follow others within English text, or that highly
+repetitive <em>sequences</em> of symbols can be taken advantage of, rather than
+the frequency of individual symbols alone.</p>
+<p>
+The Burrows-Wheeler Transform (BWT) can be used leverage this idea of context
+in order to achieve better compression. It’s used alongside other techniques,
+such as Run-Length Encoding (RLE), and the Move-to-Front Transform (MTF).</p>
+<p>
+For example, here’s a An overly simplistic, poor man’s compression pipeline
+that mimics what <a href="https://en.wikipedia.org/wiki/Bzip2">bzip2</a> does:</p>
+<pre><code class="bash">cat sample.txt |\
+  standardize.py |\       # eg. &#39;hi there&#39; -&gt; 104 105 32 116 104 101 114 101
+  rle.py |\
+  bwt_suffix_array.py |\
+  mtf.py |\
+  rle.py |\
+  huffman.py |\
+  standardize.py -d |\
+  wc -c                   # eg. generally less bytes than with just huffman.py alone</code></pre>
+<h3>
+How’s the BWT work?</h3>
+<p>
+The BWT rotates symbols from the original input text, and then sorts the
+all permutations. It produces a (conceptual) matrix where each row and
+column is a permutation of the original text.</p>
+<p>
+To apply the BWT to a text of length <code class="inline">n</code>, start by appending an EOL symbol
+is lexicographically smaller than any other symbol from the text. Begin rotating
+symbols from the back to the front <code class="inline">n</code> times. Front to back is also fine,
+since the next step is to sort the permutations. The BWT is the last column of the matrix.</p>
+<pre><code class="text">         example
+APPEND   │
+         ▼
+         example$
+ROTATE   │
+         ├──► example$
+         ├──► $example
+         ├──► e$exampl
+         ├──► le$examp
+         ├──► ple$exam
+         ├──► mple$exa
+         ├──► ample$ex
+         ├──► xample$e
+SORT     │
+         ▼
+         $example
+         ample$ex
+         e$exampl    (Conceptual)
+         example$     BWT Matrix
+         le$examp
+         mple$exa
+         ple$exam
+         xample$e
+SLICE    │
+         ▼      ┌─┐
+         $exampl│e│
+         ample$e│x│
+         e$examp│l│
+         example│$│
+         le$exam│p│
+         mple$ex│a│
+         ple$exa│m│
+         xample$│e│
+                └┬┘
+         ┌───────┘
+         ▼
+✨BWT✨  exl$pame</code></pre>
+<p>
+Though it’s not immediately obvious how, the BWT can be reversed to
+retrieve the original input string (in more ways than one).</p>
+<p>
+Start by sorting the BWT, keeping track of each symbol’s original index.</p>
+<pre><code class="text">SORT
+
+ e x l $ p a m e
+─────────────────
+ 0 1 2 3 4 5 6 7
+ │ │ │ │ │ │ │ └────┐
+ │ │ │ │ │ │ └──────┼───────────┐
+ │ │ │ │ └─┼────────┼───────────┼─────┐
+ │ │ └─┼───┼────────┼─────┐     │     │
+ │ └───┼───┼────────┼─────┼─────┼─────┼─────┐
+ └─────┼───┼──┐     │     │     │     │     │
+  ┌────┘┌──┘  │     │     │     │     │     │
+  ▼     ▼     ▼     ▼     ▼     ▼     ▼     ▼
+($,3) (a,5) (e,0) (e,7) (l,2) (m,6) (p,4) (x,1)
+────────────────────────────────────────────────
+  0     1     2     3     4     5     6     7</code></pre>
+<p>
+<em>Note: Notice that the sorted BWT corresponds to the first column of the BWT Matrix.</em></p>
+<p>
+The sorted BWT acts as a chain of instructions to get back to the original string.</p>
+<p>
+Traverse the sequence of symbol-index “pairs”. Begin with the first
+pair. Read off the symbol (the first value from the pair), and then use the
+index (the second value from the pair) to determine which pair to visit next.</p>
+<p>
+Repeat these steps until arriving back at index <code class="inline">0</code> (the first symbol should
+always be the special, lexicographically-lower-than-anything-else symbol, so
+there is no need to read it off).</p>
+<pre><code class="text">TRAVERSE
+              ┌───────────┐
+              │           │     ┌─────┐
+ A┌───────────┼─────┐    G│    E│     │     C
+  │     ┌─────┼─────┼─────┼─────┼─────┼─────┐
+  ▲     ▼     ▼     ▼     ▲     ▲     ▼     ▲
+($,3) (a,5) (e,0) (e,7) (l,2) (m,6) (p,4) (x,1)
+────────────────────────────────────────────────
+  0     1     2     3     4     5     6     7
+  ▲     ▼     ▼     ▼     ▲     ▲     ▼     ▲
+  │     └─────┼─────┼─────┼─────┘     │     │
+  │     D     │    B│     │          F│     │
+  │           │     └─────┼───────────┼─────┘
+  ▲           ▼           │           │
+START        END          └───────────┘
+
+
+A                    e______
+A─►B                 ex_____
+A─►B─►C              exa____
+A─►B─►C─►D           exam___
+A─►B─►C─►D─►E        examp__
+A─►B─►C─►D─►E─►F     exampl_
+A─►B─►C─►D─►E─►F─►G  example ✨original input✨</code></pre>
+<p>
+While the illustrations above may not show it, both construction and reversal of the BWT can be done in linear-time. A suffix array may be used for construction.</p>
+<p>
+For reversal, the key concept is called, “LF-Mapping”: The <a href="jacobsons_rank.html">rank</a> of each symbol in the BWT correspond to the symbols with the same rank in the first column of the matrix. Reversal via the LF-Mapping property can be done as follows:</p>
+<ol>
+  <li>
+For each position in the BWT, determine its rank: how many times that same symbol has appeared before it. The total frequency of each symbol can be obtained as a byproduct.  </li>
+</ol>
+<pre><code class="text">BWT:    e l o $ g o g
+──────────────────────
+Ranks:  0 0 0 0 0 1 1
+
+Frequencies:
+{e: 1, l: 1, o: 2, $: 1, g: 2}</code></pre>
+<ol start="2">
+  <li>
+Determine the “cumulative count” (<code class="inline">cc</code>) for each symbol, which is a running sum of the frequencies of each symbol (in sorted order).  </li>
+</ol>
+<pre><code class="text">{e: 1, l: 1, o: 2, $: 1, g: 2}
+
+│  SORT  │
+▼        ▼
+
+{$: 1, e: 1, g: 2, l: 1, o: 2}
+    │     │     └────┐│
+    │     └─────────┐││
+    └─────────┐     │││
+cc[&#39;$&#39;] = 0   │     │││
+          │   │     │││
+          ▼   ▼     │││
+cc[&#39;e&#39;] = 0 + 1 = 1 │││
+          ┌───────┘ │││
+          │   ┌─────┘││
+          ▼   ▼      ││
+cc[&#39;g&#39;] = 1 + 1 = 2  ││
+          ┌───────┘  ││
+          │   ┌──────┘│
+          ▼   ▼       │
+cc[&#39;l&#39;] = 2 + 2 = 4   │
+          ┌───────┘   │
+          │   ┌───────┘
+          ▼   ▼
+cc[&#39;o&#39;] = 4 + 1 = 5</code></pre>
+<ol start="3">
+  <li>
+Starting at the sentinel’s position, walk the BWT by collecting the current symbol and jumping to the next position using the following formula (because the k-th occurrence of a symbol in the last column corresponds to the k-th occurrence in the first column - in other words, their ranks are the same): <code class="inline">next_index = cc[symbol] + rank[index]</code>  </li>
+</ol>
+<pre><code class="text">e l o $ g o g
+      ▲
+      ├─ cc[&#39;$&#39;] = 0
+      └─ rank[3] = 0
+      ──────────────
+         sum     = 0 (next index)
+         result  = e _ _ _ _ _
+
+e l o $ g o g
+▲
+├─ cc[&#39;e&#39;] = 1
+└─ rank[0] = 0
+──────────────
+   sum     = 1 (next index)
+   result  = e l _ _ _ _
+
+e l o $ g o g
+  ▲
+  ├─ cc[&#39;l&#39;] = 4
+  └─ rank[1] = 0
+  ──────────────
+     sum     = 4 (next index)
+     result  = e l g _ _ _
+
+e l o $ g o g
+        ▲
+        ├─ cc[&#39;g&#39;] = 2
+        └─ rank[4] = 0
+        ──────────────
+           sum     = 2 (next index)
+           result  = e l g o _ _
+
+e l o $ g o g
+    ▲
+    ├─ cc[&#39;o&#39;] = 5
+    └─ rank[2] = 0
+    ──────────────
+       sum     = 5 (next index)
+       result  = e l g o o _
+
+e l o $ g o g
+          ▲
+          ├─ cc[&#39;o&#39;] = 5
+          └─ rank[5] = 1
+          ──────────────
+             sum     = 6 (next index)
+             result  = e l g o o g</code></pre>
+<ol start="4">
+  <li>
+Reverse the collected symbols to get the original text.  </li>
+</ol>
+<pre><code class="text">elgoog
+
+│ REVERSE │
+▼         ▼
+
+google ✨original input✨</code></pre>
+<h3>
+Why does it help improve compression?</h3>
+<p>
+It’s difficult to understand <em>why</em> the BWT is useful from the small example
+shown above. The neat property about it is that the symbols end up being very
+predictable and repetitive. High predictability equals low entropy, which
+makes for effective compression.</p>
+<p>
+Each symbol in the BWT is sorted by it’s right-side context. Consider common words
+like “the”, “there”, “their”, “they”, etc. Each “t” has a similar suffix. The BWT
+tends to bring these details to the surface. For example:</p>
+<pre><code class="text">Input:   &quot;the&quot;, &quot;there&quot;, &quot;their&quot;, &quot;they&quot;
+BWT:     &quot;,,,yeer$   &quot;&quot;&quot;rhhhhtttteie&quot;&quot;&quot;&quot;e</code></pre>
+<p>
+Symbols like “t” and “h” tend to get grouped into runs.</p>
+<p>
+Recall that the BWT is the last column of the (conceptual) BWT matrix, however, moving
+it to the front helps to see each symbol’s corresponding suffix:</p>
+<pre><code class="text">...
+,░&quot;their&quot;,░&quot;...│&quot;│
+,░&quot;there&quot;,░&quot;...│&quot;│
+,░&quot;they&quot;$&quot;th...│&quot;│
+e&quot;,░&quot;their&quot;,...│r│
+e&quot;,░&quot;there&quot;,...│h│
+eir&quot;,░&quot;they&quot;...│h│
+ere&quot;,░&quot;their...│h│
+ey&quot;$&quot;the&quot;,░&quot;...│h│
+he&quot;,░&quot;there&quot;...│t│
+heir&quot;,░&quot;they...│t│
+here&quot;,░&quot;thei...│t│
+hey&quot;$&quot;the&quot;,░...│t│
+ir&quot;,░&quot;they&quot;$...│e│
+...
+
+  │
+  ▼
+...
+│&quot;│,░&quot;their&quot;,░&quot;...
+│&quot;│,░&quot;there&quot;,░&quot;...
+│&quot;│,░&quot;they&quot;$&quot;th...
+│r│e&quot;,░&quot;their&quot;,...
+│h│e&quot;,░&quot;there&quot;,...
+│h│eir&quot;,░&quot;they&quot;...
+│h│ere&quot;,░&quot;their...
+│h│ey&quot;$&quot;the&quot;,░&quot;...
+│t│he&quot;,░&quot;there&quot;...
+│t│heir&quot;,░&quot;they...
+│t│here&quot;,░&quot;thei...
+│t│hey&quot;$&quot;the&quot;,░...
+│e│ir&quot;,░&quot;they&quot;$...
+...</code></pre>
+<p>
+<a href="/playground/bwt_encode.html">This tool</a> can be used to play around with the BWT transform to help visualize what it does.</p>
+
+    </div>
+    </main>
+    <footer>
+      <div class="p1 pv2 bg-banner muted-text banner-border-top">
+        <div class="mh-auto max-w700">
+            <img src="https://avatars.githubusercontent.com/u/10538978" class="profile-img" alt="A picture of me" decoding="async" />
+          <div class="md:mt2">
+            <p><a href="https://github.com/denvaar">GitHub</a> · <a href="https://www.youtube.com/channel/UCDY981jZta5C5A6kQXioGUg">YouTube</a> · <a href="https://www.linkedin.com/in/denver-smith-a41997103">LinkedIn</a> · <a href="../rss.xml">RSS</a> · <a href="https://buymeacoffee.com/denvaar">Buy Me Coffee</a></p>
+          </div>
+          <p class="">© 2015 - 2026 Denver Smith</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/highlight.min.js"></script>
+    <script>
+      function enableHighlightFor(mode) {
+        const oppositeMode = mode === "dark" ? "light" : "dark";
+
+        document
+          .querySelector(`link[title="${mode}"]`)
+          .removeAttribute("disabled");
+        document
+          .querySelector(`link[title="${oppositeMode}"]`)
+          .setAttribute("disabled", "disabled");
+
+        document.querySelectorAll("pre code.hljs")
+          .forEach(function(el) {
+            const bgColor = window.getComputedStyle(el).getPropertyValue("background");
+            console.log({el, bgColor});
+
+            el.closest("pre").style.background = bgColor;
+          });
+      }
+
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+
+        hljs.highlightAll();
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', event => {
+        if (event.matches) {
+          //dark mode
+          enableHighlightFor("dark");
+        } else {
+          //light mode
+          enableHighlightFor("light");
+        }
+      })
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>BWT Encoding | denvaar's Site</title>
+    <link type="image/x-icon" rel="icon" href="../favicon.ico">
+    <meta charset="UTF-8">
+  <link rel="stylesheet" href="../css/bwt_encode.css" /></head>
+  <body>
+    <header>
+      <div class="">
+        <div class="">
+          <p class="">
+            <a href="../index.html" class="">Home</a> ->
+            <a href="../playground.html" class="">Playground</a> ->
+            <span>BWT Encoding</span>
+          </p> 
+        </div>
+      </div>
+    </header>
+    <div class="layout-root">
+  <div class="section">
+    <h3>Burrows-Wheeler Transform Visualization</h3>
+    <div class="input-container">
+      <label for="bwt-input" class="input-label">Input</label>
+      <textarea id="bwt-input" name="bwt-input" autocomplete="off" autofocus="" placeholder="Type something to send through the BWT transform..."></textarea>
+    </div>
+    <fieldset>
+      <legend>Controls</legend>
+      <div class="controls-inner">
+        <button id="transform" disabled>Transform</button>
+        <button id="step" disabled>Step</button>
+        <button id="reset" disabled>Reset</button>
+      </div>
+    </fieldset>
+  </div>
+  <div class="section section-matrix">
+    <fieldset>
+      <legend>BWT Matrix (Conceptual)</legend>
+      <div class="matrix-row">
+        <div id="matrix-container">--</div>
+        <div class="matrix-sidebar">
+          <div>
+            <div class="step" id="step-append">
+              <h4>APPEND '$'</h4>
+            </div>
+            <div class="step" id="step-rotate">
+              <h4>ROTATE</h4>
+            </div>
+            <div class="step" id="step-sort">
+              <h4>SORT</h4>
+            </div>
+            <div class="step" id="step-slice">
+              <h4>SLICE</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+  <div class="section section-result">
+    <fieldset>
+      <legend>BWT (Result)</legend>
+      <div class="bwt-output-container">
+        <pre id="bwt-output">--</pre>
+      </div>
+    </fieldset>
+  </div>
+</div>
+
+  <script src="../js/bwt_encode.js"></script></body>
+</html>

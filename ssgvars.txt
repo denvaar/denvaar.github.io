@@ -1,10 +1,28 @@
 ---
+page: posts/burrows_wheeler_transform.md
+template: templates/post_detail_template.html.eex
+title: Burrows Wheeler Transform for Compression
+date_published: 2026-04-04
+summary: How does the BWT work, and why is it useful for compression?
+tags: programming
+---
+
+---
 page: posts/a_philosophy_of_software_design_review.md
 template: templates/post_detail_template.html.eex
 title: A Philosophy of Software Design Book Review
 date_published: 2024-07-27
 summary: My review of <i>A Philosophy of Software Design</i> by John Ousterhout
 tags: reviews,programming
+---
+
+---
+page: playground/bwt_encode.html
+template: templates/playground_detail.html.eex
+js: js/bwt_encode.js
+should_override_js: true
+css: css/bwt_encode.css
+title: BWT Encoding
 ---
 
 ---
