@@ -51,7 +51,7 @@ Now that this side project is coming to an end, I want to highlight some of the 
 <p>
 You can find the code on GitHub <a href="https://github.com/denvaar/sternhalma">here</a> and <a href="https://github.com/denvaar/board_games">here</a>. The game is available for now at <a href="https://gameswithfriends.app">gameswithfriends.app</a>, although I’m not sure how long I will keep it there, and the server it’s running on is, “not meant for production.”</p>
 <p>
-  <img src="../img/sternhalma_demo1.gif" alt="" />
+  <img src="../img/sternhalma_demo1.gif" alt="">
 </p>
 <h2>
 Rules of the Game</h2>
@@ -387,7 +387,7 @@ An interesting thing about GameServer is that it’s not spawned directly from a
 <p>
 GameSupervisor is a special type of process called a Dynamic Supervisor. It’s job is to watch over it’s children. The GameSupervisor itself is created when the web application first starts up, so that other processes can use it to tell which children to watch over.</p>
 <p>
-  <img src="img/game_supervisor.png" alt="" />
+  <img src="img/game_supervisor.png" alt="">
 </p>
 <p>
 If a LiveView were to start a GameServer directly, that would mean that it would get destroyed if the player who was connected to the LiveView process were to disconnect, ending the game for all.</p>
@@ -412,7 +412,7 @@ defp rotation(4), do: 120
 defp rotation(5), do: 300
 defp rotation(_player_index), do: 0</code></pre>
 <p>
-  <img src="img/sternhalma_rotation.png" alt="" />
+  <img src="img/sternhalma_rotation.png" alt="">
 </p>
 <p>
 Such a simple function for such a nice feature!</p>
@@ -457,7 +457,7 @@ I relied heavily on testing while working on the Sternhalma library. The tests I
 <p>
 Documentation is a first-class citizen in Elixir. I love how easy it is to write and read documentation for modules and functions. I feel very comfortable writing Elixir code on an airplane because when I have questions, I simply pop open an interactive console, and read the docs for whatever module or function I am wondering about. No need for the internet most of the time.</p>
 <p>
-  <img src="img/sternhalma_docs_1.png" alt="" />
+  <img src="img/sternhalma_docs_1.png" alt="">
 </p>
 <p>
 Notice the “Examples” section in the screenshot above. That’s not just for user reference – those are <a href="https://hexdocs.pm/elixir/writing-documentation.html#doctests">doctests</a>. That code is actually executed and checked against the result as part of the test suite. Maybe the only thing worse than no documentation is documentation that is wrong. I love tools Elixir offers to help prevent this.</p>
@@ -494,7 +494,7 @@ Of course there’s no way to eliminate the dependency to the library completely
 <p>
 That’s the purpose of the <a href="https://github.com/denvaar/board_games/blob/master/lib/board_games/sternhalma_adapter.ex">SternhalmaAdapter module</a>. It’s a boundary between the external library and the web app.</p>
 <p>
-  <img src="img/sternhalma_adapter.png" alt="" />
+  <img src="img/sternhalma_adapter.png" alt="">
 </p>
 <p>
 The functions were easy to throw into the module, but eliminating the use of data types throughout the app was difficult. My solution was to <a href="https://github.com/denvaar/board_games/blob/master/lib/board_games/sternhalma_adapter.ex#L106-L146">sanitize, or morph the external data to a different representation</a> that my web app could depend on.</p>

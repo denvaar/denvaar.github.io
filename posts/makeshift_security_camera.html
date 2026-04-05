@@ -65,7 +65,7 @@ These are pretty standard features for a security system, however, it was kind o
 <h2>
 Motion Detection</h2>
 <p>
-  <img src="../img/arm.png" alt="" />
+  <img src="../img/arm.png" alt="">
 </p>
 <p>
 This is one of those projects that rely heavily on the awesome work that other people have already created. <a href="http://opencv.org/">OpenCV</a> is an open source computer vision library. I used the Python version to capture frames from the pi’s camera and to determine if something has moved. There’s a lot to how this algorithm works behind the scenes, but here are the basics:</p>
@@ -79,24 +79,24 @@ gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)</code></pre>
 <p>
 At this point the frame looks like this:</p>
 <p>
-  <img src="../img/cv-image1.jpg" alt="" />
+  <img src="../img/cv-image1.jpg" alt="">
 </p>
 <p>
 Then a gaussian blur function is applied to the frame:</p>
 <pre><code class="python">gray = cv2.GaussianBlur(gray, (21, 21), 0)</code></pre>
 <p>
-  <img src="../img/cv-image2.jpg" alt="" />
+  <img src="../img/cv-image2.jpg" alt="">
 </p>
 <p>
 The idea is to compare the contours between two frames. I created an initial frame that is used to compare each new frame against using the <code class="inline">absdiff</code> function. It produces a scary ghost-like image that looks like this:</p>
 <pre><code class="python">frame_delta = cv2.absdiff(self.initial_frame, gray)</code></pre>
 <p>
-  <img src="../img/cv-image3.jpg" alt="" />
+  <img src="../img/cv-image3.jpg" alt="">
 </p>
 <p>
 These images are a result of combining the current frame with the initial frame. Finally, using more cv2 image manipulation functions, I end up with an image that looks like this, and represents a difference between the initial frame and the current frame from the camera:</p>
 <p>
-  <img src="../img/cv-image4.jpg" alt="" />
+  <img src="../img/cv-image4.jpg" alt="">
 </p>
 <p>
 I use this image with the <code class="inline">cv2.findContours</code> function to get the contours in the image. I picked the value 500 to use as an indicator that enough change has happened to alert the system that motion has been detected.</p>
@@ -113,7 +113,7 @@ I learned a lot about this method of detecting motion from the link at the botto
 <h2>
 Streaming Video to the Web</h2>
 <p>
-  <img src="../img/creeper.png" alt="" />
+  <img src="../img/creeper.png" alt="">
 </p>
 <p>
 I was so surprised at how difficult it is to stream video to a web page. I think this was the most challenging part of the project, but once I found a solution, everything started to fall into place.</p>
@@ -174,7 +174,7 @@ Here’s the relevant bit of code from <code class="inline">index.html</code></p
 The record and reset buttons on the web interface are just async actions that trigger functions to manipulate the video camera.</p>
 <h2>
 SMS Text Notifications</h2>
-<img style="width:100%" src="../img/sms-example.jpg" />
+<img style="width:100%" src="../img/sms-example.jpg">
 <p>
 To my delight, there’s such a thing as an “SMS gateway,” which makes sending text messages from a computer program easy. From what I understand, most carriers have an email address that you can send messages to. <code class="inline">1234567890@mms.att.net</code> for example. The carrier routes the message to the mobile phone number provided. If there’s an error sending the message, you receive an email instead.</p>
 <p>
@@ -193,7 +193,7 @@ One of the biggest sources of latency is the crappy wifi dongle I have on my pi.
 Finally, if I wanted to make this system more robust, I would add some authentication to the web interface. I wouldn’t want anyone just monitoring my camera. I just didn’t add this feature because it was beyond the scope of what I was trying to learn and accomplish.</p>
 <p>
 As I began to work on this project, I realized I would have to take advantage of concurrency using threads and processes to perform subtasks. By doing so, I was able to improve the performance as well as the overall quality of the security system. This project has sparked an interest in computer vision for me. I don’t know if my wife and I will catch any thieves, but they will not be able to take away the things I’ve learned from creating this makeshift security camera.</p>
-<img src="https://media.giphy.com/media/d3mlE7uhX8KFgEmY/source.gif" width="100%" />
+<img src="https://media.giphy.com/media/d3mlE7uhX8KFgEmY/source.gif" width="100%">
 <p>
 I found these resources very helpful while working on this project:</p>
 <ul>

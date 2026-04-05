@@ -59,7 +59,7 @@ The challenge</h2>
 <p>
 You can find the original problem statement <a href="https://projecteuler.net/problem=79">here</a>. It’s short, so take a moment to read through.</p>
 <p>
-  <img src="../img/secret_number_0.png" alt="" />
+  <img src="../img/secret_number_0.png" alt="">
 </p>
 <p>
 The challenge is to determine what the shortest possible secret number is. Here’s an excerpt from the keylogger file.</p>
@@ -97,7 +97,7 @@ Possible option: Maintain a sorted array</h2>
 <p>
 At this point, I still wasn’t sure how to solve the problem on paper, so I decided to try and work backwards. I wrote down a random number and then picked a few pairs of digits from it to try and reconstruct my own version of the problem. I decided to go through each number in the list and write down the digits as if they were being inserted into some kind of array.</p>
 <p>
-  <img src="../img/secret_number_1.png" alt="" />
+  <img src="../img/secret_number_1.png" alt="">
 </p>
 <p>
 I realized an approach like this would not be very practical because it still leaves room for ambiguity.</p>
@@ -122,7 +122,7 @@ Each number in the list provides helpful clues, but the problem is that it’s d
 <p>
 A directed graph seems to be a pretty natural fit to represent this information. Each node could be a digit, and the edges between nodes could represent the relationship between them.</p>
 <p>
-  <img src="../img/secret_number_2.png" alt="" />
+  <img src="../img/secret_number_2.png" alt="">
 </p>
 <p>
 I felt good about using a graph to solve the problem, but there were still some questions that I had to figure out.</p>
@@ -139,23 +139,23 @@ How to know when the answer is conclusive</h2>
 <p>
 To help answer this question I used the same technique of creating a simplified version of the problem and working backwards. Pretend now that 157 is the secret number. How many edges between the nodes would it take to definitively say that 1 comes before both 5 and 7, and 5 comes before 7? The answer is three edges for this particular graph.</p>
 <p>
-  <img src="../img/secret_number_3.png" alt="" />
+  <img src="../img/secret_number_3.png" alt="">
 </p>
 <p>
 In this example, the order is known when number of edges are equal to the number of nodes. <em>Is it that simple? Can we know what the secret number is if the number of edges are equal to the number of nodes?</em></p>
 <p>
 In this example, yes, but it doesn’t hold true for the general case. By creating more examples, I start to find a relationship between the number of nodes, and the number of edges. Have a look at what four and five-digit secret numbers look like as a graph:</p>
 <p>
-  <img src="../img/secret_number_4.png" alt="" />
+  <img src="../img/secret_number_4.png" alt="">
 </p>
 <p>
-  <img src="../img/secret_number_5.png" alt="" />
+  <img src="../img/secret_number_5.png" alt="">
 </p>
 <p>
 After drawing a few of these, I could begin to see a pattern emerge. As the number of nodes increase, the number of edges increase like, <code class="inline">1, 3, 6, 10, 15, 21, 28, ..</code>.</p>
 <p>
 It can be helpful to look for patterns, because it means that there’s an equation which can be used to represent some aspect of the problem. Here the pattern showed me what condition to use in order to know when my answer could be considered conclusive. This is the equation that represents that pattern, where n is the number of nodes in the graph.</p>
-<img src="../img/secret_number_6.png" style="width:200px" />
+<img src="../img/secret_number_6.png" style="width:200px">
 <h2>
 Reading the graph to find the answer</h2>
 <p>
@@ -171,7 +171,7 @@ Duplicate digits</h2>
 <p>
 A secret number with more than one of the same digit could cause problems with my approach. This was something that worried me as I was working, because it was not clear how to know which two nodes to put the edge between. For example, take a look at 1030 as the secret number, and imagine the digits given in the following order:</p>
 <p>
-  <img src="../img/secret_number_7.png" alt="" />
+  <img src="../img/secret_number_7.png" alt="">
 </p>
 <p>
 There are multiple ways to draw the graph because there are two 0’s. There should still be only one “correct” way. Creating a correct graph might depend on the order in which the digits are given. I might need to think of some way to backtrack and re-connect nodes in order to end up with the correct graph.</p>
@@ -180,7 +180,7 @@ The correct and incorrect graphs can be compared to understand how exactly they 
 <p>
 Another difference is that the correct version is the only one that satisfies the property mentioned above, where the number of each node’s edges differ by exactly one. This property should always be true for any secret number modeled with the graph.</p>
 <p>
-  <img src="../img/secret_number_8.png" alt="" />
+  <img src="../img/secret_number_8.png" alt="">
 </p>
 <p>
 At this point, I decided to put the question of duplicate digits on hold. It looked like this would break the approach that I had planned to use. I think its possible to figure out, but it was unclear if this use case needed to be supported at all.</p>
