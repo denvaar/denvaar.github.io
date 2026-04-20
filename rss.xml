@@ -1,9 +1,23 @@
 <rss version="2.0">
-	<channel>
-		<title>denvaar's website</title>
-		<link>https://denvaar.dev</link>
-		<description>denvaar's personal site. Most of the content is on software development and computer programming. However, other one-off topics are in the mix.</description>
-		<language>en-us</language>
+  <channel>
+    <title>denvaar's website</title>
+    <link>https://denvaar.dev</link>
+    <description>denvaar's personal site. Most of the content is on software development and computer programming. However, other one-off topics are in the mix.</description>
+    <language>en-us</language>
+    <item>
+      <title>Scooter Crash</title>
+      <description>--</description>
+      <category>random</category>
+      <link>https://denvaar.dev/trash/scooter_crash.html</link>
+      <pubDate>Thu Nov 16 21:40:09 MDT 2023</pubDate>
+    </item>
+    <item>
+      <title>Good Songs with Bongos and/or Cowbell</title>
+      <description>--</description>
+      <category>reviews,music</category>
+      <link>https://denvaar.dev/trash/songs_with_bongos_and_or_cowbell.html</link>
+      <pubDate>Sun Apr 19 21:40:09 MDT 2026</pubDate>
+    </item>
     <item>
       <title>Burrows Wheeler Transform for Compression</title>
       <description>How does the BWT work, and why is it useful for compression?</description>
@@ -307,6 +321,6 @@
       <pubDate>Fri Jun 19 23:40:09 MDT 2015</pubDate>
       <link>https://denvaar.dev/posts/optimization_with_timeit.html</link>
     </item>
-	</channel>
+  </channel>
 </rss>
 
