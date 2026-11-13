@@ -72,9 +72,9 @@ Six bits works well because it yields values up to 63. In Ben Bryant’s article
 +---------------------+-------------------------------+
 | 4 sixtets (24 bits) |   010011 010110 000101 101110 |
 +---------------------+-------------------------------+
-| Sixtet Value        |   19	 22     5      46     |
+| Sixtet Value        |   19     22     5      46     |
 +---------------------+-------------------------------+
-| Alphabet Mapping    |   T 	 W      F      u      |
+| Alphabet Mapping    |   T      W      F      u      |
 +---------------------+-------------------------------+</code></pre>
 <p>
 Each group of six bits is used as an index value in the alphabet, as illustrated in the table above. As the encoding process reaches the end of the data, it’s possible that the remaining data can’t fit evenly within a group of 24 bits. In this case, the data is padded until it divides evenly. Base64 has a special padding character <code class="inline">=</code> which is often seen at the end of an encoding.</p>
@@ -83,9 +83,9 @@ Each group of six bits is used as an index value in the alphabet, as illustrated
 +---------------------+-------------------------------+
 | sixtets             |   010011 010000 ______ ______ |
 +---------------------+-------------------------------+
-| Sixtet Value        |   19	 16    padding padding|
+| Sixtet Value        |   19     16    padding padding|
 +---------------------+-------------------------------+
-| Alphabet Mapping    |   T 	 Q      =      =      |
+| Alphabet Mapping    |   T      Q      =      =      |
 +---------------------+-------------------------------+</code></pre>
 <h2>
 Decoding Base64</h2>
@@ -118,11 +118,11 @@ The last step is to regroup all of the bits into bytes, or groups of 8. As an ex
 Another example</h2>
 <p>
 I’ve pasted a base64-encoded picture of my teeth to help illustrate how base64 can be useful.</p>
-<img src="../img/my-teeth-1.png" style="width:200px" />
+<img src="../img/my-teeth-1.png" style="width:200px">
 <p>
 If you use your web browser’s developer console to inspect the image, you’ll see base64 in action. Instead of a path to an image, this &amp;lt;img&amp;gt; tag is using a data-url. The data url follows this format: data:[&amp;lt;mediatype&amp;gt;][;base64],&amp;lt;data&amp;gt; and you’ll notice a big block of text, which is the base64 encoded version of the image above.</p>
 <p>
-  <img src="../img/my-teeth-2.png" alt="" />
+  <img src="../img/my-teeth-2.png" alt="">
 </p>
 
     </div>

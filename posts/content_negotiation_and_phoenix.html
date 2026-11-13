@@ -53,7 +53,7 @@ Use Case</h2>
 <p>
 There’s this really cool website for checking the weather called <a href="http://wttr.in">wttr.in</a>. Not only is it available in the web browser, but it’s also been configured in a way that that if you <code class="inline">curl</code> it in the console, the server sends back a beautiful response of plain ANSI text. I looked at the <a href="https://github.com/chubin/wttr.in/blob/0d76ba4a3e112694665af6653040807835883b22/lib/wttr_srv.py#L123">source code</a> to see how the server knows to return plain text or HTML markup, and it looks like it checks the User-Agent header on the request. It works, but I am going to demonstrate a different way of negotiating content.</p>
 <p>
-  <img src="../img/wttr.png" alt="" />
+  <img src="../img/wttr.png" alt="">
 </p>
 <h2>
 Accept vs Content-Type</h2>
@@ -134,7 +134,7 @@ And I also added another template, called, “index.text.eex”, so that if a cl
 <p>
 That’s pretty much it, here’s an example of what the text format looks like in my console. Hitting <code class="inline">http://localhost:4000/bikes</code> from the browser returns a normal HTML list version as you would expect (I’m not going to post a screen shot of that one.)</p>
 <p>
-  <img src="../img/content-type-example.png" alt="" />
+  <img src="../img/content-type-example.png" alt="">
 </p>
 
     </div>

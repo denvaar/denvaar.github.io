@@ -95,12 +95,12 @@ Not too surprisingly, when binary numbers are enumerated, there’s a pattern of
 <p>
 Graphing the number of set bits for every binary number helps to visualize the pattern.</p>
 <p>
-  <img src="../img/set_bit_count_1.jpg" alt="Overall pattern of the number of set bits" />
+  <img src="../img/set_bit_count_1.jpg" alt="Overall pattern of the number of set bits">
 </p>
 <p>
 Zoom in closer and you can start to pinpoint what the pattern actually is.</p>
 <p>
-  <img src="../img/set_bit_count_2.jpg" alt="Close-up pattern of the number of set bits" />
+  <img src="../img/set_bit_count_2.jpg" alt="Close-up pattern of the number of set bits">
 </p>
 <p>
 Within each green box there are four population counts, which basically go like this as <code class="inline">n</code> increases:</p>
@@ -141,7 +141,7 @@ static const uint8_t table[16] = {
 <p>
 <code class="inline">B2</code> yields four values, and so <code class="inline">B4</code> provides 16 since it uses <code class="inline">B2</code> four times. This same pattern continues. Each pink box represents all four green boxes, and it’s clear to see that it also follows the <code class="inline">n, n+1, n+1, n+2</code> pattern.</p>
 <p>
-  <img src="../img/set_bit_count_3.jpg" alt="Number of set bits" />
+  <img src="../img/set_bit_count_3.jpg" alt="Number of set bits">
 </p>
 <p>
 It’s the same steps as before to code this up: Define another macro that calls the previous version four times, each following the same pattern for <code class="inline">n</code>.</p>
